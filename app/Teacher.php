@@ -8,9 +8,14 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use App\Notifications\TeacherResetPasswordNotification;
 use App\Notifications\TeacherVerifyEmail;
 
+use Spatie\Permission\Traits\HasRoles;
+
+
 class Teacher extends Authenticatable implements MustVerifyEmail
 {
     use Notifiable;
+
+    use HasRoles;
 
     protected $guard = 'teacher';
     /**

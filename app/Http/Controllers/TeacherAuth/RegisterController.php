@@ -11,6 +11,9 @@ use Illuminate\Auth\Events\Registered;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 
+use Spatie\Permission\Models\Role;
+use Spatie\Permission\Models\Permission;
+
 
 class RegisterController extends Controller
 {
@@ -67,16 +70,24 @@ class RegisterController extends Controller
      */
     protected function create(array $data)
     {
-        return Teacher::create([
+        $teacher = Teacher::create([
             'name' => $data['name'],
             'email' => $data['email'],
             'password' => Hash::make($data['password']),
         ]);
+
+        $role = Role::create(['guard_name' => 'teacher', 'name' => $data['role'] ]);
+
+        $teacher->assignRole($role);
+
+        return $teacher;
     }
     
     
     public function showRegistrationForm()
-    {
+    {   
+
+        
         return view('teacher.auth.register');
     }
 
@@ -90,8 +101,12 @@ class RegisterController extends Controller
     {
 
         $this->validator($request->all())->validate();
-
+        
         event(new Registered($user = $this->create($request->all())));
+
+        // $role = Role::create(['guard_name' => 'teacher', 'name' => 'full-time']);
+
+        // $user->assignRole($role);
 
         $this->guard()->login($user);
 

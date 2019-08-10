@@ -2,7 +2,13 @@
 
 namespace App\Http\Controllers;
 use Auth;
+
 use Illuminate\Http\Request;
+
+use App\Teacher;
+
+use Spatie\Permission\Models\Role;
+use Spatie\Permission\Models\Permission;
 
 class TeacherController extends Controller
 {
@@ -15,7 +21,8 @@ class TeacherController extends Controller
 
     public function index(){
         // if(Auth::guard('teacher')->check()){
-
+        //    dd(Auth::user()->hasRole('full-time'));
+    
             return view('teacher.teacher');
         // }
         

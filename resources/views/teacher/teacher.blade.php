@@ -16,6 +16,20 @@
 
                     You are logged in as Teacher!
                 </div>
+
+                <div class="card-body">
+                        @role('full-time')
+                        You are logged in as Full time Teacher!
+
+                        @endrole
+
+                        @role('part-time')
+                        You are logged in as Part time Teacher!
+                        @endrole
+    
+                </div>
+
+
             </div>
         </div>
     </div>
