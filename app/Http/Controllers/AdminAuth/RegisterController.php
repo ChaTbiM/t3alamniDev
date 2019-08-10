@@ -11,7 +11,6 @@ use Illuminate\Auth\Events\Registered;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 
-
 class RegisterController extends Controller
 {
     /*
@@ -54,7 +53,7 @@ class RegisterController extends Controller
     {
         return Validator::make($data, [
             'name' => 'required',
-            'email' => 'required',
+            'email' =>'required',
             'password' => 'required',
         ]);
     }
