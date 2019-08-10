@@ -14,7 +14,21 @@
                         </div>
                     @endif
 
-                    You are logged in as Student!
+                    <div class="card-body">
+                        welcome
+                        <br>
+                        @role('student')
+                        You are logged in as student!
+
+                        @endrole
+
+                        @role('parent')
+                        You are logged in as parent!
+                        @endrole
+
+                        
+    
+                </div>
                 </div>
             </div>
         </div>

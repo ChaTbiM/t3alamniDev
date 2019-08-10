@@ -12,6 +12,9 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 
 
+use Spatie\Permission\Models\Role;
+use Spatie\Permission\Models\Permission;
+
 class RegisterController extends Controller
 {
     /*
@@ -67,11 +70,17 @@ class RegisterController extends Controller
      */
     protected function create(array $data)
     {
-        return Student::create([
+        $student = Student::create([
             'name' => $data['name'],
             'email' => $data['email'],
             'password' => Hash::make($data['password']),
         ]);
+
+        $role = Role::create(['guard_name' => 'student', 'name' => $data['role'] ]);
+
+        $student->assignRole($role);
+
+        return $student;
     }
     
     
