@@ -15,12 +15,44 @@ class CreateTeachersTable extends Migration
     {
         Schema::create('teachers', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->string('name');
+            // auth info
+            $table->string('user_name');
             $table->string('email')->unique();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
             $table->rememberToken();
             $table->timestamps();
+            $table->integer('age');
+            $table->string('experience');
+            
+            //personal info
+            $table->string('first_name');
+            $table->string('last_name');
+            $table->string('phone_teach');
+
+
+            $table->integer('note');  // probably make notes table and reference it
+            
+            // references
+            // $table->unsignedBigInteger('address_id');
+            // $table->unsignedBigInteger('diploma_id'); done
+            // $table->unsignedBigInteger('cv_id'); done
+            
+            
+            // $table->foreign('address_id')
+            //     ->references('id')
+            //     ->on('addresses');
+                
+            // $table->foreign('diploma_id')
+            //     ->references('id')
+            //     ->on('diplomas');
+                
+
+            // $table->foreign('cv_id')
+            //     ->references('id')
+            //     ->on('c_v_s');
+                
+
         });
     }
 

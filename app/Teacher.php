@@ -8,6 +8,8 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use App\Notifications\TeacherResetPasswordNotification;
 use App\Notifications\TeacherVerifyEmail;
 
+
+
 use Spatie\Permission\Traits\HasRoles;
 
 
@@ -44,6 +46,23 @@ class Teacher extends Authenticatable implements MustVerifyEmail
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
+
+
+    // Relations 
+
+    public function cv () {
+        return $this->hasOne(Cv::class);
+    }
+
+    public function address () {
+        return $this->hasOne(Address::class);
+    }
+
+    public function diplomas (){
+        return $this->hasMany(Diploma::class);
+    }
+
+
 
     //Password Reset
     public function sendPasswordResetNotification($token)
