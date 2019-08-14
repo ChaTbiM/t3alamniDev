@@ -49,7 +49,7 @@ class Teacher extends Authenticatable implements MustVerifyEmail
 
 
     // Relations 
-
+    // relations of personal information
     public function cv () {
         return $this->hasOne(Cv::class);
     }
@@ -62,7 +62,11 @@ class Teacher extends Authenticatable implements MustVerifyEmail
         return $this->hasMany(Diploma::class);
     }
 
+    // relations of main functionalities
 
+    public function groups (){
+        return $this->hasMany(Group::class);
+    }
 
     //Password Reset
     public function sendPasswordResetNotification($token)
