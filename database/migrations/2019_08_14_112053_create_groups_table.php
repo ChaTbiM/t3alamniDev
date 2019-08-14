@@ -19,9 +19,10 @@ class CreateGroupsTable extends Migration
             $table->integer('monthly_price');
             $table->integer('nb_places');
             $table->string('cycle');
-            // $table->integer('id_specialité'); reference to speciality
+            $table->integer('specialty'); 
             $table->integer('year');
             // $table->integer('id_module'); reference to module
+           
             $table->timestamps();
 
             $table->unsignedBigInteger('teacher_id');

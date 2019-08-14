@@ -68,11 +68,16 @@ class Teacher extends Authenticatable implements MustVerifyEmail
         return $this->hasMany(Group::class);
     }
 
+    public function simpleSessions(){
+        return $this->hasMany(SimpleSession::class);
+    }
+
     //Password Reset
     public function sendPasswordResetNotification($token)
     {
         $this->notify(new TeacherResetPasswordNotification($token));
     }
+
 
 
 
