@@ -1,4 +1,4 @@
-@extends('layouts.auth')
+{{-- @extends('layouts.auth')
 
 @section('content')
 <div class="container">
@@ -34,4 +34,10 @@
         </div>
     </div>
 </div>
+@endsection --}}
+
+@extends('teacher.layouts.layout')
+
+@section('content')
+    <p class="words">words here</p>
 @endsection
