@@ -9,8 +9,11 @@
         <!-- Fonts -->
         <link href="https://fonts.googleapis.com/css?family=Nunito:200,600" rel="stylesheet">
 
+         <!-- Scripts -->
+        <script src="{{ asset('js/teacher.js') }}" defer></script>
+
         <!-- Styles -->
-        <style>
+        {{-- <style>
             html, body {
                 background-color: #fff;
                 color: #636b6f;
@@ -61,10 +64,10 @@
             .m-b-md {
                 margin-bottom: 30px;
             }
-        </style>
+        </style> --}}
     </head>
     <body>
-        <div class="flex-center position-ref full-height">
+        {{-- <div class="flex-center position-ref full-height">
             @if (Route::has('login'))
                 <div class="top-right links">
                     @auth
@@ -92,6 +95,12 @@
                     <a href="https://nova.laravel.com">Nova</a>
                     <a href="https://forge.laravel.com">Forge</a>
                     <a href="https://github.com/laravel/laravel">GitHub</a>
+                </div> --}}
+
+                <div id="teacher">
+                    
+                    <schedule-component></schedule-component>
+
                 </div>
             </div>
         </div>
