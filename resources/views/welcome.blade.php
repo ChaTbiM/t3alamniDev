@@ -100,6 +100,7 @@
                 <div id="teacher">
                     
                     <schedule-component></schedule-component>
+                    {{-- <add-simple-session></add-simple-session> --}}
 
                 </div>
             </div>

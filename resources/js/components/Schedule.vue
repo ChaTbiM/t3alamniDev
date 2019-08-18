@@ -12,18 +12,22 @@
             </div>
         </div>
     </div> -->
+
+   
     <div class="schedule" >
+         <div> {{addSessionsOpen}} </div>
         <div class="schedule__header">
             <div>left</div>
             <div>right  </div>
             <div class="schedule__header__date">{{ currentWeek }}</div>
         </div>
         <hr class="line">
+        
 
         
         
         <div class="calender">
-            <div class="column">
+            <!-- <div class="column">
                 <div class="hour"></div>
                 <div class="hour">07:00</div>
                 <div class="hour">08:00</div>
@@ -41,9 +45,44 @@
                 <div class="hour">20:00</div>
                 <div class="hour">21:00</div>
 
+            </div> -->
+            <div class="column">
+                <div class="hour" v-for="(cell, index) in data.time" v-bind:key="index"  > {{cell}} </div>
+            </div>
+
+            <div class="column">
+                <div class="cell day">Samedi</div> 
+                <div class="cell block" @click="showAddSessions" v-for="(cell, index) in data.samedi" v-bind:key="index"  > {{cell}} block</div>
             </div>
             <div class="column">
-                <div class="cell">Sunday</div>                
+                <div class="cell day">Dimanche</div> 
+                <div class="cell block" @click="showAddSessions" v-for="(cell, index) in data.dimanche" v-bind:key="index"  > {{cell}} block</div>
+            </div>
+             <div class="column">
+                <div class="cell day">Lundi</div> 
+                <div class="cell block" @click="showAddSessions" v-for="(cell, index) in data.dimanche" v-bind:key="index"  > {{cell}} block</div>
+            </div>
+             <div class="column">
+                <div class="cell day">Mardi</div> 
+                <div class="cell block" @click="showAddSessions" v-for="(cell, index) in data.dimanche" v-bind:key="index"  > {{cell}} block</div>
+            </div>
+             <div class="column">
+                <div class="cell day">Mercredi</div> 
+                <div class="cell block" @click="showAddSessions" v-for="(cell, index) in data.dimanche" v-bind:key="index"  > {{cell}} block</div>
+            </div>
+             <div class="column">
+                <div class="cell day">Jeudi</div> 
+                <div class="cell block" @click="showAddSessions" v-for="(cell, index) in data.dimanche" v-bind:key="index"  > {{cell}} block</div>
+            </div>
+             <div class="column">
+                <div class="cell day">Vendredi</div> 
+                <div class="cell block" @click="showAddSessions" v-for="(cell, index) in data.dimanche" v-bind:key="index"  > {{cell}} block</div>
+            </div>
+
+            <div id="model" v-show="addSessionsOpen"   > show  </div>      
+
+            <!-- <div class="column">
+                <div class="cell day">Sunday</div>                
                 <div class="cell block" >{{mess}}</div>
                 <div class="cell block">block</div>
                 <div class="cell block">block</div>
@@ -59,115 +98,8 @@
                 <div class="cell block">block</div>
                 <div class="cell block">block</div>
                 <div class="cell block">block</div>
-            </div>
-            <div class="column">
-                <div class="cell">Monday</div>                
-                <div class="cell block">block</div>
-                <div class="cell block">block</div>
-                <div class="cell block">block</div>
-                <div class="cell block">block</div>
-                <div class="cell block">block</div>
-                <div class="cell block">block</div>
-                <div class="cell block">block</div>
-                <div class="cell block">block</div>
-                <div class="cell block">block</div>
-                <div class="cell block">block</div>
-                <div class="cell block">block</div>
-                <div class="cell block">block</div>
-                <div class="cell block">block</div>
-                <div class="cell block">block</div>
-                <div class="cell block">block</div>
-            </div>
-            <div class="column">
-                <div class="cell">Tuesday</div>                
-                <div class="cell block">block</div>
-                <div class="cell block">block</div>
-                <div class="cell block">block</div>
-                <div class="cell block">block</div>
-                <div class="cell block">block</div>
-                <div class="cell block">block</div>
-                <div class="cell block">block</div>
-                <div class="cell block">block</div>
-                <div class="cell block">block</div>
-                <div class="cell block">block</div>
-                <div class="cell block">block</div>
-                <div class="cell block">block</div>
-                <div class="cell block">block</div>
-                <div class="cell block">block</div>
-                <div class="cell block">block</div>
-            </div>
-            <div class="column">
-                <div class="cell">Wednesday</div>                
-                <div class="cell block">block</div>
-                <div class="cell block">block</div>
-                <div class="cell block">block</div>
-                <div class="cell block">block</div>
-                <div class="cell block">block</div>
-                <div class="cell block">block</div>
-                <div class="cell block">block</div>
-                <div class="cell block">block</div>
-                <div class="cell block">block</div>
-                <div class="cell block">block</div>
-                <div class="cell block">block</div>
-                <div class="cell block">block</div>
-                <div class="cell block">block</div>
-                <div class="cell block">block</div>
-                <div class="cell block">block</div>
-            </div>
-            <div class="column">
-                <div class="cell">Thursday</div>                
-                <div class="cell block">block</div>
-                <div class="cell block">block</div>
-                <div class="cell block">block</div>
-                <div class="cell block">block</div>
-                <div class="cell block">block</div>
-                <div class="cell block">block</div>
-                <div class="cell block">block</div>
-                <div class="cell block">block</div>
-                <div class="cell block">block</div>
-                <div class="cell block">block</div>
-                <div class="cell block">block</div>
-                <div class="cell block">block</div>
-                <div class="cell block">block</div>
-                <div class="cell block">block</div>
-                <div class="cell block">block</div>
-            </div>
-            <div class="column">
-                <div class="cell">Friday</div>                
-                <div class="cell block">block</div>
-                <div class="cell block">block</div>
-                <div class="cell block">block</div>
-                <div class="cell block">block</div>
-                <div class="cell block">block</div>
-                <div class="cell block">block</div>
-                <div class="cell block">block</div>
-                <div class="cell block">block</div>
-                <div class="cell block">block</div>
-                <div class="cell block">block</div>
-                <div class="cell block">block</div>
-                <div class="cell block">block</div>
-                <div class="cell block">block</div>
-                <div class="cell block">block</div>
-                <div class="cell block">block</div>
-            </div>
-            <div class="column">
-                <div class="cell">Saturday</div>                
-                <div class="cell block">block</div>
-                <div class="cell block">block</div>
-                <div class="cell block">block</div>
-                <div class="cell block">block</div>
-                <div class="cell block">block</div>
-                <div class="cell block">block</div>
-                <div class="cell block">block</div>
-                <div class="cell block">block</div>
-                <div class="cell block">block</div>
-                <div class="cell block">block</div>
-                <div class="cell block">block</div>
-                <div class="cell block">block</div>
-                <div class="cell block">block</div>
-                <div class="cell block">block</div>
-                <div class="cell block">block</div>
-            </div>
+            </div> -->
+            
         </div>
         
     </div>
@@ -181,6 +113,18 @@ import { setTimeout } from 'timers';
         name:'schedule',
         data(){
             return{
+                data:
+                {
+                    time : ['07:00','08:00','09:00', '10:00' , '11:00' ,'12:00', '13:00' ,'14:00' , '15:00' , '16:00' , '17:00' , '18:00' , '19:00' , '20:00' , '21:00' , '22:00' ],
+                    samedi :  [  ' ' , ' ' , ' ' , ' ' , ' ' , ' ' ,' ' ,' ' , ' ' ,' ' , ' ' , ' ' ,' ' , ' ' ,' ' , ],
+                    dimanche:[  ' ' , ' ' , ' ' , ' ' , ' ' , ' ' ,' ' ,' ' , ' ' ,' ' , ' ' , ' ' ,' ' , ' ' ,' ' , ],
+                    lundi : [ ' ' , ' ' , ' ' , ' ' , ' ' , ' ' ,' ' ,' ' , ' ' ,' ' , ' ' , ' ' ,' ' , ' ' ,' ' , ],
+                    mardi : [ ' ' , ' ' , ' ' , ' ' , ' ' , ' ' ,' ' ,' ' , ' ' ,' ' , ' ' , ' ' ,' ' , ' ' ,' ' , ], 
+                    mercredi : [ ' ' , ' ' , ' ' , ' ' , ' ' , ' ' ,' ' ,' ' , ' ' ,' ' , ' ' , ' ' ,' ' , ' ' ,' ' , ],
+                    jeudi :[ ' ' , ' ' , ' ' , ' ' , ' ' , ' ' ,' ' ,' ' , ' ' ,' ' , ' ' , ' ' ,' ' , ' ' ,' ' , ],
+                    vendredi : [ ' ' , ' ' , ' ' , ' ' , ' ' , ' ' ,' ' ,' ' , ' ' ,' ' , ' ' , ' ' ,' ' , ' ' ,' ' , ],
+                },
+                addSessionsOpen:false,
                 mess:"Hi there",
                 currentDay:'',
                 wkStart:'',
@@ -277,6 +221,22 @@ import { setTimeout } from 'timers';
                 this.currentWeek += ' ' + this.months[wkEnd.getMonth()];
                 this.currentWeek += ' ' + wkEnd.getFullYear();
 
+            },
+
+            showAddSessions: function(e){
+                e.preventDefault();
+                let top = e.target.offsetTop;
+                let left = e.target.offsetLeft + 50 ;
+                console.log(top);
+                // console.log(e.target.offsetTop);
+                // e.target.style.color= 'red';
+                let model = document.getElementById('model');
+                
+                model.style.top = `${top}px`;
+                model.style.left = `${left}px`;
+                
+                console.dir(e.target);
+                return  this.addSessionsOpen = !this.addSessionsOpen;
             }
 
 
@@ -284,10 +244,10 @@ import { setTimeout } from 'timers';
         mounted() {
            
             this.getCurrentWeek();
-            this.getPreviousWeek();
+            // this.getPreviousWeek();
 
-            this.getPreviousWeek();
-            this.getPreviousWeek();
+            // this.getPreviousWeek();
+            // this.getPreviousWeek();
 
 
 
@@ -313,6 +273,7 @@ import { setTimeout } from 'timers';
     display: flex;
     flex-direction: row;
     flex-wrap: wrap;
+    font-weight: bold;
 }
 
 .hour , 
@@ -329,6 +290,16 @@ import { setTimeout } from 'timers';
 
 .block {
     background-color: grey;
+    
+}
+
+
+
+#model {
+    position: absolute;
+    
+
+    background-color:burlywood;
 }
 
 </style>
