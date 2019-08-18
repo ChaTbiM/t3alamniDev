@@ -183,8 +183,8 @@ import { setTimeout } from 'timers';
             return{
                 mess:"Hi there",
                 currentDay:'',
-                first:'',
-                last:'',
+                wkStart:'',
+                wkEnd:'',
                 month:'',
                 weekNumber:'',
                 currentWeek:'',
@@ -194,129 +194,105 @@ import { setTimeout } from 'timers';
         },
         methods:{
             getCurrentWeek(){
-                let curr = new Date; // get current date
-                
-                this.currentDay = new Date(curr.getFullYear(),curr.getMonth(),curr.getDate());
-            
-                let first = curr.getDate() - (curr.getDay() === 6 ? 0 : curr.getDay() ); // First day is the day of the month - the day of the week
-                let last = first + 6; // last day is the first day + 6
-                this.first = first;
-                this.last = last; 
-
-               
-            
-
-                let firstDay = new Date(curr.setDate(first)).getDay();
-                let lastDay = new Date(curr.setDate(last)).getDay();
-
-                let firstDayYear = new Date(curr.setDate(first)).getFullYear();
-                let lastDayYear = new Date(curr.setDate(last)).getFullYear();
-
-                let firstDayMonth = new Date(curr.setDate(first)).getMonth();
-                this.month = firstDayMonth;
-                let lastDayMonth = new Date(curr.setDate(last)).getMonth();
-
+                let newWeek;
+                let curr = new Date(); // get current date
+                this.currentDay = curr;
 
                 
 
-                this.currentWeek = first.toString();
-                this.currentWeek += ' ' + this.weekDays[firstDay];
-                this.currentWeek += ' ' + this.months[ firstDayMonth ];
-                this.currentWeek += ' ' + firstDayYear + ' - ';
+                let diff = function (){
+                    if(curr.getDay() === 0) {
+                        return -1;
+                    }else if (curr.getDay() === 6){
+                        return 0
+                    }else {
+                        return -(curr.getDay() + 1); 
+                    }
+                }
 
-                this.currentWeek += last.toString();
-                this.currentWeek += ' ' + this.weekDays[lastDay];
-                this.currentWeek += ' ' + this.months[ lastDayMonth ];
-                this.currentWeek += ' ' + lastDayYear;
+                let wkStart = new Date(curr.setDate(curr.getDate() + diff()));
+                this.wkStart = wkStart;
 
-                // console.log('first',first);
-                // console.log('firstDay',firstDay);
-                // console.log(this.currentWeek)
+
+                let wkEnd = new Date(curr.setDate(wkStart.getDate()+6));
+                this.wkEnd = wkEnd;
+        
+
+                this.currentWeek = wkStart.getDate();
+                this.currentWeek += ' ' + this.weekDays[wkStart.getDay()];
+                this.currentWeek += ' ' + this.months[wkStart.getMonth()];
+                this.currentWeek += ' ' + wkStart.getFullYear();
+
+
+                this.currentWeek += ' - ' + wkEnd.getDate();
+                this.currentWeek += ' ' + this.weekDays[wkEnd.getDay()];
+                this.currentWeek += ' ' + this.months[wkEnd.getMonth()];
+                this.currentWeek += ' ' + wkEnd.getFullYear();
 
             },
             getNextWeek (){
                
-                // console.log(this.currentDay);
-                let curr = this.currentDay;
-                // console.log(curr);
-                curr = new Date(curr.setDate(this.last + 1 ));
-                this.currentDay = curr;
-                // this.curr = curr;
-                
-                // console.log(curr);
+               let curr = new Date(this.wkEnd);
+               
+               let wkStart = new Date(curr.setDate(curr.getDate() + 1) );
+               this.wkStart = wkStart; 
+               console.log(' next Week start week',wkStart);
                 
 
-                let first = curr.getDate();
-                this.first = first ; 
-
-                let firstDay = new Date(curr.setDate(first)).getDay();
-                let firstDayMonth = curr.getMonth().toString();
-                let firstDayYear = new Date(curr.setDate(first)).getFullYear();
-            
-
-
-
-
-                let last = new Date(curr.setDate(first +6 )).getDate();
-                this.last = last;
-                
-                let lastDay = new Date(curr.setDate(last)).getDay();
-                let lastDayMonth = new Date(curr.setDate(last)).getMonth();
-                let lastDayYear = new Date(curr.setDate(last)).getFullYear();
-                
+               let wkEnd = new Date(curr.setDate(wkStart.getDate()+6));
+               this.wkEnd = wkEnd; 
                 
             
-                
-                // // this.curr = curr ;
+                this.currentWeek = wkStart.getDate();
+                this.currentWeek += ' ' + this.weekDays[wkStart.getDay()];
+                this.currentWeek += ' ' + this.months[wkStart.getMonth()];
+                this.currentWeek += ' ' + wkStart.getFullYear();
 
-                this.currentWeek = first.toString();
-                this.currentWeek += ' ' + this.weekDays[firstDay];
-                this.currentWeek += ' ' + this.months[ firstDayMonth ];
-                this.currentWeek += ' ' + firstDayYear + ' - ';
 
-                this.currentWeek += last.toString();
-                this.currentWeek += ' ' + this.weekDays[lastDay];
-                this.currentWeek += ' ' + this.months[ lastDayMonth ];
-                this.currentWeek += ' ' + lastDayYear;
+                this.currentWeek += ' - ' + wkEnd.getDate();
+                this.currentWeek += ' ' + this.weekDays[wkEnd.getDay()];
+                this.currentWeek += ' ' + this.months[wkEnd.getMonth()];
+                this.currentWeek += ' ' + wkEnd.getFullYear();
                 
+            },
+            getPreviousWeek(){
+                let curr = new Date(this.wkStart);
+                console.log(curr);
+
+                let wkEnd = new Date(curr.setDate(curr.getDate() - 1) );
+               this.wkEnd = wkEnd; 
+
+
+               let wkStart = new Date(curr.setDate(wkEnd.getDate()-6));
+               this.wkStart = wkStart;
+
+               this.currentWeek = wkStart.getDate();
+                this.currentWeek += ' ' + this.weekDays[wkStart.getDay()];
+                this.currentWeek += ' ' + this.months[wkStart.getMonth()];
+                this.currentWeek += ' ' + wkStart.getFullYear();
+
+
+                this.currentWeek += ' - ' + wkEnd.getDate();
+                this.currentWeek += ' ' + this.weekDays[wkEnd.getDay()];
+                this.currentWeek += ' ' + this.months[wkEnd.getMonth()];
+                this.currentWeek += ' ' + wkEnd.getFullYear();
+
             }
 
 
         },
         mounted() {
+           
             this.getCurrentWeek();
-            this.getNextWeek();
-            this.getNextWeek();
-            this.getNextWeek();
+            this.getPreviousWeek();
 
-            this.getNextWeek();
-            this.getNextWeek();
-            this.getNextWeek();
-
-            this.getNextWeek();
-            this.getNextWeek();
-
-            this.getNextWeek();
-            this.getNextWeek();
-            this.getNextWeek();
-            this.getNextWeek();
-            this.getNextWeek();
-
-            this.getNextWeek();
-            this.getNextWeek();
-            this.getNextWeek();
-            this.getNextWeek();
-            this.getNextWeek();
-
-            this.getNextWeek();
-            this.getNextWeek();
-            this.getNextWeek();
-
-            
+            this.getPreviousWeek();
+            this.getPreviousWeek();
 
 
-            //  setTimeout(this.getNextWeek,2000);
-            //  setTimeout(this.getNextWeek,2000);
+
+           
+
 
             console.log('Component mounted. for teachers')
         }

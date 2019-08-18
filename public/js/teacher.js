@@ -2056,8 +2056,8 @@ __webpack_require__.r(__webpack_exports__);
     return {
       mess: "Hi there",
       currentDay: '',
-      first: '',
-      last: '',
+      wkStart: '',
+      wkEnd: '',
       month: '',
       weekNumber: '',
       currentWeek: '',
@@ -2067,87 +2067,72 @@ __webpack_require__.r(__webpack_exports__);
   },
   methods: {
     getCurrentWeek: function getCurrentWeek() {
+      var newWeek;
       var curr = new Date(); // get current date
 
-      this.currentDay = new Date(curr.getFullYear(), curr.getMonth(), curr.getDate());
-      var first = curr.getDate() - (curr.getDay() === 6 ? 0 : curr.getDay()); // First day is the day of the month - the day of the week
+      this.currentDay = curr;
 
-      var last = first + 6; // last day is the first day + 6
+      var diff = function diff() {
+        if (curr.getDay() === 0) {
+          return -1;
+        } else if (curr.getDay() === 6) {
+          return 0;
+        } else {
+          return -(curr.getDay() + 1);
+        }
+      };
 
-      this.first = first;
-      this.last = last;
-      var firstDay = new Date(curr.setDate(first)).getDay();
-      var lastDay = new Date(curr.setDate(last)).getDay();
-      var firstDayYear = new Date(curr.setDate(first)).getFullYear();
-      var lastDayYear = new Date(curr.setDate(last)).getFullYear();
-      var firstDayMonth = new Date(curr.setDate(first)).getMonth();
-      this.month = firstDayMonth;
-      var lastDayMonth = new Date(curr.setDate(last)).getMonth();
-      this.currentWeek = first.toString();
-      this.currentWeek += ' ' + this.weekDays[firstDay];
-      this.currentWeek += ' ' + this.months[firstDayMonth];
-      this.currentWeek += ' ' + firstDayYear + ' - ';
-      this.currentWeek += last.toString();
-      this.currentWeek += ' ' + this.weekDays[lastDay];
-      this.currentWeek += ' ' + this.months[lastDayMonth];
-      this.currentWeek += ' ' + lastDayYear; // console.log('first',first);
-      // console.log('firstDay',firstDay);
-      // console.log(this.currentWeek)
+      var wkStart = new Date(curr.setDate(curr.getDate() + diff()));
+      this.wkStart = wkStart;
+      var wkEnd = new Date(curr.setDate(wkStart.getDate() + 6));
+      this.wkEnd = wkEnd;
+      this.currentWeek = wkStart.getDate();
+      this.currentWeek += ' ' + this.weekDays[wkStart.getDay()];
+      this.currentWeek += ' ' + this.months[wkStart.getMonth()];
+      this.currentWeek += ' ' + wkStart.getFullYear();
+      this.currentWeek += ' - ' + wkEnd.getDate();
+      this.currentWeek += ' ' + this.weekDays[wkEnd.getDay()];
+      this.currentWeek += ' ' + this.months[wkEnd.getMonth()];
+      this.currentWeek += ' ' + wkEnd.getFullYear();
     },
     getNextWeek: function getNextWeek() {
-      // console.log(this.currentDay);
-      var curr = this.currentDay; // console.log(curr);
-
-      curr = new Date(curr.setDate(this.last + 1));
-      this.currentDay = curr; // this.curr = curr;
-      // console.log(curr);
-
-      var first = curr.getDate();
-      this.first = first;
-      var firstDay = new Date(curr.setDate(first)).getDay();
-      var firstDayMonth = curr.getMonth().toString();
-      var firstDayYear = new Date(curr.setDate(first)).getFullYear();
-      var last = new Date(curr.setDate(first + 6)).getDate();
-      this.last = last;
-      var lastDay = new Date(curr.setDate(last)).getDay();
-      var lastDayMonth = new Date(curr.setDate(last)).getMonth();
-      var lastDayYear = new Date(curr.setDate(last)).getFullYear(); // // this.curr = curr ;
-
-      this.currentWeek = first.toString();
-      this.currentWeek += ' ' + this.weekDays[firstDay];
-      this.currentWeek += ' ' + this.months[firstDayMonth];
-      this.currentWeek += ' ' + firstDayYear + ' - ';
-      this.currentWeek += last.toString();
-      this.currentWeek += ' ' + this.weekDays[lastDay];
-      this.currentWeek += ' ' + this.months[lastDayMonth];
-      this.currentWeek += ' ' + lastDayYear;
+      var curr = new Date(this.wkEnd);
+      var wkStart = new Date(curr.setDate(curr.getDate() + 1));
+      this.wkStart = wkStart;
+      console.log(' next Week start week', wkStart);
+      var wkEnd = new Date(curr.setDate(wkStart.getDate() + 6));
+      this.wkEnd = wkEnd;
+      this.currentWeek = wkStart.getDate();
+      this.currentWeek += ' ' + this.weekDays[wkStart.getDay()];
+      this.currentWeek += ' ' + this.months[wkStart.getMonth()];
+      this.currentWeek += ' ' + wkStart.getFullYear();
+      this.currentWeek += ' - ' + wkEnd.getDate();
+      this.currentWeek += ' ' + this.weekDays[wkEnd.getDay()];
+      this.currentWeek += ' ' + this.months[wkEnd.getMonth()];
+      this.currentWeek += ' ' + wkEnd.getFullYear();
+    },
+    getPreviousWeek: function getPreviousWeek() {
+      var curr = new Date(this.wkStart);
+      console.log(curr);
+      var wkEnd = new Date(curr.setDate(curr.getDate() - 1));
+      this.wkEnd = wkEnd;
+      var wkStart = new Date(curr.setDate(wkEnd.getDate() - 6));
+      this.wkStart = wkStart;
+      this.currentWeek = wkStart.getDate();
+      this.currentWeek += ' ' + this.weekDays[wkStart.getDay()];
+      this.currentWeek += ' ' + this.months[wkStart.getMonth()];
+      this.currentWeek += ' ' + wkStart.getFullYear();
+      this.currentWeek += ' - ' + wkEnd.getDate();
+      this.currentWeek += ' ' + this.weekDays[wkEnd.getDay()];
+      this.currentWeek += ' ' + this.months[wkEnd.getMonth()];
+      this.currentWeek += ' ' + wkEnd.getFullYear();
     }
   },
   mounted: function mounted() {
     this.getCurrentWeek();
-    this.getNextWeek();
-    this.getNextWeek();
-    this.getNextWeek();
-    this.getNextWeek();
-    this.getNextWeek();
-    this.getNextWeek();
-    this.getNextWeek();
-    this.getNextWeek();
-    this.getNextWeek();
-    this.getNextWeek();
-    this.getNextWeek();
-    this.getNextWeek();
-    this.getNextWeek();
-    this.getNextWeek();
-    this.getNextWeek();
-    this.getNextWeek();
-    this.getNextWeek();
-    this.getNextWeek();
-    this.getNextWeek();
-    this.getNextWeek();
-    this.getNextWeek(); //  setTimeout(this.getNextWeek,2000);
-    //  setTimeout(this.getNextWeek,2000);
-
+    this.getPreviousWeek();
+    this.getPreviousWeek();
+    this.getPreviousWeek();
     console.log('Component mounted. for teachers');
   }
 });
