@@ -4,29 +4,8 @@
         <form class="form" action="" method="post">
             <fieldset class="form__content" > 
                 <legend class="legend">Add Session</legend>
-                <label for="title">titre 
-                </label>
-                <input type="text" name="titre" id="titre" class="titre"><br>
-                <label for="module">module
-                </label>
-                <input type="text" name="module" id="module" class="module"><br>
-                <label for="title">niveau
-                </label>
-                <input type="text" name="niveau" id="niveau" class="niveau"><br>
-                <label for="title">specialite
-                </label>
-                <input type="text" name="specialite" id="specialite" class="specialite"><br>
-                <label for="title">annee
-                </label>
-                <input type="text" name="annee" id="annee" class="annee"><br>
-                <label for="title" class="description">description
-                </label>
-                <!-- <input type="text" name="title" id="title" class="title"> -->
-                    <textarea name="description" id="description" cols="30" rows="10"></textarea><br>
-                <br>
-                <label for="document">document attache
-                </label>
-                <input type="file" name="document" id="document" class="document"><br>
+                
+                
                 <label for="title">date
                 </label>
                 <input type="text" name="date" id="date" class="date"><br>
@@ -36,13 +15,18 @@
 
                 <!-- <select name="temps" id="temps"></select> -->
                 <br>
-                <label for="nombre">nombre de place
+                <label for="duree">duree
                 </label>
-                <input type="text" name="nombre" id="nombre" class="nombre"><br>
+                <select name="duree" id="duree">
+                    <option value="1">1 hour</option>
+                    <option value="2">2 hour</option>
+                </select><br>
 
-                <label for="prix">prix
+                <label for="document">document attache
                 </label>
-                <input type="text" name="prix" id="prix" class="prix"><br>
+                <input type="file" name="document" id="document" class="document"><br>
+
+                
 
                 <button type="submit">Add</button>
                 <button type="reset">Reset</button>
@@ -59,7 +43,7 @@
     }
 </script>
 
-<style  scoped>
+<style scoped>
 
     .container {
         position:absolute;
@@ -78,13 +62,7 @@
         flex-basis: 100%;
         
     }
-/* 
-    .form__content{
-        flex-basis: 100%;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-    }  */
+
 
     label {
         display:inline-block;
@@ -111,7 +89,7 @@
         color: black;
         position: absolute;
         right: 0;
-        top:-3%;
+        top:-6%;
         z-index: -1;
         padding: 5px;
         font-size: 1.2rem;
@@ -119,7 +97,5 @@
         border-top-right-radius: 50px;
 
     }
-
-
 
 </style>

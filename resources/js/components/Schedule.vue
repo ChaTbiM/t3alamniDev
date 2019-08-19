@@ -1,4 +1,21 @@
 <template>
+
+    <div class="container">
+        
+        <div class="left">
+            <div class="left__calender"></div>
+            <div class="left__add__fix"> add fix session </div>
+            <div class="left__add__simple"> add simple session </div>
+            <label for="fix"> all fix sessions
+                <input type="checkbox" name="fix" id="fix">    
+            </label>
+
+           <label for="simple"> all simple sessions
+                <input type="checkbox" name="simple" id="simple">    
+            </label>
+
+        </div>
+
     <!-- <div class="container">
         <div class="row justify-content-center">
             <div class="col-md-8">
@@ -47,39 +64,48 @@
 
             </div> -->
             <div class="column">
-                <div class="hour" v-for="(cell, index) in data.time" v-bind:key="index"  > {{cell}} </div>
+                <div class="hour" v-for="(cell, index) in sessions.time" v-bind:key="index"  > {{cell}} </div>
             </div>
 
             <div class="column">
                 <div class="cell day">Samedi</div> 
-                <div class="cell block" @click="showAddSessions" v-for="(cell, index) in data.samedi" v-bind:key="index"  > {{cell}} block</div>
+                <div class="cell block" @click="showAddSessions" v-for="(cell, index) in sessions.samedi" v-bind:key="index"  > {{cell}} block</div>
             </div>
             <div class="column">
                 <div class="cell day">Dimanche</div> 
-                <div class="cell block" @click="showAddSessions" v-for="(cell, index) in data.dimanche" v-bind:key="index"  > {{cell}} block</div>
+                <div class="cell block" @click="showAddSessions" v-for="(cell, index) in sessions.dimanche" v-bind:key="index"  > {{cell}} block</div>
             </div>
              <div class="column">
                 <div class="cell day">Lundi</div> 
-                <div class="cell block" @click="showAddSessions" v-for="(cell, index) in data.dimanche" v-bind:key="index"  > {{cell}} block</div>
+                <div class="cell block" @click="showAddSessions" v-for="(cell, index) in sessions.lundi" v-bind:key="index"  > {{cell}} block</div>
             </div>
              <div class="column">
                 <div class="cell day">Mardi</div> 
-                <div class="cell block" @click="showAddSessions" v-for="(cell, index) in data.dimanche" v-bind:key="index"  > {{cell}} block</div>
+                <div class="cell block" @click="showAddSessions" v-for="(cell, index) in sessions.mardi" v-bind:key="index"  > {{cell}} block</div>
             </div>
              <div class="column">
                 <div class="cell day">Mercredi</div> 
-                <div class="cell block" @click="showAddSessions" v-for="(cell, index) in data.dimanche" v-bind:key="index"  > {{cell}} block</div>
+                <div class="cell block" @click="showAddSessions" v-for="(cell, index) in sessions.mercredi" v-bind:key="index"  > {{cell}} block</div>
             </div>
              <div class="column">
                 <div class="cell day">Jeudi</div> 
-                <div class="cell block" @click="showAddSessions" v-for="(cell, index) in data.dimanche" v-bind:key="index"  > {{cell}} block</div>
+                <div class="cell block" @click="showAddSessions" v-for="(cell, index) in sessions.jeudi" v-bind:key="index"  > {{cell}} block</div>
             </div>
              <div class="column">
                 <div class="cell day">Vendredi</div> 
-                <div class="cell block" @click="showAddSessions" v-for="(cell, index) in data.dimanche" v-bind:key="index"  > {{cell}} block</div>
+                <div class="cell block" @click="showAddSessions" v-for="(cell, index) in sessions.vendredi" v-bind:key="index"  > {{cell}} block</div>
             </div>
 
-            <div id="model" v-show="addSessionsOpen"   > show  </div>      
+            <div id="model" v-show="addSessionsOpen"   > 
+                <div class="model__close"  >X</div>
+                <div class="model__add__fix btn">add fix session</div>
+                <div class="model__add__simple btn">add simple session</div>
+
+            </div>      
+
+            <add-simple-session v-show="AddSimpleSessionOpen" ></add-simple-session>
+            <add-group v-show="addGroupOpen"></add-group>
+            <add-fixed-session v-show="AddFixedSessionOpen"></add-fixed-session>
 
             <!-- <div class="column">
                 <div class="cell day">Sunday</div>                
@@ -103,6 +129,7 @@
         </div>
         
     </div>
+    </div>
 
 </template>
 
@@ -113,7 +140,7 @@ import { setTimeout } from 'timers';
         name:'schedule',
         data(){
             return{
-                data:
+                sessions:
                 {
                     time : ['07:00','08:00','09:00', '10:00' , '11:00' ,'12:00', '13:00' ,'14:00' , '15:00' , '16:00' , '17:00' , '18:00' , '19:00' , '20:00' , '21:00' , '22:00' ],
                     samedi :  [  ' ' , ' ' , ' ' , ' ' , ' ' , ' ' ,' ' ,' ' , ' ' ,' ' , ' ' , ' ' ,' ' , ' ' ,' ' , ],
@@ -125,6 +152,10 @@ import { setTimeout } from 'timers';
                     vendredi : [ ' ' , ' ' , ' ' , ' ' , ' ' , ' ' ,' ' ,' ' , ' ' ,' ' , ' ' , ' ' ,' ' , ' ' ,' ' , ],
                 },
                 addSessionsOpen:false,
+                AddSimpleSessionOpen:false,
+                AddFixedSessionOpen:true,
+                addGroupOpen:false,
+                addGroup: '',
                 mess:"Hi there",
                 currentDay:'',
                 wkStart:'',
@@ -226,40 +257,46 @@ import { setTimeout } from 'timers';
             showAddSessions: function(e){
                 e.preventDefault();
                 let top = e.target.offsetTop;
-                let left = e.target.offsetLeft + 50 ;
-                console.log(top);
-                // console.log(e.target.offsetTop);
-                // e.target.style.color= 'red';
+                let left = e.target.offsetLeft + 85 ;
                 let model = document.getElementById('model');
                 
                 model.style.top = `${top}px`;
                 model.style.left = `${left}px`;
                 
-                console.dir(e.target);
                 return  this.addSessionsOpen = !this.addSessionsOpen;
             }
 
 
         },
         mounted() {
-           
             this.getCurrentWeek();
             // this.getPreviousWeek();
 
             // this.getPreviousWeek();
             // this.getPreviousWeek();
-
-
-
-           
-
-
             console.log('Component mounted. for teachers')
         }
     }
 </script>
 
-<style >
+<style scoped>
+
+.container {
+    display: flex;
+    
+}
+
+.left {
+    
+}
+
+.schedule{
+    /* flex-basis:72%;
+    height: 400px;
+    overflow-y: scroll;
+    margin: 0 auto;
+    min-width: 950px; */
+}
 .schedule__header{
     display: flex;
     justify-content: flex-start;
@@ -274,6 +311,13 @@ import { setTimeout } from 'timers';
     flex-direction: row;
     flex-wrap: wrap;
     font-weight: bold;
+
+    flex-basis:72%;
+    height: 400px;
+    overflow-y: scroll;
+    /* margin: 0 auto; */
+    min-width: 950px;
+    
 }
 
 .hour , 
@@ -284,22 +328,43 @@ import { setTimeout } from 'timers';
 .cell ,
 .hour {
     display: block;
-    width: 50px;
+    width: 85px;
     height:50px;
 }
 
 .block {
-    background-color: grey;
+    background-color: #C4C4C4;
     
 }
 
-
+/* Model  */
 
 #model {
     position: absolute;
-    
+    background-color:gray;
+    text-align: center;
+    background-color:  rgba(243, 242, 235, 0.74);
 
-    background-color:burlywood;
+}
+
+
+.model__close {
+    text-align: right;
+    position: absolute;
+    bottom: 100%;
+    color: black;
+    background-color:  rgba(243, 242, 235, 1);
+    border-top-left-radius: 100px;
+    border-top-right-radius: 100px;
+    padding: 5px;
+    z-index: -1;
+    /* display: inline-block;
+    width: 100%;
+    text-align: right; */
+}
+
+.btn {
+    padding: 1rem;
 }
 
 </style>

@@ -22,6 +22,10 @@ window.Vue = require('vue');
 Vue.component('example', require('./components/Example.vue').default);
 Vue.component('schedule-component', require('./components/Schedule.vue').default);
 Vue.component('add-simple-session', require('./components/AddSimpleSession.vue').default);
+Vue.component('add-fixed-session', require('./components/AddFixedSession.vue').default);
+
+Vue.component('add-group', require('./components/AddGroup.vue').default);
+
 
 
 
