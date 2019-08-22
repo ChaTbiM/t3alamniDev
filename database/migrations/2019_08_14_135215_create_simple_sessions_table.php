@@ -17,7 +17,7 @@ class CreateSimpleSessionsTable extends Migration
             $table->bigIncrements('id');
             $table->string('type')->defualt('simple');
             // $table->integer('id_subject'); possibly reference
-            $table->text()('description');
+            $table->text('description');
             $table->integer ('price');
             $table->string('state'); // etat
             $table->integer('nb_places');

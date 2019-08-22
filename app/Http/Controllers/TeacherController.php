@@ -22,10 +22,13 @@ class TeacherController extends Controller
     public function index(){
         // if(Auth::guard('teacher')->check()){
         //    dd(Auth::user()->hasRole('full-time'));
-    
-            return view('teacher.teacher');
+            $fixedSessions = json_encode(auth::user()->groups[0]->fixedSessions);
+            return view('teacher.teacher' , [
+                'fixedSessions' => $fixedSessions,
+            ]);
         // }
         
         // return redirect()->route('teacher.login');
     }
+    
 }

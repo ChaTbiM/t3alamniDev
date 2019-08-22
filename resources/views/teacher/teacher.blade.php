@@ -38,6 +38,7 @@
 
 @extends('teacher.layouts.layout')
 
+
 @section('content')
-    <p class="words">words here</p>
+    <schedule-component fixed="{{$fixedSessions}}" ></schedule-component>
 @endsection

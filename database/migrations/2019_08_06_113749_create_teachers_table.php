@@ -22,16 +22,16 @@ class CreateTeachersTable extends Migration
             $table->string('password');
             $table->rememberToken();
             $table->timestamps();
-            $table->integer('age');
-            $table->string('experience');
+            $table->integer('age')->nullable();
+            $table->string('experience')->nullable();
             
             //personal info
-            $table->string('first_name');
-            $table->string('last_name');
-            $table->string('phone_teach');
+            $table->string('first_name')->nullable();
+            $table->string('last_name')->nullable();
+            $table->string('phone_teach')->nullable();
 
 
-            $table->integer('note');  // probably make notes table and reference it
+            $table->integer('note')->nullable();  // probably make notes table and reference it
             
             // references
             // $table->unsignedBigInteger('address_id');

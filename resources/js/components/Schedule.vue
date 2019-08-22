@@ -1,7 +1,8 @@
 <template>
 
+  
     <div class="container">
-        
+    
         <div class="left">
             <div class="left__calender"></div>
             <div class="left__add__fix"> add fix session </div>
@@ -34,8 +35,8 @@
     <div class="schedule" >
          <div> {{addSessionsOpen}} </div>
         <div class="schedule__header">
-            <div>left</div>
-            <div>right  </div>
+            <div class="prevWeek" >previous</div>
+            <div class="nextWeek" > next </div>
             <div class="schedule__header__date">{{ currentWeek }}</div>
         </div>
         <hr class="line">
@@ -64,10 +65,11 @@
 
             </div> -->
             <div class="column">
+                <div class="cell Hour">Hours</div> 
                 <div class="hour" v-for="(cell, index) in sessions.time" v-bind:key="index"  > {{cell}} </div>
             </div>
 
-            <div class="column">
+            <!-- <div class="column">
                 <div class="cell day">Samedi</div> 
                 <div class="cell block" @click="showAddSessions" v-for="(cell, index) in sessions.samedi" v-bind:key="index"  > {{cell}} block</div>
             </div>
@@ -94,10 +96,16 @@
              <div class="column">
                 <div class="cell day">Vendredi</div> 
                 <div class="cell block" @click="showAddSessions" v-for="(cell, index) in sessions.vendredi" v-bind:key="index"  > {{cell}} block</div>
+            </div> -->
+
+            <div class="column" v-for="(day,index) in days" v-bind:key="index" >
+                <div class="cell day">{{day}}</div>
+                <div class="cell block" @click="showAddSessions"  v-for="(cell,ind) in sessions2.data[index]" v-bind:key="ind" > {{cell}} block</div>
+                 
             </div>
 
             <div id="model" v-show="addSessionsOpen"   > 
-                <div class="model__close"  >X</div>
+                <div class="model__close" @click="closeAddSessions" >X</div>
                 <div class="model__add__fix btn">add fix session</div>
                 <div class="model__add__simple btn">add simple session</div>
 
@@ -138,24 +146,42 @@ import { setTimeout } from 'timers';
     
     export default {
         name:'schedule',
+        props:['fixed'],
         data(){
             return{
                 sessions:
                 {
                     time : ['07:00','08:00','09:00', '10:00' , '11:00' ,'12:00', '13:00' ,'14:00' , '15:00' , '16:00' , '17:00' , '18:00' , '19:00' , '20:00' , '21:00' , '22:00' ],
-                    samedi :  [  ' ' , ' ' , ' ' , ' ' , ' ' , ' ' ,' ' ,' ' , ' ' ,' ' , ' ' , ' ' ,' ' , ' ' ,' ' , ],
-                    dimanche:[  ' ' , ' ' , ' ' , ' ' , ' ' , ' ' ,' ' ,' ' , ' ' ,' ' , ' ' , ' ' ,' ' , ' ' ,' ' , ],
-                    lundi : [ ' ' , ' ' , ' ' , ' ' , ' ' , ' ' ,' ' ,' ' , ' ' ,' ' , ' ' , ' ' ,' ' , ' ' ,' ' , ],
-                    mardi : [ ' ' , ' ' , ' ' , ' ' , ' ' , ' ' ,' ' ,' ' , ' ' ,' ' , ' ' , ' ' ,' ' , ' ' ,' ' , ], 
-                    mercredi : [ ' ' , ' ' , ' ' , ' ' , ' ' , ' ' ,' ' ,' ' , ' ' ,' ' , ' ' , ' ' ,' ' , ' ' ,' ' , ],
-                    jeudi :[ ' ' , ' ' , ' ' , ' ' , ' ' , ' ' ,' ' ,' ' , ' ' ,' ' , ' ' , ' ' ,' ' , ' ' ,' ' , ],
-                    vendredi : [ ' ' , ' ' , ' ' , ' ' , ' ' , ' ' ,' ' ,' ' , ' ' ,' ' , ' ' , ' ' ,' ' , ' ' ,' ' , ],
+                    samedi :  [  ' ' , ' ' , ' ' , ' ' , ' ' , ' ' ,' ' ,' ' , ' ' ,' ' , ' ' , ' ' ,' ' , ' ' ,' ' , '' ],
+                    dimanche:[  ' ' , ' ' , ' ' , ' ' , ' ' , ' ' ,' ' ,' ' , ' ' ,' ' , ' ' , ' ' ,' ' , ' ' ,' ' , '' ],
+                    lundi : [ ' ' , ' ' , ' ' , ' ' , ' ' , ' ' ,' ' ,' ' , ' ' ,' ' , ' ' , ' ' ,' ' , ' ' ,' ' , '' ],
+                    mardi : [ ' ' , ' ' , ' ' , ' ' , ' ' , ' ' ,' ' ,' ' , ' ' ,' ' , ' ' , ' ' ,' ' , ' ' ,' ' , '' ], 
+                    mercredi : [ ' ' , ' ' , ' ' , ' ' , ' ' , ' ' ,' ' ,' ' , ' ' ,' ' , ' ' , ' ' ,' ' , ' ' ,' ' , '' ],
+                    jeudi :[ ' ' , ' ' , ' ' , ' ' , ' ' , ' ' ,' ' ,' ' , ' ' ,' ' , ' ' , ' ' ,' ' , ' ' ,' ' ,'' ],
+                    vendredi : [ ' ' , ' ' , ' ' , ' ' , ' ' , ' ' ,' ' ,' ' , ' ' ,' ' , ' ' , ' ' ,' ' , ' ' ,' ' ,'' ],
                 },
-                addSessionsOpen:false,
-                AddSimpleSessionOpen:false,
-                AddFixedSessionOpen:true,
-                addGroupOpen:false,
+                sessions2:
+                {
+                    time : ['07:00','08:00','09:00', '10:00' , '11:00' ,'12:00', '13:00' ,'14:00' , '15:00' , '16:00' , '17:00' , '18:00' , '19:00' , '20:00' , '21:00' , '22:00' ],
+                    data: [ 
+                        [  ' ' , ' ' , ' ' , ' ' , ' ' , ' ' ,' ' ,' ' , ' ' ,' ' , ' ' , ' ' ,' ' , ' ' ,' ' , '' ],
+                        [  ' ' , ' ' , ' ' , ' ' , ' ' , ' ' ,' ' ,' ' , ' ' ,' ' , ' ' , ' ' ,' ' , ' ' ,' ' , '' ],
+                        [  ' ' , ' ' , ' ' , ' ' , ' ' , ' ' ,' ' ,' ' , ' ' ,' ' , ' ' , ' ' ,' ' , ' ' ,' ' , '' ],
+                        [  ' ' , ' ' , ' ' , ' ' , ' ' , ' ' ,' ' ,' ' , ' ' ,' ' , ' ' , ' ' ,' ' , ' ' ,' ' , '' ],
+                        [  ' ' , ' ' , ' ' , ' ' , ' ' , ' ' ,' ' ,' ' , ' ' ,' ' , ' ' , ' ' ,' ' , ' ' ,' ' , '' ],
+                        [  ' ' , ' ' , ' ' , ' ' , ' ' , ' ' ,' ' ,' ' , ' ' ,' ' , ' ' , ' ' ,' ' , ' ' ,' ' , '' ],
+                        [  ' ' , ' ' , ' ' , ' ' , ' ' , ' ' ,' ' ,' ' , ' ' ,' ' , ' ' , ' ' ,' ' , ' ' ,' ' , '' ],                        
+                     ]
+                },
+                days:['samedi' , 'dimance' , 'lundi' , 'mardi' ,'mercredi' ,'jeudi', 'vendredi'],
+                addSessionsOpen:this.$store.getters.addSessionsOpen,
+                AddSimpleSessionOpen:this.$store.getters.AddSimpleSessionOpen,
+                AddFixedSessionOpen:this.$store.getters.AddFixedSessionOpen,
+                addGroupOpen:this.$store.getters.addGroupOpen,
                 addGroup: '',
+
+                fixedSessions:this.$store.getters.fixed,
+
                 mess:"Hi there",
                 currentDay:'',
                 wkStart:'',
@@ -263,7 +289,16 @@ import { setTimeout } from 'timers';
                 model.style.top = `${top}px`;
                 model.style.left = `${left}px`;
                 
-                return  this.addSessionsOpen = !this.addSessionsOpen;
+                // return  this.addSessionsOpen = !this.addSessionsOpen;
+                this.$store.commit('changeState', 'addSessionsOpen');
+                this.addSessionsOpen = this.$store.getters.addSessionsOpen;
+            },
+            
+            closeAddSessions:function(e){
+                e.preventDefault();
+
+                this.$store.commit('changeState', 'addSessionsOpen');
+                this.addSessionsOpen = this.$store.getters.addSessionsOpen;
             }
 
 
@@ -271,12 +306,25 @@ import { setTimeout } from 'timers';
         mounted() {
             this.getCurrentWeek();
             // this.getPreviousWeek();
+            this.$store.commit('initFixed' , this.fixed);
+            this.fixedSessions = this.$store.getters.fixedSessions;
+
+
+            
+            let date = this.fixedSessions[0].date.split('-')[2] ;
+            let time = this.fixedSessions[0].time.split(':')[0] ;
+            console.log('date',date);
+            console.log('time',time);
+            this.sessions.vendredi[time-7] = this.fixedSessions[0].mark + 'title';
+
 
             // this.getPreviousWeek();
             // this.getPreviousWeek();
-            console.log('Component mounted. for teachers')
+            // console.log(this.fixed);
         }
     }
+
+    
 </script>
 
 <style scoped>
@@ -302,6 +350,12 @@ import { setTimeout } from 'timers';
     justify-content: flex-start;
     align-items: center;
 }
+
+.prevWeek,
+.nextWeek {
+    margin-right: 1rem;
+}
+
 .line {
     font-size: 5px;
 }
@@ -357,7 +411,7 @@ import { setTimeout } from 'timers';
     border-top-left-radius: 100px;
     border-top-right-radius: 100px;
     padding: 5px;
-    z-index: -1;
+    /* z-index: -1; */
     /* display: inline-block;
     width: 100%;
     text-align: right; */
@@ -366,5 +420,8 @@ import { setTimeout } from 'timers';
 .btn {
     padding: 1rem;
 }
+
+
+
 
 </style>
