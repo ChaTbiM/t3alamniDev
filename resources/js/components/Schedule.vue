@@ -100,8 +100,7 @@
 
             <div class="column" v-for="(day,index) in days" v-bind:key="index" >
                 <div class="cell day">{{day}}</div>
-                <div class="cell block" @click="showAddSessions"  v-for="(cell,ind) in sessions2.data[index]" v-bind:key="ind" > {{cell}} block</div>
-                 
+                <div class="cell block" @click="showAddSessions"  v-for="(cell,ind) in sessions.data[index]" v-bind:key="ind" > {{cell.group_id}} block</div>  
             </div>
 
             <div id="model" v-show="addSessionsOpen"   > 
@@ -149,7 +148,7 @@ import { setTimeout } from 'timers';
         props:['fixed'],
         data(){
             return{
-                sessions:
+                sessions2:
                 {
                     time : ['07:00','08:00','09:00', '10:00' , '11:00' ,'12:00', '13:00' ,'14:00' , '15:00' , '16:00' , '17:00' , '18:00' , '19:00' , '20:00' , '21:00' , '22:00' ],
                     samedi :  [  ' ' , ' ' , ' ' , ' ' , ' ' , ' ' ,' ' ,' ' , ' ' ,' ' , ' ' , ' ' ,' ' , ' ' ,' ' , '' ],
@@ -160,17 +159,17 @@ import { setTimeout } from 'timers';
                     jeudi :[ ' ' , ' ' , ' ' , ' ' , ' ' , ' ' ,' ' ,' ' , ' ' ,' ' , ' ' , ' ' ,' ' , ' ' ,' ' ,'' ],
                     vendredi : [ ' ' , ' ' , ' ' , ' ' , ' ' , ' ' ,' ' ,' ' , ' ' ,' ' , ' ' , ' ' ,' ' , ' ' ,' ' ,'' ],
                 },
-                sessions2:
+                sessions:
                 {
                     time : ['07:00','08:00','09:00', '10:00' , '11:00' ,'12:00', '13:00' ,'14:00' , '15:00' , '16:00' , '17:00' , '18:00' , '19:00' , '20:00' , '21:00' , '22:00' ],
                     data: [ 
-                        [  ' ' , ' ' , ' ' , ' ' , ' ' , ' ' ,' ' ,' ' , ' ' ,' ' , ' ' , ' ' ,' ' , ' ' ,' ' , '' ],
-                        [  ' ' , ' ' , ' ' , ' ' , ' ' , ' ' ,' ' ,' ' , ' ' ,' ' , ' ' , ' ' ,' ' , ' ' ,' ' , '' ],
-                        [  ' ' , ' ' , ' ' , ' ' , ' ' , ' ' ,' ' ,' ' , ' ' ,' ' , ' ' , ' ' ,' ' , ' ' ,' ' , '' ],
-                        [  ' ' , ' ' , ' ' , ' ' , ' ' , ' ' ,' ' ,' ' , ' ' ,' ' , ' ' , ' ' ,' ' , ' ' ,' ' , '' ],
-                        [  ' ' , ' ' , ' ' , ' ' , ' ' , ' ' ,' ' ,' ' , ' ' ,' ' , ' ' , ' ' ,' ' , ' ' ,' ' , '' ],
-                        [  ' ' , ' ' , ' ' , ' ' , ' ' , ' ' ,' ' ,' ' , ' ' ,' ' , ' ' , ' ' ,' ' , ' ' ,' ' , '' ],
-                        [  ' ' , ' ' , ' ' , ' ' , ' ' , ' ' ,' ' ,' ' , ' ' ,' ' , ' ' , ' ' ,' ' , ' ' ,' ' , '' ],                        
+                        [  {} , {} , {} , {} , {} , {} ,{} ,{} , {} ,{} , {} , {} ,{} , {} ,{} , {} ],
+                        [  {} , {} , {} , {} , {} , {} ,{} ,{} , {} ,{} , {} , {} ,{} , {} ,{} , {} ],
+                        [  {} , {} , {} , {} , {} , {} ,{} ,{} , {} ,{} , {} , {} ,{} , {} ,{} , {} ],
+                        [  {} , {} , {} , {} , {} , {} ,{} ,{} , {} ,{} , {} , {} ,{} , {} ,{} , {} ],
+                        [  {} , {} , {} , {} , {} , {} ,{} ,{} , {} ,{} , {} , {} ,{} , {} ,{} , {} ],
+                        [  {} , {} , {} , {} , {} , {} ,{} ,{} , {} ,{} , {} , {} ,{} , {} ,{} , {} ],
+
                      ]
                 },
                 days:['samedi' , 'dimance' , 'lundi' , 'mardi' ,'mercredi' ,'jeudi', 'vendredi'],
@@ -299,23 +298,48 @@ import { setTimeout } from 'timers';
 
                 this.$store.commit('changeState', 'addSessionsOpen');
                 this.addSessionsOpen = this.$store.getters.addSessionsOpen;
-            }
+            },
 
+            
+            showFixedSessions(){
+                console.log(this.fixedSessions[0])
+
+                const firstDay = this.currentWeek.split(' ')[0];
+                
+                this.fixedSessions.forEach(el => {
+                    const date = el.date.split('-')[2];
+                    const time = el.time.split(':')[0];
+                    
+                    const diffTime = time - 7 ;
+                    console.log(diffTime)
+                    const diffDay = date-firstDay;
+
+                    if( diffDay <= 6 && diffDay >= 0 ){
+                        this.sessions.data[diffDay][diffTime].groupId = el.group_id;
+                        this.sessions.data[diffDay][diffTime].type = el.type;
+
+                    }
+                   
+                });
+            }
 
         },
         mounted() {
             this.getCurrentWeek();
-            // this.getPreviousWeek();
+            this.getPreviousWeek();
             this.$store.commit('initFixed' , this.fixed);
             this.fixedSessions = this.$store.getters.fixedSessions;
-
-
             
-            let date = this.fixedSessions[0].date.split('-')[2] ;
-            let time = this.fixedSessions[0].time.split(':')[0] ;
-            console.log('date',date);
-            console.log('time',time);
-            this.sessions.vendredi[time-7] = this.fixedSessions[0].mark + 'title';
+            this.showFixedSessions();
+
+            // console.log('jour',this.fixedSessions[0].date.split('-')[2]);
+            // console.log(this.currentWeek.split(' ')[0]);
+            
+            // let date = this.fixedSessions[0].date.split('-')[2] ;
+            // let time = this.fixedSessions[0].time.split(':')[0] ;
+            // console.log('date',date);
+            // console.log('time',time);
+            // this.sessions.vendredi[time-7] = this.fixedSessions[0].mark + 'title';
 
 
             // this.getPreviousWeek();

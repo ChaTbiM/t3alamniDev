@@ -2173,14 +2173,13 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
-//
 
 /* harmony default export */ __webpack_exports__["default"] = ({
   name: 'schedule',
   props: ['fixed'],
   data: function data() {
     return {
-      sessions: {
+      sessions2: {
         time: ['07:00', '08:00', '09:00', '10:00', '11:00', '12:00', '13:00', '14:00', '15:00', '16:00', '17:00', '18:00', '19:00', '20:00', '21:00', '22:00'],
         samedi: [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ''],
         dimanche: [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ''],
@@ -2190,9 +2189,9 @@ __webpack_require__.r(__webpack_exports__);
         jeudi: [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ''],
         vendredi: [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', '']
       },
-      sessions2: {
+      sessions: {
         time: ['07:00', '08:00', '09:00', '10:00', '11:00', '12:00', '13:00', '14:00', '15:00', '16:00', '17:00', '18:00', '19:00', '20:00', '21:00', '22:00'],
-        data: [[' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ''], [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ''], [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ''], [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ''], [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ''], [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ''], [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', '']]
+        data: [[{}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}], [{}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}], [{}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}], [{}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}], [{}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}], [{}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}]]
       },
       days: ['samedi', 'dimance', 'lundi', 'mardi', 'mercredi', 'jeudi', 'vendredi'],
       addSessionsOpen: this.$store.getters.addSessionsOpen,
@@ -2289,18 +2288,39 @@ __webpack_require__.r(__webpack_exports__);
       e.preventDefault();
       this.$store.commit('changeState', 'addSessionsOpen');
       this.addSessionsOpen = this.$store.getters.addSessionsOpen;
+    },
+    showFixedSessions: function showFixedSessions() {
+      var _this = this;
+
+      console.log(this.fixedSessions[0]);
+      var firstDay = this.currentWeek.split(' ')[0];
+      this.fixedSessions.forEach(function (el) {
+        var date = el.date.split('-')[2];
+        var time = el.time.split(':')[0];
+        var diffTime = time - 7;
+        console.log(diffTime);
+        var diffDay = date - firstDay;
+
+        if (diffDay <= 6 && diffDay >= 0) {
+          _this.sessions.data[diffDay][diffTime].groupId = el.group_id;
+          _this.sessions.data[diffDay][diffTime].type = el.type;
+        }
+      });
     }
   },
   mounted: function mounted() {
-    this.getCurrentWeek(); // this.getPreviousWeek();
-
+    this.getCurrentWeek();
+    this.getPreviousWeek();
     this.$store.commit('initFixed', this.fixed);
     this.fixedSessions = this.$store.getters.fixedSessions;
-    var date = this.fixedSessions[0].date.split('-')[2];
-    var time = this.fixedSessions[0].time.split(':')[0];
-    console.log('date', date);
-    console.log('time', time);
-    this.sessions.vendredi[time - 7] = this.fixedSessions[0].mark + 'title'; // this.getPreviousWeek();
+    this.showFixedSessions(); // console.log('jour',this.fixedSessions[0].date.split('-')[2]);
+    // console.log(this.currentWeek.split(' ')[0]);
+    // let date = this.fixedSessions[0].date.split('-')[2] ;
+    // let time = this.fixedSessions[0].time.split(':')[0] ;
+    // console.log('date',date);
+    // console.log('time',time);
+    // this.sessions.vendredi[time-7] = this.fixedSessions[0].mark + 'title';
+    // this.getPreviousWeek();
     // this.getPreviousWeek();
     // console.log(this.fixed);
   }
@@ -38793,7 +38813,7 @@ var render = function() {
               [
                 _c("div", { staticClass: "cell day" }, [_vm._v(_vm._s(day))]),
                 _vm._v(" "),
-                _vm._l(_vm.sessions2.data[index], function(cell, ind) {
+                _vm._l(_vm.sessions.data[index], function(cell, ind) {
                   return _c(
                     "div",
                     {
@@ -38801,7 +38821,7 @@ var render = function() {
                       staticClass: "cell block",
                       on: { click: _vm.showAddSessions }
                     },
-                    [_vm._v(" " + _vm._s(cell) + " block")]
+                    [_vm._v(" " + _vm._s(cell.group_id) + " block")]
                   )
                 })
               ],
