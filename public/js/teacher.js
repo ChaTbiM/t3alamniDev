@@ -2103,80 +2103,10 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
 
 /* harmony default export */ __webpack_exports__["default"] = ({
   name: 'schedule',
-  props: ['fixed'],
+  props: ['fixed', 'simple', 'module'],
   data: function data() {
     return {
       sessions2: {
@@ -2199,7 +2129,13 @@ __webpack_require__.r(__webpack_exports__);
       AddFixedSessionOpen: this.$store.getters.AddFixedSessionOpen,
       addGroupOpen: this.$store.getters.addGroupOpen,
       addGroup: '',
-      fixedSessions: this.$store.getters.fixed,
+      fixedSessions: '',
+      simpleSessions: '',
+      modules: '',
+      filters: {
+        sessionsType: [],
+        checkedGroups: []
+      },
       mess: "Hi there",
       currentDay: '',
       wkStart: '',
@@ -2245,7 +2181,6 @@ __webpack_require__.r(__webpack_exports__);
       var curr = new Date(this.wkEnd);
       var wkStart = new Date(curr.setDate(curr.getDate() + 1));
       this.wkStart = wkStart;
-      console.log(' next Week start week', wkStart);
       var wkEnd = new Date(curr.setDate(wkStart.getDate() + 6));
       this.wkEnd = wkEnd;
       this.currentWeek = wkStart.getDate();
@@ -2259,7 +2194,6 @@ __webpack_require__.r(__webpack_exports__);
     },
     getPreviousWeek: function getPreviousWeek() {
       var curr = new Date(this.wkStart);
-      console.log(curr);
       var wkEnd = new Date(curr.setDate(curr.getDate() - 1));
       this.wkEnd = wkEnd;
       var wkStart = new Date(curr.setDate(wkEnd.getDate() - 6));
@@ -2275,8 +2209,24 @@ __webpack_require__.r(__webpack_exports__);
     },
     showAddSessions: function showAddSessions(e) {
       e.preventDefault();
-      var top = e.target.offsetTop;
-      var left = e.target.offsetLeft + 85;
+      var top;
+      var left; //
+
+      if (e.target.offsetLeft >= 700) {
+        left = e.target.offsetLeft - 160;
+      } else {
+        left = e.target.offsetLeft + 85;
+      }
+
+      if (e.target.offsetTop >= 1020) {
+        top = e.target.offsetTop - 50;
+      } else {
+        top = e.target.offsetTop;
+      } // console.log(e.target.getBoundingClientRect().x);
+      // let top = e.target.getBoundingClientRect().x;
+      // let left = e.target.getBoundingClientRect().y ;
+
+
       var model = document.getElementById('model');
       model.style.top = "".concat(top, "px");
       model.style.left = "".concat(left, "px"); // return  this.addSessionsOpen = !this.addSessionsOpen;
@@ -2292,37 +2242,55 @@ __webpack_require__.r(__webpack_exports__);
     showFixedSessions: function showFixedSessions() {
       var _this = this;
 
-      console.log(this.fixedSessions[0]);
       var firstDay = this.currentWeek.split(' ')[0];
       this.fixedSessions.forEach(function (el) {
         var date = el.date.split('-')[2];
         var time = el.time.split(':')[0];
         var diffTime = time - 7;
-        console.log(diffTime);
         var diffDay = date - firstDay;
+
+        var module = _this.modules.find(function (element) {
+          return element.groupId === el.group_id;
+        });
+
+        console.log(module);
 
         if (diffDay <= 6 && diffDay >= 0) {
           _this.sessions.data[diffDay][diffTime].groupId = el.group_id;
           _this.sessions.data[diffDay][diffTime].type = el.type;
+          _this.sessions.data[diffDay][diffTime].module = module.module;
+        }
+      });
+    },
+    showSimpleSessions: function showSimpleSessions() {
+      var _this2 = this;
+
+      var firstDay = this.currentWeek.split(' ')[0];
+      this.simpleSessions.forEach(function (el) {
+        var date = el.date.split('-')[2];
+        var time = el.time.split(':')[0];
+        var diffTime = time - 7;
+        var diffDay = date - firstDay;
+
+        if (diffDay <= 6 && diffDay >= 0) {
+          _this2.sessions.data[diffDay][diffTime].subject = el.subject;
+          _this2.sessions.data[diffDay][diffTime].type = el.type;
         }
       });
     }
   },
   mounted: function mounted() {
-    this.getCurrentWeek();
-    this.getPreviousWeek();
+    this.getCurrentWeek(); // this.getPreviousWeek();
+
     this.$store.commit('initFixed', this.fixed);
     this.fixedSessions = this.$store.getters.fixedSessions;
-    this.showFixedSessions(); // console.log('jour',this.fixedSessions[0].date.split('-')[2]);
-    // console.log(this.currentWeek.split(' ')[0]);
-    // let date = this.fixedSessions[0].date.split('-')[2] ;
-    // let time = this.fixedSessions[0].time.split(':')[0] ;
-    // console.log('date',date);
-    // console.log('time',time);
-    // this.sessions.vendredi[time-7] = this.fixedSessions[0].mark + 'title';
-    // this.getPreviousWeek();
-    // this.getPreviousWeek();
-    // console.log(this.fixed);
+    this.$store.commit('initSimple', this.simple);
+    this.simpleSessions = this.$store.getters.simpleSessions;
+    this.$store.commit('initModules', this.module);
+    this.modules = this.$store.getters.modules;
+    console.log(this.modules[0].module);
+    this.showFixedSessions();
+    this.showSimpleSessions();
   }
 });
 
@@ -6842,7 +6810,7 @@ exports = module.exports = __webpack_require__(/*! ../../../node_modules/css-loa
 
 
 // module
-exports.push([module.i, "\n.container[data-v-5f748482] {\r\n    display: flex;\n}\n.left[data-v-5f748482] {\n}\n.schedule[data-v-5f748482]{\r\n    /* flex-basis:72%;\r\n    height: 400px;\r\n    overflow-y: scroll;\r\n    margin: 0 auto;\r\n    min-width: 950px; */\n}\n.schedule__header[data-v-5f748482]{\r\n    display: flex;\r\n    justify-content: flex-start;\r\n    align-items: center;\n}\n.prevWeek[data-v-5f748482],\r\n.nextWeek[data-v-5f748482] {\r\n    margin-right: 1rem;\n}\n.line[data-v-5f748482] {\r\n    font-size: 5px;\n}\n.calender[data-v-5f748482] {\r\n    display: flex;\r\n    flex-direction: row;\r\n    flex-wrap: wrap;\r\n    font-weight: bold;\r\n\r\n    flex-basis:72%;\r\n    height: 400px;\r\n    overflow-y: scroll;\r\n    /* margin: 0 auto; */\r\n    min-width: 950px;\n}\n.hour[data-v-5f748482], \r\n.cell[data-v-5f748482] {\r\n    margin: 1rem;\n}\n.cell[data-v-5f748482],\r\n.hour[data-v-5f748482] {\r\n    display: block;\r\n    width: 85px;\r\n    height:50px;\n}\n.block[data-v-5f748482] {\r\n    background-color: #C4C4C4;\n}\r\n\r\n/* Model  */\n#model[data-v-5f748482] {\r\n    position: absolute;\r\n    background-color:gray;\r\n    text-align: center;\r\n    background-color:  rgba(243, 242, 235, 0.74);\n}\n.model__close[data-v-5f748482] {\r\n    text-align: right;\r\n    position: absolute;\r\n    bottom: 100%;\r\n    color: black;\r\n    background-color:  rgba(243, 242, 235, 1);\r\n    border-top-left-radius: 100px;\r\n    border-top-right-radius: 100px;\r\n    padding: 5px;\r\n    /* z-index: -1; */\r\n    /* display: inline-block;\r\n    width: 100%;\r\n    text-align: right; */\n}\n.btn[data-v-5f748482] {\r\n    padding: 1rem;\n}\r\n\r\n\r\n\r\n\r\n", ""]);
+exports.push([module.i, "\n.container[data-v-5f748482] {\r\n    display: flex;\n}\n.left[data-v-5f748482] {\n}\n.schedule[data-v-5f748482]{\r\n    /* flex-basis:72%;\r\n    height: 400px;\r\n    overflow-y: scroll;\r\n    margin: 0 auto;\r\n    min-width: 950px; */\n}\n.schedule__header[data-v-5f748482]{\r\n    display: flex;\r\n    justify-content: flex-start;\r\n    align-items: center;\n}\n.prevWeek[data-v-5f748482],\r\n.nextWeek[data-v-5f748482] {\r\n    margin-right: 1rem;\n}\n.line[data-v-5f748482] {\r\n    font-size: 5px;\n}\n.calender[data-v-5f748482] {\r\n    display: flex;\r\n    flex-direction: row;\r\n    flex-wrap: wrap;\r\n    font-weight: bold;\r\n\r\n    flex-basis:72%;\r\n    height: 400px;\r\n    overflow-y: scroll;\r\n    /* margin: 0 auto; */\r\n    min-width: 950px;\r\n\r\n\r\n    /* for position .offsetTop*/\r\n    position: relative;\n}\n.hour[data-v-5f748482], \r\n.cell[data-v-5f748482] {\r\n    margin: 1rem;\n}\n.cell[data-v-5f748482],\r\n.hour[data-v-5f748482] {\r\n    display: block;\r\n    width: 85px;\r\n    height:50px;\n}\n.block[data-v-5f748482] {\r\n    background-color: #C4C4C4;\n}\r\n\r\n/* Model  */\n#model[data-v-5f748482] {\r\n    position: absolute;\r\n    background-color:gray;\r\n    text-align: center;\r\n    background-color:  rgba(243, 242, 235, 0.74);\n}\n.model__close[data-v-5f748482] {\r\n    text-align: right;\r\n    position: absolute;\r\n    bottom: 100%;\r\n    color: black;\r\n    background-color:  rgba(243, 242, 235, 1);\r\n    border-top-left-radius: 100px;\r\n    border-top-right-radius: 100px;\r\n    padding: 5px;\r\n    /* z-index: -1; */\r\n    /* display: inline-block;\r\n    width: 100%;\r\n    text-align: right; */\n}\n.btn[data-v-5f748482] {\r\n    padding: 1rem;\n}\r\n\r\n\r\n\r\n\r\n", ""]);
 
 // exports
 
@@ -38770,7 +38738,110 @@ var render = function() {
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
   return _c("div", { staticClass: "container" }, [
-    _vm._m(0),
+    _c("div", { staticClass: "left" }, [
+      _c("div", { staticClass: "left__calender" }),
+      _vm._v(" "),
+      _c("div", { staticClass: "left__add__fix" }, [
+        _vm._v(" add fix session ")
+      ]),
+      _vm._v(" "),
+      _c("div", { staticClass: "left__add__simple" }, [
+        _vm._v(" add simple session ")
+      ]),
+      _vm._v(" "),
+      _c("label", { attrs: { for: "fix" } }, [
+        _vm._v(" all fix sessions\n            "),
+        _c("input", {
+          directives: [
+            {
+              name: "model",
+              rawName: "v-model",
+              value: _vm.filters.sessionsType,
+              expression: "filters.sessionsType"
+            }
+          ],
+          attrs: { type: "checkbox", name: "fix", id: "fix", value: "fixed" },
+          domProps: {
+            checked: Array.isArray(_vm.filters.sessionsType)
+              ? _vm._i(_vm.filters.sessionsType, "fixed") > -1
+              : _vm.filters.sessionsType
+          },
+          on: {
+            change: function($event) {
+              var $$a = _vm.filters.sessionsType,
+                $$el = $event.target,
+                $$c = $$el.checked ? true : false
+              if (Array.isArray($$a)) {
+                var $$v = "fixed",
+                  $$i = _vm._i($$a, $$v)
+                if ($$el.checked) {
+                  $$i < 0 &&
+                    _vm.$set(_vm.filters, "sessionsType", $$a.concat([$$v]))
+                } else {
+                  $$i > -1 &&
+                    _vm.$set(
+                      _vm.filters,
+                      "sessionsType",
+                      $$a.slice(0, $$i).concat($$a.slice($$i + 1))
+                    )
+                }
+              } else {
+                _vm.$set(_vm.filters, "sessionsType", $$c)
+              }
+            }
+          }
+        })
+      ]),
+      _vm._v(" "),
+      _c("label", { attrs: { for: "simple" } }, [
+        _vm._v(" all simple sessions\n            "),
+        _c("input", {
+          directives: [
+            {
+              name: "model",
+              rawName: "v-model",
+              value: _vm.filters.sessionsType,
+              expression: "filters.sessionsType"
+            }
+          ],
+          attrs: {
+            type: "checkbox",
+            name: "simple",
+            id: "simple",
+            value: "simple"
+          },
+          domProps: {
+            checked: Array.isArray(_vm.filters.sessionsType)
+              ? _vm._i(_vm.filters.sessionsType, "simple") > -1
+              : _vm.filters.sessionsType
+          },
+          on: {
+            change: function($event) {
+              var $$a = _vm.filters.sessionsType,
+                $$el = $event.target,
+                $$c = $$el.checked ? true : false
+              if (Array.isArray($$a)) {
+                var $$v = "simple",
+                  $$i = _vm._i($$a, $$v)
+                if ($$el.checked) {
+                  $$i < 0 &&
+                    _vm.$set(_vm.filters, "sessionsType", $$a.concat([$$v]))
+                } else {
+                  $$i > -1 &&
+                    _vm.$set(
+                      _vm.filters,
+                      "sessionsType",
+                      $$a.slice(0, $$i).concat($$a.slice($$i + 1))
+                    )
+                }
+              } else {
+                _vm.$set(_vm.filters, "sessionsType", $$c)
+              }
+            }
+          }
+        })
+      ])
+    ]),
     _vm._v(" "),
     _c("div", { staticClass: "schedule" }, [
       _c("div", [_vm._v(" " + _vm._s(_vm.addSessionsOpen) + " ")]),
@@ -38821,7 +38892,23 @@ var render = function() {
                       staticClass: "cell block",
                       on: { click: _vm.showAddSessions }
                     },
-                    [_vm._v(" " + _vm._s(cell.group_id) + " block")]
+                    [
+                      cell.type === "fixed"
+                        ? _c("span", [
+                            _vm._v(
+                              " groupe " +
+                                _vm._s(cell.groupId) +
+                                " " +
+                                _vm._s(cell.module) +
+                                " "
+                            )
+                          ])
+                        : _vm._e(),
+                      _vm._v(" "),
+                      cell.type == "simple"
+                        ? _c("span", [_vm._v(" " + _vm._s(cell.subject) + " ")])
+                        : _vm._e()
+                    ]
                   )
                 })
               ],
@@ -38900,36 +38987,7 @@ var render = function() {
     ])
   ])
 }
-var staticRenderFns = [
-  function() {
-    var _vm = this
-    var _h = _vm.$createElement
-    var _c = _vm._self._c || _h
-    return _c("div", { staticClass: "left" }, [
-      _c("div", { staticClass: "left__calender" }),
-      _vm._v(" "),
-      _c("div", { staticClass: "left__add__fix" }, [
-        _vm._v(" add fix session ")
-      ]),
-      _vm._v(" "),
-      _c("div", { staticClass: "left__add__simple" }, [
-        _vm._v(" add simple session ")
-      ]),
-      _vm._v(" "),
-      _c("label", { attrs: { for: "fix" } }, [
-        _vm._v(" all fix sessions\n            "),
-        _c("input", { attrs: { type: "checkbox", name: "fix", id: "fix" } })
-      ]),
-      _vm._v(" "),
-      _c("label", { attrs: { for: "simple" } }, [
-        _vm._v(" all simple sessions\n            "),
-        _c("input", {
-          attrs: { type: "checkbox", name: "simple", id: "simple" }
-        })
-      ])
-    ])
-  }
-]
+var staticRenderFns = []
 render._withStripped = true
 
 
@@ -52601,7 +52659,9 @@ var store = new vuex__WEBPACK_IMPORTED_MODULE_1__["default"].Store({
     AddSimpleSessionOpen: false,
     AddFixedSessionOpen: false,
     addGroupOpen: false,
-    fixed: ''
+    fixed: '',
+    simple: '',
+    modules: ''
   },
   mutations: {
     changeState: function changeState(state, target) {
@@ -52609,6 +52669,12 @@ var store = new vuex__WEBPACK_IMPORTED_MODULE_1__["default"].Store({
     },
     initFixed: function initFixed(state, data) {
       state.fixed = JSON.parse(data);
+    },
+    initSimple: function initSimple(state, data) {
+      state.simple = JSON.parse(data);
+    },
+    initModules: function initModules(state, data) {
+      state.modules = JSON.parse(data);
     }
   },
   getters: {
@@ -52629,6 +52695,12 @@ var store = new vuex__WEBPACK_IMPORTED_MODULE_1__["default"].Store({
     },
     fixedSessions: function fixedSessions(state) {
       return state.fixed;
+    },
+    simpleSessions: function simpleSessions(state) {
+      return state.simple;
+    },
+    modules: function modules(state) {
+      return state.modules;
     }
   }
 });

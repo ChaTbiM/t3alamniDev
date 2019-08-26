@@ -12,6 +12,8 @@ export const store = new Vuex.Store ({
         AddFixedSessionOpen:false,
         addGroupOpen:false,
         fixed:'',
+        simple:'',
+        modules:'',
         
     },
     mutations:{
@@ -21,6 +23,15 @@ export const store = new Vuex.Store ({
 
         initFixed(state,data){
             state.fixed = JSON.parse(data);
+        },
+
+        
+        initSimple(state,data){
+            state.simple = JSON.parse(data);
+        },
+        
+        initModules(state,data){
+            state.modules = JSON.parse(data);
         }
 
     },
@@ -31,6 +42,10 @@ export const store = new Vuex.Store ({
         AddFixedSessionOpen : state=> state.AddFixedSessionOpen,
         addGroupOpen : state=> state.addGroupOpen,
         fixedSessions: state => state.fixed,
+        simpleSessions: state => state.simple,
+        modules: state => state.modules,
+
+
 
     }
 

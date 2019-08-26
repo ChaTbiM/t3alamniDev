@@ -15,21 +15,21 @@ class CreateSimpleSessionsTable extends Migration
     {
         Schema::create('simple_sessions', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->string('type')->defualt('simple');
-            // $table->integer('id_subject'); possibly reference
-            $table->text('description');
-            $table->integer ('price');
-            $table->string('state'); // etat
-            $table->integer('nb_places');
-            $table->string('cycle');
-            $table->integer('specialité');
+            $table->string('type')->default('simple');
+            $table->string('state'); // etat - en attente , en cour , terminer
+            $table->string('subject'); // titre 
+            $table->string('cycle'); // niveau
+            $table->string('specialty'); 
             $table->integer('year');
-            $table->time('time');
+            $table->text('description');
             $table->date('date');
+            $table->time('time');
             $table->integer('duration');
-            $table->integer('mark'); // note
+            $table->integer('nb_places');
+            $table->smallInteger('price');
+            $table->integer('mark')->nullable(); // note
             // $table->integer('id_document');
-            $table->date('end_registration'); // date fin d'inscription
+            $table->date('end_registration')->nullable(); // date fin d'inscription
             $table->timestamps();
             
             // references

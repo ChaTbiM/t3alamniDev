@@ -15,8 +15,7 @@ class Group extends Model
         return $this->hasOne(Module::class);
     }
 
-
-
+    
     public function fixedSessions(){
         return $this->hasMany(FixedSession::class);
     }

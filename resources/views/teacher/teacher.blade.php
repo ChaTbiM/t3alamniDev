@@ -40,5 +40,5 @@
 
 
 @section('content')
-    <schedule-component fixed="{{$fixedSessions}}" ></schedule-component>
+    <schedule-component fixed="{{$fixedSessions}}" simple="{{ $simpleSessions }}" module="{{$modules}}"  ></schedule-component>
 @endsection

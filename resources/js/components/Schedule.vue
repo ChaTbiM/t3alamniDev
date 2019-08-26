@@ -2,35 +2,25 @@
 
   
     <div class="container">
-    
+        
         <div class="left">
             <div class="left__calender"></div>
             <div class="left__add__fix"> add fix session </div>
             <div class="left__add__simple"> add simple session </div>
             <label for="fix"> all fix sessions
-                <input type="checkbox" name="fix" id="fix">    
+                <input type="checkbox" name="fix" id="fix" value="fixed" v-model="filters.sessionsType">    
             </label>
 
            <label for="simple"> all simple sessions
-                <input type="checkbox" name="simple" id="simple">    
+                <input type="checkbox" name="simple" id="simple" value="simple" v-model="filters.sessionsType" >    
             </label>
-
+                
         </div>
 
-    <!-- <div class="container">
-        <div class="row justify-content-center">
-            <div class="col-md-8">
-                <div class="card">
-                    <div class="card-header">Example Component</div>
 
-                    <div class="card-body">
-                        schedule 
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div> -->
+        
 
+    
    
     <div class="schedule" >
          <div> {{addSessionsOpen}} </div>
@@ -45,62 +35,20 @@
         
         
         <div class="calender">
-            <!-- <div class="column">
-                <div class="hour"></div>
-                <div class="hour">07:00</div>
-                <div class="hour">08:00</div>
-                <div class="hour">09:00</div>
-                <div class="hour">10:00</div>
-                <div class="hour">11:00</div>
-                <div class="hour">12:00</div>
-                <div class="hour">13:00</div>
-                <div class="hour">14:00</div>
-                <div class="hour">15:00</div>
-                <div class="hour">16:00</div>
-                <div class="hour">17:00</div>
-                <div class="hour">18:00</div>
-                <div class="hour">19:00</div>
-                <div class="hour">20:00</div>
-                <div class="hour">21:00</div>
-
-            </div> -->
+            
             <div class="column">
                 <div class="cell Hour">Hours</div> 
                 <div class="hour" v-for="(cell, index) in sessions.time" v-bind:key="index"  > {{cell}} </div>
             </div>
 
-            <!-- <div class="column">
-                <div class="cell day">Samedi</div> 
-                <div class="cell block" @click="showAddSessions" v-for="(cell, index) in sessions.samedi" v-bind:key="index"  > {{cell}} block</div>
-            </div>
-            <div class="column">
-                <div class="cell day">Dimanche</div> 
-                <div class="cell block" @click="showAddSessions" v-for="(cell, index) in sessions.dimanche" v-bind:key="index"  > {{cell}} block</div>
-            </div>
-             <div class="column">
-                <div class="cell day">Lundi</div> 
-                <div class="cell block" @click="showAddSessions" v-for="(cell, index) in sessions.lundi" v-bind:key="index"  > {{cell}} block</div>
-            </div>
-             <div class="column">
-                <div class="cell day">Mardi</div> 
-                <div class="cell block" @click="showAddSessions" v-for="(cell, index) in sessions.mardi" v-bind:key="index"  > {{cell}} block</div>
-            </div>
-             <div class="column">
-                <div class="cell day">Mercredi</div> 
-                <div class="cell block" @click="showAddSessions" v-for="(cell, index) in sessions.mercredi" v-bind:key="index"  > {{cell}} block</div>
-            </div>
-             <div class="column">
-                <div class="cell day">Jeudi</div> 
-                <div class="cell block" @click="showAddSessions" v-for="(cell, index) in sessions.jeudi" v-bind:key="index"  > {{cell}} block</div>
-            </div>
-             <div class="column">
-                <div class="cell day">Vendredi</div> 
-                <div class="cell block" @click="showAddSessions" v-for="(cell, index) in sessions.vendredi" v-bind:key="index"  > {{cell}} block</div>
-            </div> -->
 
             <div class="column" v-for="(day,index) in days" v-bind:key="index" >
                 <div class="cell day">{{day}}</div>
-                <div class="cell block" @click="showAddSessions"  v-for="(cell,ind) in sessions.data[index]" v-bind:key="ind" > {{cell.group_id}} block</div>  
+                <div class="cell block" @click="showAddSessions"  v-for="(cell,ind) in sessions.data[index]" v-bind:key="ind" > 
+                     <span v-if="cell.type === 'fixed'"> groupe {{cell.groupId}} {{cell.module}} </span>
+                     <span v-if="cell.type == 'simple'"> {{cell.subject}} </span> 
+
+                     </div>  
             </div>
 
             <div id="model" v-show="addSessionsOpen"   > 
@@ -114,24 +62,6 @@
             <add-group v-show="addGroupOpen"></add-group>
             <add-fixed-session v-show="AddFixedSessionOpen"></add-fixed-session>
 
-            <!-- <div class="column">
-                <div class="cell day">Sunday</div>                
-                <div class="cell block" >{{mess}}</div>
-                <div class="cell block">block</div>
-                <div class="cell block">block</div>
-                <div class="cell block">block</div>
-                <div class="cell block">block</div>
-                <div class="cell block">block</div>
-                <div class="cell block">block</div>
-                <div class="cell block">block</div>
-                <div class="cell block">block</div>
-                <div class="cell block">block</div>
-                <div class="cell block">block</div>
-                <div class="cell block">block</div>
-                <div class="cell block">block</div>
-                <div class="cell block">block</div>
-                <div class="cell block">block</div>
-            </div> -->
             
         </div>
         
@@ -145,7 +75,7 @@ import { setTimeout } from 'timers';
     
     export default {
         name:'schedule',
-        props:['fixed'],
+        props:['fixed','simple','module'],
         data(){
             return{
                 sessions2:
@@ -181,7 +111,14 @@ import { setTimeout } from 'timers';
                 addGroupOpen:this.$store.getters.addGroupOpen,
                 addGroup: '',
 
-                fixedSessions:this.$store.getters.fixed,
+                fixedSessions:'',
+                simpleSessions:'',
+                modules:'',
+
+                filters:{
+                    sessionsType:[],
+                    checkedGroups:[]
+                    },
 
                 mess:"Hi there",
                 currentDay:'',
@@ -238,7 +175,6 @@ import { setTimeout } from 'timers';
                
                let wkStart = new Date(curr.setDate(curr.getDate() + 1) );
                this.wkStart = wkStart; 
-               console.log(' next Week start week',wkStart);
                 
 
                let wkEnd = new Date(curr.setDate(wkStart.getDate()+6));
@@ -259,7 +195,6 @@ import { setTimeout } from 'timers';
             },
             getPreviousWeek(){
                 let curr = new Date(this.wkStart);
-                console.log(curr);
 
                 let wkEnd = new Date(curr.setDate(curr.getDate() - 1) );
                this.wkEnd = wkEnd; 
@@ -283,8 +218,33 @@ import { setTimeout } from 'timers';
 
             showAddSessions: function(e){
                 e.preventDefault();
-                let top = e.target.offsetTop;
-                let left = e.target.offsetLeft + 85 ;
+                let top ;
+                let left ;
+                //
+
+                if(e.target.offsetLeft >= 700){
+                    left = e.target.offsetLeft - 160 ;
+
+                } else {
+                    left = e.target.offsetLeft + 85 ;                    
+                }
+                
+
+                if(e.target.offsetTop >=1020){
+                        top = e.target.offsetTop - 50;
+                    }else {
+
+                        top = e.target.offsetTop;
+                    }
+                
+                
+                // console.log(e.target.getBoundingClientRect().x);
+
+                
+                // let top = e.target.getBoundingClientRect().x;
+                // let left = e.target.getBoundingClientRect().y ;
+                
+
                 let model = document.getElementById('model');
                 
                 model.style.top = `${top}px`;
@@ -304,7 +264,6 @@ import { setTimeout } from 'timers';
 
             
             showFixedSessions(){
-                console.log(this.fixedSessions[0])
 
                 const firstDay = this.currentWeek.split(' ')[0];
                 
@@ -313,11 +272,39 @@ import { setTimeout } from 'timers';
                     const time = el.time.split(':')[0];
                     
                     const diffTime = time - 7 ;
-                    console.log(diffTime)
                     const diffDay = date-firstDay;
+
+                    const module = this.modules.find(function(element){
+                        return element.groupId === el.group_id;                        
+                    })
+
+                    console.log(module);
 
                     if( diffDay <= 6 && diffDay >= 0 ){
                         this.sessions.data[diffDay][diffTime].groupId = el.group_id;
+                        this.sessions.data[diffDay][diffTime].type = el.type;
+                        this.sessions.data[diffDay][diffTime].module = module.module;
+
+                    }
+                   
+                });
+            },
+
+
+
+
+            showSimpleSessions(){
+
+                const firstDay = this.currentWeek.split(' ')[0];
+                
+                this.simpleSessions.forEach(el => {
+                    const date = el.date.split('-')[2];
+                    const time = el.time.split(':')[0];
+
+                    const diffTime = time - 7 ;
+                    const diffDay = date-firstDay;
+                    if( diffDay <= 6 && diffDay >= 0 ){
+                        this.sessions.data[diffDay][diffTime].subject = el.subject;
                         this.sessions.data[diffDay][diffTime].type = el.type;
 
                     }
@@ -325,28 +312,39 @@ import { setTimeout } from 'timers';
                 });
             }
 
+
+
+
+
+
         },
+
+        
         mounted() {
             this.getCurrentWeek();
-            this.getPreviousWeek();
+            // this.getPreviousWeek();
+
             this.$store.commit('initFixed' , this.fixed);
             this.fixedSessions = this.$store.getters.fixedSessions;
+
+            this.$store.commit('initSimple' , this.simple);
+            this.simpleSessions = this.$store.getters.simpleSessions;
+
+            this.$store.commit('initModules' , this.module);
+            this.modules = this.$store.getters.modules;
+
+            console.log(this.modules[0].module);
             
+            
+                        
+
+
             this.showFixedSessions();
+            this.showSimpleSessions();
 
-            // console.log('jour',this.fixedSessions[0].date.split('-')[2]);
-            // console.log(this.currentWeek.split(' ')[0]);
+ 
+
             
-            // let date = this.fixedSessions[0].date.split('-')[2] ;
-            // let time = this.fixedSessions[0].time.split(':')[0] ;
-            // console.log('date',date);
-            // console.log('time',time);
-            // this.sessions.vendredi[time-7] = this.fixedSessions[0].mark + 'title';
-
-
-            // this.getPreviousWeek();
-            // this.getPreviousWeek();
-            // console.log(this.fixed);
         }
     }
 
@@ -377,6 +375,8 @@ import { setTimeout } from 'timers';
     align-items: center;
 }
 
+
+
 .prevWeek,
 .nextWeek {
     margin-right: 1rem;
@@ -397,6 +397,10 @@ import { setTimeout } from 'timers';
     overflow-y: scroll;
     /* margin: 0 auto; */
     min-width: 950px;
+
+
+    /* for position .offsetTop*/
+    position: relative;
     
 }
 
