@@ -2,7 +2,6 @@
 
   
     <div class="container">
-        
         <div class="left">
             <div class="left__calender"></div>
             <div class="left__add__fix"> add fix session </div>
@@ -44,7 +43,7 @@
 
             <div class="column" v-for="(day,index) in days" v-bind:key="index" >
                 <div class="cell day">{{day}}</div>
-                <div class="cell block" @click="showAddSessions"  v-for="(cell,ind) in sessions.data[index]" v-bind:key="ind" > 
+                <div class="cell block" @click="showAddSessions"  v-for="(cell,ind) in filterSessions[index]" v-bind:key="ind" > 
                      <span v-if="cell.type === 'fixed'"> groupe {{cell.groupId}} {{cell.module}} </span>
                      <span v-if="cell.type == 'simple'"> {{cell.subject}} </span> 
 
@@ -111,9 +110,11 @@ import { setTimeout } from 'timers';
                 addGroupOpen:this.$store.getters.addGroupOpen,
                 addGroup: '',
 
-                fixedSessions:'',
-                simpleSessions:'',
-                modules:'',
+                componentLoaded:false,
+
+                fixedSessions:JSON.parse(this.fixed),
+                simpleSessions:JSON.parse(this.simple),
+                modules:JSON.parse(this.module),
 
                 filters:{
                     sessionsType:[],
@@ -278,13 +279,11 @@ import { setTimeout } from 'timers';
                         return element.groupId === el.group_id;                        
                     })
 
-                    console.log(module);
 
                     if( diffDay <= 6 && diffDay >= 0 ){
                         this.sessions.data[diffDay][diffTime].groupId = el.group_id;
                         this.sessions.data[diffDay][diffTime].type = el.type;
                         this.sessions.data[diffDay][diffTime].module = module.module;
-
                     }
                    
                 });
@@ -333,18 +332,57 @@ import { setTimeout } from 'timers';
             this.$store.commit('initModules' , this.module);
             this.modules = this.$store.getters.modules;
 
-            console.log(this.modules[0].module);
             
             
-                        
+            
 
 
             this.showFixedSessions();
             this.showSimpleSessions();
 
- 
+         
+            this.componentLoaded = true;
+        },
 
-            
+        computed : {
+            filterSessions : function(){
+            const data = [];
+                if(this.componentLoaded){
+            console.log('original' , this.sessions.data)
+                    this.sessions.data.forEach(el => {
+                    
+                        const dayData = [];
+                        el.forEach(element => {
+                            if(element.type === 'fixed'){
+                                dayData.push(element);
+                            }else {
+                                dayData.push({});
+                            }
+                            
+                        })
+                        data.push(dayData);
+                    });
+                    
+                    return data;
+                }
+
+                
+            // this.sessions.data.forEach(el =>{
+                // console.log(el[2]);
+            // })
+                // this.sessions.data.forEach(el =>{
+                //     const dayData = [];
+                //     el.forEach((element,index) =>{
+                //         if( element.type && element.type === 'fixed'){
+                //             console.log(element)
+                //         }
+                //     })
+                // })
+
+
+                
+         
+            }
         }
     }
 

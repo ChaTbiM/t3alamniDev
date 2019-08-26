@@ -2102,7 +2102,6 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
-//
 
 /* harmony default export */ __webpack_exports__["default"] = ({
   name: 'schedule',
@@ -2129,9 +2128,10 @@ __webpack_require__.r(__webpack_exports__);
       AddFixedSessionOpen: this.$store.getters.AddFixedSessionOpen,
       addGroupOpen: this.$store.getters.addGroupOpen,
       addGroup: '',
-      fixedSessions: '',
-      simpleSessions: '',
-      modules: '',
+      componentLoaded: false,
+      fixedSessions: JSON.parse(this.fixed),
+      simpleSessions: JSON.parse(this.simple),
+      modules: JSON.parse(this.module),
       filters: {
         sessionsType: [],
         checkedGroups: []
@@ -2253,8 +2253,6 @@ __webpack_require__.r(__webpack_exports__);
           return element.groupId === el.group_id;
         });
 
-        console.log(module);
-
         if (diffDay <= 6 && diffDay >= 0) {
           _this.sessions.data[diffDay][diffTime].groupId = el.group_id;
           _this.sessions.data[diffDay][diffTime].type = el.type;
@@ -2288,9 +2286,41 @@ __webpack_require__.r(__webpack_exports__);
     this.simpleSessions = this.$store.getters.simpleSessions;
     this.$store.commit('initModules', this.module);
     this.modules = this.$store.getters.modules;
-    console.log(this.modules[0].module);
     this.showFixedSessions();
     this.showSimpleSessions();
+    this.componentLoaded = true;
+  },
+  computed: {
+    filterSessions: function filterSessions() {
+      var data = [];
+
+      if (this.componentLoaded) {
+        console.log('original', this.sessions.data);
+        this.sessions.data.forEach(function (el) {
+          var dayData = [];
+          el.forEach(function (element) {
+            if (element.type === 'fixed') {
+              dayData.push(element);
+            } else {
+              dayData.push({});
+            }
+          });
+          data.push(dayData);
+        });
+        return data;
+      } // this.sessions.data.forEach(el =>{
+      // console.log(el[2]);
+      // })
+      // this.sessions.data.forEach(el =>{
+      //     const dayData = [];
+      //     el.forEach((element,index) =>{
+      //         if( element.type && element.type === 'fixed'){
+      //             console.log(element)
+      //         }
+      //     })
+      // })
+
+    }
   }
 });
 
@@ -38884,7 +38914,7 @@ var render = function() {
               [
                 _c("div", { staticClass: "cell day" }, [_vm._v(_vm._s(day))]),
                 _vm._v(" "),
-                _vm._l(_vm.sessions.data[index], function(cell, ind) {
+                _vm._l(_vm.filterSessions[index], function(cell, ind) {
                   return _c(
                     "div",
                     {
@@ -52661,7 +52691,8 @@ var store = new vuex__WEBPACK_IMPORTED_MODULE_1__["default"].Store({
     addGroupOpen: false,
     fixed: '',
     simple: '',
-    modules: ''
+    modules: '',
+    data: ''
   },
   mutations: {
     changeState: function changeState(state, target) {

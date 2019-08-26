@@ -14,6 +14,7 @@ export const store = new Vuex.Store ({
         fixed:'',
         simple:'',
         modules:'',
+        data:'',
         
     },
     mutations:{
@@ -32,7 +33,11 @@ export const store = new Vuex.Store ({
         
         initModules(state,data){
             state.modules = JSON.parse(data);
-        }
+        },
+
+        
+
+
 
     },
     getters:{
@@ -47,6 +52,8 @@ export const store = new Vuex.Store ({
 
 
 
-    }
+    },
+
+    
 
 })
