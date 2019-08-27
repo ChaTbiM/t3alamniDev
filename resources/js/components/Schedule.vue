@@ -6,12 +6,21 @@
             <div class="left__calender"></div>
             <div class="left__add__fix"> add fix session </div>
             <div class="left__add__simple"> add simple session </div>
+           
             <label for="fix"> all fix sessions
                 <input type="checkbox" name="fix" id="fix" value="fixed" v-model="filters.sessionsType">    
             </label>
 
            <label for="simple"> all simple sessions
                 <input type="checkbox" name="simple" id="simple" value="simple" v-model="filters.sessionsType" >    
+            </label>
+            <br>
+            <label for="simple"> Groupe 1
+                <input type="checkbox" name="group1" id="group1" value="1" v-model="filters.checkedGroups" >    
+            </label>
+
+            <label for="simple"> Groupe 2
+                <input type="checkbox" name="group2" id="group2" value="2" v-model="filters.checkedGroups" >    
             </label>
                 
         </div>
@@ -44,6 +53,7 @@
             <div class="column" v-for="(day,index) in days" v-bind:key="index" >
                 <div class="cell day">{{day}}</div>
                 <div class="cell block" @click="showAddSessions"  v-for="(cell,ind) in filterSessions[index]" v-bind:key="ind" > 
+                
                      <span v-if="cell.type === 'fixed'"> groupe {{cell.groupId}} {{cell.module}} </span>
                      <span v-if="cell.type == 'simple'"> {{cell.subject}} </span> 
 
@@ -238,14 +248,6 @@ import { setTimeout } from 'timers';
                         top = e.target.offsetTop;
                     }
                 
-                
-                // console.log(e.target.getBoundingClientRect().x);
-
-                
-                // let top = e.target.getBoundingClientRect().x;
-                // let left = e.target.getBoundingClientRect().y ;
-                
-
                 let model = document.getElementById('model');
                 
                 model.style.top = `${top}px`;
@@ -348,41 +350,57 @@ import { setTimeout } from 'timers';
             filterSessions : function(){
             const data = [];
                 if(this.componentLoaded){
-            console.log('original' , this.sessions.data)
-                    this.sessions.data.forEach(el => {
                     
-                        const dayData = [];
-                        el.forEach(element => {
-                            if(element.type === 'fixed'){
-                                dayData.push(element);
-                            }else {
-                                dayData.push({});
-                            }
+                    let fixedType = this.filters.sessionsType.find(el =>  el === 'fixed');
+                    let simpleType = this.filters.sessionsType.find(el =>  el === 'simple');
+                    
+                    const groups = Object.assign([],this.filters.checkedGroups);
+                    // const groups = JSON.parse(JSON.stringify(this.filters.checkedGroups));  
+                    
+                    this.sessions.data.forEach((el,i) => {
+                            const dayData = [];
+                            el.forEach((element,j) => {
+                                if((element.type === fixedType  ) || element.type === simpleType ){
+                                    dayData.push(element);
+                                                                        
+                                }else {
+                                    dayData.push({});
+                                }
+                            })
                             
-                        })
-                        data.push(dayData);
-                    });
+                             
+                            data.push(dayData);
+                        });
+
                     
-                    return data;
+                    if(groups.length !== 0){
+                        data.forEach((day,i)=>{
+                            day.forEach((element,j)=>{
+                                groups.forEach((gr,k)=>{
+                                    if(this.sessions.data[i][j].groupId == gr){
+                                        data[i][j] = this.sessions.data[i][j];
+                                    }
+                                })
+                            })
+                        })
+
+
+                    }
+                    console.log(this.filters.checkedGroups.length);
+                    
+                if(this.filters.sessionsType.length || this.filters.checkedGroups.length){
+                    return data
+                    } else {
+                    return this.sessions.data;
                 }
 
-                
-            // this.sessions.data.forEach(el =>{
-                // console.log(el[2]);
-            // })
-                // this.sessions.data.forEach(el =>{
-                //     const dayData = [];
-                //     el.forEach((element,index) =>{
-                //         if( element.type && element.type === 'fixed'){
-                //             console.log(element)
-                //         }
-                //     })
-                // })
+
+                }
+            
+                return this.sessions.data;
+            },
 
 
-                
-         
-            }
         }
     }
 

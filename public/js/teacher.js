@@ -2102,6 +2102,16 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
 /* harmony default export */ __webpack_exports__["default"] = ({
   name: 'schedule',
@@ -2222,10 +2232,7 @@ __webpack_require__.r(__webpack_exports__);
         top = e.target.offsetTop - 50;
       } else {
         top = e.target.offsetTop;
-      } // console.log(e.target.getBoundingClientRect().x);
-      // let top = e.target.getBoundingClientRect().x;
-      // let left = e.target.getBoundingClientRect().y ;
-
+      }
 
       var model = document.getElementById('model');
       model.style.top = "".concat(top, "px");
@@ -2292,14 +2299,23 @@ __webpack_require__.r(__webpack_exports__);
   },
   computed: {
     filterSessions: function filterSessions() {
+      var _this3 = this;
+
       var data = [];
 
       if (this.componentLoaded) {
-        console.log('original', this.sessions.data);
-        this.sessions.data.forEach(function (el) {
+        var fixedType = this.filters.sessionsType.find(function (el) {
+          return el === 'fixed';
+        });
+        var simpleType = this.filters.sessionsType.find(function (el) {
+          return el === 'simple';
+        });
+        var groups = Object.assign([], this.filters.checkedGroups); // const groups = JSON.parse(JSON.stringify(this.filters.checkedGroups));  
+
+        this.sessions.data.forEach(function (el, i) {
           var dayData = [];
-          el.forEach(function (element) {
-            if (element.type === 'fixed') {
+          el.forEach(function (element, j) {
+            if (element.type === fixedType || element.type === simpleType) {
               dayData.push(element);
             } else {
               dayData.push({});
@@ -2307,19 +2323,29 @@ __webpack_require__.r(__webpack_exports__);
           });
           data.push(dayData);
         });
-        return data;
-      } // this.sessions.data.forEach(el =>{
-      // console.log(el[2]);
-      // })
-      // this.sessions.data.forEach(el =>{
-      //     const dayData = [];
-      //     el.forEach((element,index) =>{
-      //         if( element.type && element.type === 'fixed'){
-      //             console.log(element)
-      //         }
-      //     })
-      // })
 
+        if (groups.length !== 0) {
+          data.forEach(function (day, i) {
+            day.forEach(function (element, j) {
+              groups.forEach(function (gr, k) {
+                if (_this3.sessions.data[i][j].groupId == gr) {
+                  data[i][j] = _this3.sessions.data[i][j];
+                }
+              });
+            });
+          });
+        }
+
+        console.log(this.filters.checkedGroups.length);
+
+        if (this.filters.sessionsType.length || this.filters.checkedGroups.length) {
+          return data;
+        } else {
+          return this.sessions.data;
+        }
+      }
+
+      return this.sessions.data;
     }
   }
 });
@@ -38866,6 +38892,96 @@ var render = function() {
                 }
               } else {
                 _vm.$set(_vm.filters, "sessionsType", $$c)
+              }
+            }
+          }
+        })
+      ]),
+      _vm._v(" "),
+      _c("br"),
+      _vm._v(" "),
+      _c("label", { attrs: { for: "simple" } }, [
+        _vm._v(" Groupe 1\n            "),
+        _c("input", {
+          directives: [
+            {
+              name: "model",
+              rawName: "v-model",
+              value: _vm.filters.checkedGroups,
+              expression: "filters.checkedGroups"
+            }
+          ],
+          attrs: { type: "checkbox", name: "group1", id: "group1", value: "1" },
+          domProps: {
+            checked: Array.isArray(_vm.filters.checkedGroups)
+              ? _vm._i(_vm.filters.checkedGroups, "1") > -1
+              : _vm.filters.checkedGroups
+          },
+          on: {
+            change: function($event) {
+              var $$a = _vm.filters.checkedGroups,
+                $$el = $event.target,
+                $$c = $$el.checked ? true : false
+              if (Array.isArray($$a)) {
+                var $$v = "1",
+                  $$i = _vm._i($$a, $$v)
+                if ($$el.checked) {
+                  $$i < 0 &&
+                    _vm.$set(_vm.filters, "checkedGroups", $$a.concat([$$v]))
+                } else {
+                  $$i > -1 &&
+                    _vm.$set(
+                      _vm.filters,
+                      "checkedGroups",
+                      $$a.slice(0, $$i).concat($$a.slice($$i + 1))
+                    )
+                }
+              } else {
+                _vm.$set(_vm.filters, "checkedGroups", $$c)
+              }
+            }
+          }
+        })
+      ]),
+      _vm._v(" "),
+      _c("label", { attrs: { for: "simple" } }, [
+        _vm._v(" Groupe 2\n            "),
+        _c("input", {
+          directives: [
+            {
+              name: "model",
+              rawName: "v-model",
+              value: _vm.filters.checkedGroups,
+              expression: "filters.checkedGroups"
+            }
+          ],
+          attrs: { type: "checkbox", name: "group2", id: "group2", value: "2" },
+          domProps: {
+            checked: Array.isArray(_vm.filters.checkedGroups)
+              ? _vm._i(_vm.filters.checkedGroups, "2") > -1
+              : _vm.filters.checkedGroups
+          },
+          on: {
+            change: function($event) {
+              var $$a = _vm.filters.checkedGroups,
+                $$el = $event.target,
+                $$c = $$el.checked ? true : false
+              if (Array.isArray($$a)) {
+                var $$v = "2",
+                  $$i = _vm._i($$a, $$v)
+                if ($$el.checked) {
+                  $$i < 0 &&
+                    _vm.$set(_vm.filters, "checkedGroups", $$a.concat([$$v]))
+                } else {
+                  $$i > -1 &&
+                    _vm.$set(
+                      _vm.filters,
+                      "checkedGroups",
+                      $$a.slice(0, $$i).concat($$a.slice($$i + 1))
+                    )
+                }
+              } else {
+                _vm.$set(_vm.filters, "checkedGroups", $$c)
               }
             }
           }
