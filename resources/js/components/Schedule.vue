@@ -15,14 +15,11 @@
                 <input type="checkbox" name="simple" id="simple" value="simple" v-model="filters.sessionsType" >    
             </label>
             <br>
-            <label for="simple"> Groupe 1
-                <input type="checkbox" name="group1" id="group1" value="1" v-model="filters.checkedGroups" >    
+            
+            <label v-for="(module,index) in modules" v-bind:key="index" :for="`group${index+1}`">
+                group {{index+1}}
+                <input type="checkbox" :name="`group${index+1}`" :id="`group${index+1}`" :value="index+1" v-model="filters.checkedGroups" >
             </label>
-
-            <label for="simple"> Groupe 2
-                <input type="checkbox" name="group2" id="group2" value="2" v-model="filters.checkedGroups" >    
-            </label>
-                
         </div>
 
 
@@ -344,6 +341,8 @@ import { setTimeout } from 'timers';
 
          
             this.componentLoaded = true;
+
+            console.log(this.modules);
         },
 
         computed : {

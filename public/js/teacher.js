@@ -2109,9 +2109,6 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
-//
-//
-//
 
 /* harmony default export */ __webpack_exports__["default"] = ({
   name: 'schedule',
@@ -2296,6 +2293,7 @@ __webpack_require__.r(__webpack_exports__);
     this.showFixedSessions();
     this.showSimpleSessions();
     this.componentLoaded = true;
+    console.log(this.modules);
   },
   computed: {
     filterSessions: function filterSessions() {
@@ -38794,200 +38792,178 @@ var render = function() {
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
   return _c("div", { staticClass: "container" }, [
-    _c("div", { staticClass: "left" }, [
-      _c("div", { staticClass: "left__calender" }),
-      _vm._v(" "),
-      _c("div", { staticClass: "left__add__fix" }, [
-        _vm._v(" add fix session ")
-      ]),
-      _vm._v(" "),
-      _c("div", { staticClass: "left__add__simple" }, [
-        _vm._v(" add simple session ")
-      ]),
-      _vm._v(" "),
-      _c("label", { attrs: { for: "fix" } }, [
-        _vm._v(" all fix sessions\n            "),
-        _c("input", {
-          directives: [
-            {
-              name: "model",
-              rawName: "v-model",
-              value: _vm.filters.sessionsType,
-              expression: "filters.sessionsType"
-            }
-          ],
-          attrs: { type: "checkbox", name: "fix", id: "fix", value: "fixed" },
-          domProps: {
-            checked: Array.isArray(_vm.filters.sessionsType)
-              ? _vm._i(_vm.filters.sessionsType, "fixed") > -1
-              : _vm.filters.sessionsType
-          },
-          on: {
-            change: function($event) {
-              var $$a = _vm.filters.sessionsType,
-                $$el = $event.target,
-                $$c = $$el.checked ? true : false
-              if (Array.isArray($$a)) {
-                var $$v = "fixed",
-                  $$i = _vm._i($$a, $$v)
-                if ($$el.checked) {
-                  $$i < 0 &&
-                    _vm.$set(_vm.filters, "sessionsType", $$a.concat([$$v]))
+    _c(
+      "div",
+      { staticClass: "left" },
+      [
+        _c("div", { staticClass: "left__calender" }),
+        _vm._v(" "),
+        _c("div", { staticClass: "left__add__fix" }, [
+          _vm._v(" add fix session ")
+        ]),
+        _vm._v(" "),
+        _c("div", { staticClass: "left__add__simple" }, [
+          _vm._v(" add simple session ")
+        ]),
+        _vm._v(" "),
+        _c("label", { attrs: { for: "fix" } }, [
+          _vm._v(" all fix sessions\n            "),
+          _c("input", {
+            directives: [
+              {
+                name: "model",
+                rawName: "v-model",
+                value: _vm.filters.sessionsType,
+                expression: "filters.sessionsType"
+              }
+            ],
+            attrs: { type: "checkbox", name: "fix", id: "fix", value: "fixed" },
+            domProps: {
+              checked: Array.isArray(_vm.filters.sessionsType)
+                ? _vm._i(_vm.filters.sessionsType, "fixed") > -1
+                : _vm.filters.sessionsType
+            },
+            on: {
+              change: function($event) {
+                var $$a = _vm.filters.sessionsType,
+                  $$el = $event.target,
+                  $$c = $$el.checked ? true : false
+                if (Array.isArray($$a)) {
+                  var $$v = "fixed",
+                    $$i = _vm._i($$a, $$v)
+                  if ($$el.checked) {
+                    $$i < 0 &&
+                      _vm.$set(_vm.filters, "sessionsType", $$a.concat([$$v]))
+                  } else {
+                    $$i > -1 &&
+                      _vm.$set(
+                        _vm.filters,
+                        "sessionsType",
+                        $$a.slice(0, $$i).concat($$a.slice($$i + 1))
+                      )
+                  }
                 } else {
-                  $$i > -1 &&
-                    _vm.$set(
-                      _vm.filters,
-                      "sessionsType",
-                      $$a.slice(0, $$i).concat($$a.slice($$i + 1))
-                    )
+                  _vm.$set(_vm.filters, "sessionsType", $$c)
                 }
-              } else {
-                _vm.$set(_vm.filters, "sessionsType", $$c)
               }
             }
-          }
-        })
-      ]),
-      _vm._v(" "),
-      _c("label", { attrs: { for: "simple" } }, [
-        _vm._v(" all simple sessions\n            "),
-        _c("input", {
-          directives: [
-            {
-              name: "model",
-              rawName: "v-model",
-              value: _vm.filters.sessionsType,
-              expression: "filters.sessionsType"
-            }
-          ],
-          attrs: {
-            type: "checkbox",
-            name: "simple",
-            id: "simple",
-            value: "simple"
-          },
-          domProps: {
-            checked: Array.isArray(_vm.filters.sessionsType)
-              ? _vm._i(_vm.filters.sessionsType, "simple") > -1
-              : _vm.filters.sessionsType
-          },
-          on: {
-            change: function($event) {
-              var $$a = _vm.filters.sessionsType,
-                $$el = $event.target,
-                $$c = $$el.checked ? true : false
-              if (Array.isArray($$a)) {
-                var $$v = "simple",
-                  $$i = _vm._i($$a, $$v)
-                if ($$el.checked) {
-                  $$i < 0 &&
-                    _vm.$set(_vm.filters, "sessionsType", $$a.concat([$$v]))
+          })
+        ]),
+        _vm._v(" "),
+        _c("label", { attrs: { for: "simple" } }, [
+          _vm._v(" all simple sessions\n            "),
+          _c("input", {
+            directives: [
+              {
+                name: "model",
+                rawName: "v-model",
+                value: _vm.filters.sessionsType,
+                expression: "filters.sessionsType"
+              }
+            ],
+            attrs: {
+              type: "checkbox",
+              name: "simple",
+              id: "simple",
+              value: "simple"
+            },
+            domProps: {
+              checked: Array.isArray(_vm.filters.sessionsType)
+                ? _vm._i(_vm.filters.sessionsType, "simple") > -1
+                : _vm.filters.sessionsType
+            },
+            on: {
+              change: function($event) {
+                var $$a = _vm.filters.sessionsType,
+                  $$el = $event.target,
+                  $$c = $$el.checked ? true : false
+                if (Array.isArray($$a)) {
+                  var $$v = "simple",
+                    $$i = _vm._i($$a, $$v)
+                  if ($$el.checked) {
+                    $$i < 0 &&
+                      _vm.$set(_vm.filters, "sessionsType", $$a.concat([$$v]))
+                  } else {
+                    $$i > -1 &&
+                      _vm.$set(
+                        _vm.filters,
+                        "sessionsType",
+                        $$a.slice(0, $$i).concat($$a.slice($$i + 1))
+                      )
+                  }
                 } else {
-                  $$i > -1 &&
-                    _vm.$set(
-                      _vm.filters,
-                      "sessionsType",
-                      $$a.slice(0, $$i).concat($$a.slice($$i + 1))
-                    )
+                  _vm.$set(_vm.filters, "sessionsType", $$c)
                 }
-              } else {
-                _vm.$set(_vm.filters, "sessionsType", $$c)
               }
             }
-          }
-        })
-      ]),
-      _vm._v(" "),
-      _c("br"),
-      _vm._v(" "),
-      _c("label", { attrs: { for: "simple" } }, [
-        _vm._v(" Groupe 1\n            "),
-        _c("input", {
-          directives: [
-            {
-              name: "model",
-              rawName: "v-model",
-              value: _vm.filters.checkedGroups,
-              expression: "filters.checkedGroups"
-            }
-          ],
-          attrs: { type: "checkbox", name: "group1", id: "group1", value: "1" },
-          domProps: {
-            checked: Array.isArray(_vm.filters.checkedGroups)
-              ? _vm._i(_vm.filters.checkedGroups, "1") > -1
-              : _vm.filters.checkedGroups
-          },
-          on: {
-            change: function($event) {
-              var $$a = _vm.filters.checkedGroups,
-                $$el = $event.target,
-                $$c = $$el.checked ? true : false
-              if (Array.isArray($$a)) {
-                var $$v = "1",
-                  $$i = _vm._i($$a, $$v)
-                if ($$el.checked) {
-                  $$i < 0 &&
-                    _vm.$set(_vm.filters, "checkedGroups", $$a.concat([$$v]))
-                } else {
-                  $$i > -1 &&
-                    _vm.$set(
-                      _vm.filters,
-                      "checkedGroups",
-                      $$a.slice(0, $$i).concat($$a.slice($$i + 1))
-                    )
+          })
+        ]),
+        _vm._v(" "),
+        _c("br"),
+        _vm._v(" "),
+        _vm._l(_vm.modules, function(module, index) {
+          return _c(
+            "label",
+            { key: index, attrs: { for: "group" + (index + 1) } },
+            [
+              _vm._v(
+                "\n            group " + _vm._s(index + 1) + "\n            "
+              ),
+              _c("input", {
+                directives: [
+                  {
+                    name: "model",
+                    rawName: "v-model",
+                    value: _vm.filters.checkedGroups,
+                    expression: "filters.checkedGroups"
+                  }
+                ],
+                attrs: {
+                  type: "checkbox",
+                  name: "group" + (index + 1),
+                  id: "group" + (index + 1)
+                },
+                domProps: {
+                  value: index + 1,
+                  checked: Array.isArray(_vm.filters.checkedGroups)
+                    ? _vm._i(_vm.filters.checkedGroups, index + 1) > -1
+                    : _vm.filters.checkedGroups
+                },
+                on: {
+                  change: function($event) {
+                    var $$a = _vm.filters.checkedGroups,
+                      $$el = $event.target,
+                      $$c = $$el.checked ? true : false
+                    if (Array.isArray($$a)) {
+                      var $$v = index + 1,
+                        $$i = _vm._i($$a, $$v)
+                      if ($$el.checked) {
+                        $$i < 0 &&
+                          _vm.$set(
+                            _vm.filters,
+                            "checkedGroups",
+                            $$a.concat([$$v])
+                          )
+                      } else {
+                        $$i > -1 &&
+                          _vm.$set(
+                            _vm.filters,
+                            "checkedGroups",
+                            $$a.slice(0, $$i).concat($$a.slice($$i + 1))
+                          )
+                      }
+                    } else {
+                      _vm.$set(_vm.filters, "checkedGroups", $$c)
+                    }
+                  }
                 }
-              } else {
-                _vm.$set(_vm.filters, "checkedGroups", $$c)
-              }
-            }
-          }
+              })
+            ]
+          )
         })
-      ]),
-      _vm._v(" "),
-      _c("label", { attrs: { for: "simple" } }, [
-        _vm._v(" Groupe 2\n            "),
-        _c("input", {
-          directives: [
-            {
-              name: "model",
-              rawName: "v-model",
-              value: _vm.filters.checkedGroups,
-              expression: "filters.checkedGroups"
-            }
-          ],
-          attrs: { type: "checkbox", name: "group2", id: "group2", value: "2" },
-          domProps: {
-            checked: Array.isArray(_vm.filters.checkedGroups)
-              ? _vm._i(_vm.filters.checkedGroups, "2") > -1
-              : _vm.filters.checkedGroups
-          },
-          on: {
-            change: function($event) {
-              var $$a = _vm.filters.checkedGroups,
-                $$el = $event.target,
-                $$c = $$el.checked ? true : false
-              if (Array.isArray($$a)) {
-                var $$v = "2",
-                  $$i = _vm._i($$a, $$v)
-                if ($$el.checked) {
-                  $$i < 0 &&
-                    _vm.$set(_vm.filters, "checkedGroups", $$a.concat([$$v]))
-                } else {
-                  $$i > -1 &&
-                    _vm.$set(
-                      _vm.filters,
-                      "checkedGroups",
-                      $$a.slice(0, $$i).concat($$a.slice($$i + 1))
-                    )
-                }
-              } else {
-                _vm.$set(_vm.filters, "checkedGroups", $$c)
-              }
-            }
-          }
-        })
-      ])
-    ]),
+      ],
+      2
+    ),
     _vm._v(" "),
     _c("div", { staticClass: "schedule" }, [
       _c("div", [_vm._v(" " + _vm._s(_vm.addSessionsOpen) + " ")]),
