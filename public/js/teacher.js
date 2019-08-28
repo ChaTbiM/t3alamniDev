@@ -2107,8 +2107,6 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
-//
-//
 
 /* harmony default export */ __webpack_exports__["default"] = ({
   name: 'schedule',
@@ -6864,7 +6862,7 @@ exports = module.exports = __webpack_require__(/*! ../../../node_modules/css-loa
 
 
 // module
-exports.push([module.i, "\n.container[data-v-5f748482] {\r\n    display: flex;\n}\n.left[data-v-5f748482] {\n}\n.schedule[data-v-5f748482]{\r\n    /* flex-basis:72%;\r\n    height: 400px;\r\n    overflow-y: scroll;\r\n    margin: 0 auto;\r\n    min-width: 950px; */\n}\n.schedule__header[data-v-5f748482]{\r\n    display: flex;\r\n    justify-content: flex-start;\r\n    align-items: center;\n}\n.prevWeek[data-v-5f748482],\r\n.nextWeek[data-v-5f748482] {\r\n    margin-right: 1rem;\n}\n.line[data-v-5f748482] {\r\n    font-size: 5px;\n}\n.calender[data-v-5f748482] {\r\n    display: flex;\r\n    flex-direction: row;\r\n    flex-wrap: wrap;\r\n    font-weight: bold;\r\n\r\n    flex-basis:72%;\r\n    height: 400px;\r\n    overflow-y: scroll;\r\n    /* margin: 0 auto; */\r\n    min-width: 950px;\r\n\r\n\r\n    /* for position .offsetTop*/\r\n    position: relative;\n}\n.hour[data-v-5f748482], \r\n.cell[data-v-5f748482] {\r\n    margin: 1rem;\n}\n.cell[data-v-5f748482],\r\n.hour[data-v-5f748482] {\r\n    display: block;\r\n    width: 85px;\r\n    height:50px;\n}\n.block[data-v-5f748482] {\r\n    background-color: #C4C4C4;\n}\r\n\r\n/* Model  */\n#model[data-v-5f748482] {\r\n    position: absolute;\r\n    background-color:gray;\r\n    text-align: center;\r\n    background-color:  rgba(243, 242, 235, 0.74);\n}\n.model__close[data-v-5f748482] {\r\n    text-align: right;\r\n    position: absolute;\r\n    bottom: 100%;\r\n    color: black;\r\n    background-color:  rgba(243, 242, 235, 1);\r\n    border-top-left-radius: 100px;\r\n    border-top-right-radius: 100px;\r\n    padding: 5px;\r\n    /* z-index: -1; */\r\n    /* display: inline-block;\r\n    width: 100%;\r\n    text-align: right; */\n}\n.btn[data-v-5f748482] {\r\n    padding: 1rem;\n}\r\n\r\n\r\n\r\n\r\n", ""]);
+exports.push([module.i, "\n.container[data-v-5f748482] {\r\n    display: flex;\n}\n.left[data-v-5f748482] {\r\n    flex-basis:25%;\n}\n.schedule[data-v-5f748482]{\r\n    /* flex-basis:72%;\r\n    height: 400px;\r\n    overflow-y: scroll;\r\n    margin: 0 auto;\r\n    min-width: 950px; */\r\n    flex-basis:75%;\r\n    margin-top: 1rem;\n}\n.schedule__header[data-v-5f748482]{\r\n    display: flex;\r\n    justify-content: flex-start;\r\n    align-items: center;\n}\n.prevWeek[data-v-5f748482],\r\n.nextWeek[data-v-5f748482] {\r\n    margin-right: 1rem;\n}\n.line[data-v-5f748482] {\r\n    font-size: 5px;\n}\n.calender[data-v-5f748482] {\r\n    display: flex;\r\n    flex-direction: row;\r\n    flex-wrap: wrap;\r\n    font-weight: bold;\r\n\r\n    flex-basis:72%;\r\n    height: 400px;\r\n    overflow-y: scroll;\r\n    /* margin: 0 auto; */\r\n    min-width: 950px;\r\n\r\n\r\n    /* for position .offsetTop*/\r\n    position: relative;\n}\n.hour[data-v-5f748482], \r\n.cell[data-v-5f748482] {\r\n    margin: 1rem;\n}\n.cell[data-v-5f748482],\r\n.hour[data-v-5f748482] {\r\n    display: block;\r\n    width: 85px;\r\n    height:50px;\n}\n.block[data-v-5f748482] {\r\n    background-color: #C4C4C4;\n}\r\n\r\n/* Model  */\n#model[data-v-5f748482] {\r\n    position: absolute;\r\n    background-color:gray;\r\n    text-align: center;\r\n    background-color:  rgba(243, 242, 235, 0.74);\n}\n.model__close[data-v-5f748482] {\r\n    text-align: right;\r\n    position: absolute;\r\n    bottom: 100%;\r\n    color: black;\r\n    background-color:  rgba(243, 242, 235, 1);\r\n    border-top-left-radius: 100px;\r\n    border-top-right-radius: 100px;\r\n    padding: 5px;\r\n    /* z-index: -1; */\r\n    /* display: inline-block;\r\n    width: 100%;\r\n    text-align: right; */\n}\n.btn[data-v-5f748482] {\r\n    padding: 1rem;\n}\r\n\r\n\r\n\r\n\r\n", ""]);
 
 // exports
 
@@ -38966,8 +38964,6 @@ var render = function() {
     ),
     _vm._v(" "),
     _c("div", { staticClass: "schedule" }, [
-      _c("div", [_vm._v(" " + _vm._s(_vm.addSessionsOpen) + " ")]),
-      _vm._v(" "),
       _c("div", { staticClass: "schedule__header" }, [
         _c("div", { staticClass: "prevWeek" }, [_vm._v("previous")]),
         _vm._v(" "),

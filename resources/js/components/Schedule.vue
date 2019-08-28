@@ -28,7 +28,6 @@
     
    
     <div class="schedule" >
-         <div> {{addSessionsOpen}} </div>
         <div class="schedule__header">
             <div class="prevWeek" >previous</div>
             <div class="nextWeek" > next </div>
@@ -40,7 +39,6 @@
         
         
         <div class="calender">
-            
             <div class="column">
                 <div class="cell Hour">Hours</div> 
                 <div class="hour" v-for="(cell, index) in sessions.time" v-bind:key="index"  > {{cell}} </div>
@@ -414,7 +412,7 @@ import { setTimeout } from 'timers';
 }
 
 .left {
-    
+    flex-basis:25%;
 }
 
 .schedule{
@@ -423,6 +421,8 @@ import { setTimeout } from 'timers';
     overflow-y: scroll;
     margin: 0 auto;
     min-width: 950px; */
+    flex-basis:75%;
+    margin-top: 1rem;
 }
 .schedule__header{
     display: flex;
