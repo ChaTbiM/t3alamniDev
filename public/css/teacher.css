@@ -138,7 +138,7 @@ table {
 /* navigation */
 
 html {
-  font-family: Roboto;
+  font-family: Roboto, "Helvetica Neue", "sans-serif";
   -webkit-font-smoothing: antialiased;
 }
 
@@ -163,7 +163,7 @@ svg {
   font-size: 1.25rem;
   line-height: 1.4;
   height: 100%;
-  background-color: #FFFFFF;
+  background-color: #ffffff;
 }
 
 .nav__top {
@@ -206,7 +206,7 @@ svg {
   -webkit-text-decoration-style: solid;
           text-decoration-style: solid;
   text-rendering: optimizeLegibility;
-  color: #6F757B;
+  color: #6f757b;
   padding: 0.45rem 0;
 }
 
@@ -216,13 +216,13 @@ svg {
 }
 
 .messages {
-  border-left: solid 1px #E2E4E7;
+  border-left: solid 1px #e2e4e7;
   padding: 0.45rem 0 0.45rem 1.7rem;
 }
 
 .logo {
   padding-right: 1.7rem;
-  border-right: solid 1px #E2E4E7;
+  border-right: solid 1px #e2e4e7;
 }
 
 .top__link {
@@ -253,7 +253,7 @@ svg {
 }
 
 .bottom__link:hover {
-  color: #FFFFFF;
+  color: #ffffff;
   border-bottom: solid 1px white;
   padding-bottom: 0.2rem;
   transition: color 0.2s ease 0s, border 0.2s ease 0s;
