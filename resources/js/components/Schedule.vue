@@ -70,9 +70,12 @@
           <div
             class="cell block"
             @click="showAddSessions"
-            @mousedown="logIt($event, index, ind)"
+            @mousedown="stepOne($event, index, ind)"
+            @mouseenter="stepTwo($event, index, ind)"
+            @mouseup="stepThree($event, index, ind)"
             v-for="(cell, ind) in filterSessions[index]"
             v-bind:key="ind"
+            :style="{backgroundColor:cell.backgroundColor}"
           >
             <span v-if="cell.type === 'fixed'">groupe {{ cell.groupId }} {{ cell.module }}</span>
             <span v-if="cell.type == 'simple'">
@@ -105,35 +108,6 @@ export default {
   props: ["fixed", "simple", "module"],
   data() {
     return {
-      sessions2: {
-        time: [
-          "07:00",
-          "    08:00",
-          "09:00",
-          "10:00",
-          "11:00",
-          "12:00",
-          "13:00",
-          "14:00",
-          "15:00",
-          "16:00",
-          "17:00",
-          "18:00",
-          "19:00",
-          "20:00",
-          "21:00",
-          "22:00"
-        ],
-        data: [
-          [{}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}],
-          [{}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}],
-          [{}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}],
-          [{}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}],
-          [{}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}],
-          [{}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}],
-          [{}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}]
-        ]
-      },
       sessions: {
         time: [
           "07:00",
@@ -154,13 +128,132 @@ export default {
           "22:00"
         ],
         data: [
-          [{}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}],
-          [{}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}],
-          [{}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}],
-          [{}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}],
-          [{}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}],
-          [{}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}],
-          [{}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}]
+          [
+            { backgroundColor: "rgb(218, 223, 225)" },
+            { backgroundColor: "rgb(218, 223, 225)" },
+            { backgroundColor: "rgb(218, 223, 225)" },
+            { backgroundColor: "rgb(218, 223, 225)" },
+            { backgroundColor: "rgb(218, 223, 225)" },
+            { backgroundColor: "rgb(218, 223, 225)" },
+            { backgroundColor: "rgb(218, 223, 225)" },
+            { backgroundColor: "rgb(218, 223, 225)" },
+            { backgroundColor: "rgb(218, 223, 225)" },
+            { backgroundColor: "rgb(218, 223, 225)" },
+            { backgroundColor: "rgb(218, 223, 225)" },
+            { backgroundColor: "rgb(218, 223, 225)" },
+            { backgroundColor: "rgb(218, 223, 225)" },
+            { backgroundColor: "rgb(218, 223, 225)" },
+            { backgroundColor: "rgb(218, 223, 225)" },
+            { backgroundColor: "rgb(218, 223, 225)" }
+          ],
+          [
+            { backgroundColor: "rgb(218, 223, 225)" },
+            { backgroundColor: "rgb(218, 223, 225)" },
+            { backgroundColor: "rgb(218, 223, 225)" },
+            { backgroundColor: "rgb(218, 223, 225)" },
+            { backgroundColor: "rgb(218, 223, 225)" },
+            { backgroundColor: "rgb(218, 223, 225)" },
+            { backgroundColor: "rgb(218, 223, 225)" },
+            { backgroundColor: "rgb(218, 223, 225)" },
+            { backgroundColor: "rgb(218, 223, 225)" },
+            { backgroundColor: "rgb(218, 223, 225)" },
+            { backgroundColor: "rgb(218, 223, 225)" },
+            { backgroundColor: "rgb(218, 223, 225)" },
+            { backgroundColor: "rgb(218, 223, 225)" },
+            { backgroundColor: "rgb(218, 223, 225)" },
+            { backgroundColor: "rgb(218, 223, 225)" },
+            { backgroundColor: "rgb(218, 223, 225)" }
+          ],
+          [
+            { backgroundColor: "rgb(218, 223, 225)" },
+            { backgroundColor: "rgb(218, 223, 225)" },
+            { backgroundColor: "rgb(218, 223, 225)" },
+            { backgroundColor: "rgb(218, 223, 225)" },
+            { backgroundColor: "rgb(218, 223, 225)" },
+            { backgroundColor: "rgb(218, 223, 225)" },
+            { backgroundColor: "rgb(218, 223, 225)" },
+            { backgroundColor: "rgb(218, 223, 225)" },
+            { backgroundColor: "rgb(218, 223, 225)" },
+            { backgroundColor: "rgb(218, 223, 225)" },
+            { backgroundColor: "rgb(218, 223, 225)" },
+            { backgroundColor: "rgb(218, 223, 225)" },
+            { backgroundColor: "rgb(218, 223, 225)" },
+            { backgroundColor: "rgb(218, 223, 225)" },
+            { backgroundColor: "rgb(218, 223, 225)" },
+            { backgroundColor: "rgb(218, 223, 225)" }
+          ],
+          [
+            { backgroundColor: "rgb(218, 223, 225)" },
+            { backgroundColor: "rgb(218, 223, 225)" },
+            { backgroundColor: "rgb(218, 223, 225)" },
+            { backgroundColor: "rgb(218, 223, 225)" },
+            { backgroundColor: "rgb(218, 223, 225)" },
+            { backgroundColor: "rgb(218, 223, 225)" },
+            { backgroundColor: "rgb(218, 223, 225)" },
+            { backgroundColor: "rgb(218, 223, 225)" },
+            { backgroundColor: "rgb(218, 223, 225)" },
+            { backgroundColor: "rgb(218, 223, 225)" },
+            { backgroundColor: "rgb(218, 223, 225)" },
+            { backgroundColor: "rgb(218, 223, 225)" },
+            { backgroundColor: "rgb(218, 223, 225)" },
+            { backgroundColor: "rgb(218, 223, 225)" },
+            { backgroundColor: "rgb(218, 223, 225)" },
+            { backgroundColor: "rgb(218, 223, 225)" }
+          ],
+          [
+            { backgroundColor: "rgb(218, 223, 225)" },
+            { backgroundColor: "rgb(218, 223, 225)" },
+            { backgroundColor: "rgb(218, 223, 225)" },
+            { backgroundColor: "rgb(218, 223, 225)" },
+            { backgroundColor: "rgb(218, 223, 225)" },
+            { backgroundColor: "rgb(218, 223, 225)" },
+            { backgroundColor: "rgb(218, 223, 225)" },
+            { backgroundColor: "rgb(218, 223, 225)" },
+            { backgroundColor: "rgb(218, 223, 225)" },
+            { backgroundColor: "rgb(218, 223, 225)" },
+            { backgroundColor: "rgb(218, 223, 225)" },
+            { backgroundColor: "rgb(218, 223, 225)" },
+            { backgroundColor: "rgb(218, 223, 225)" },
+            { backgroundColor: "rgb(218, 223, 225)" },
+            { backgroundColor: "rgb(218, 223, 225)" },
+            { backgroundColor: "rgb(218, 223, 225)" }
+          ],
+          [
+            { backgroundColor: "rgb(218, 223, 225)" },
+            { backgroundColor: "rgb(218, 223, 225)" },
+            { backgroundColor: "rgb(218, 223, 225)" },
+            { backgroundColor: "rgb(218, 223, 225)" },
+            { backgroundColor: "rgb(218, 223, 225)" },
+            { backgroundColor: "rgb(218, 223, 225)" },
+            { backgroundColor: "rgb(218, 223, 225)" },
+            { backgroundColor: "rgb(218, 223, 225)" },
+            { backgroundColor: "rgb(218, 223, 225)" },
+            { backgroundColor: "rgb(218, 223, 225)" },
+            { backgroundColor: "rgb(218, 223, 225)" },
+            { backgroundColor: "rgb(218, 223, 225)" },
+            { backgroundColor: "rgb(218, 223, 225)" },
+            { backgroundColor: "rgb(218, 223, 225)" },
+            { backgroundColor: "rgb(218, 223, 225)" },
+            { backgroundColor: "rgb(218, 223, 225)" }
+          ],
+          [
+            { backgroundColor: "rgb(218, 223, 225)" },
+            { backgroundColor: "rgb(218, 223, 225)" },
+            { backgroundColor: "rgb(218, 223, 225)" },
+            { backgroundColor: "rgb(218, 223, 225)" },
+            { backgroundColor: "rgb(218, 223, 225)" },
+            { backgroundColor: "rgb(218, 223, 225)" },
+            { backgroundColor: "rgb(218, 223, 225)" },
+            { backgroundColor: "rgb(218, 223, 225)" },
+            { backgroundColor: "rgb(218, 223, 225)" },
+            { backgroundColor: "rgb(218, 223, 225)" },
+            { backgroundColor: "rgb(218, 223, 225)" },
+            { backgroundColor: "rgb(218, 223, 225)" },
+            { backgroundColor: "rgb(218, 223, 225)" },
+            { backgroundColor: "rgb(218, 223, 225)" },
+            { backgroundColor: "rgb(218, 223, 225)" },
+            { backgroundColor: "rgb(218, 223, 225)" }
+          ]
         ]
       },
       days: [
@@ -226,19 +319,21 @@ export default {
     };
   },
   methods: {
-    logIt(event, index, ind) {
+    stepOne(event, index, ind) {
       event.preventDefault();
-      console.log(index, ind);
-      console.log(this.sessions.data[index][ind]);
-      // console.dir(event.target)
-      // event.target.style.backgroundColor = 'red';
-      // console.log('hovered on index', index);
-      // console.log(this.sessions.data[index][ind]);
+      this.clicked = true;
     },
-
-    log(event, index, ind) {
+    stepTwo(event, index, ind) {
       event.preventDefault();
-      console.dir(event.target);
+      if (this.clicked) {
+        console.log(event.target);
+      }
+    },
+    stepThree(event, index, ind) {
+      event.preventDefault();
+
+      this.click = false;
+      console.log("done");
     },
 
     getCurrentWeek() {
@@ -389,6 +484,7 @@ export default {
           this.sessions.data[diffDay][diffTime].groupId = el.group_id;
           this.sessions.data[diffDay][diffTime].type = el.type;
           this.sessions.data[diffDay][diffTime].module = module.module;
+          this.sessions.data[diffDay][diffTime].backgroundColor = "#2AD231";
         }
       });
     },
@@ -413,6 +509,7 @@ export default {
           }
           this.sessions.data[diffDay][diffTime].subject = el.subject;
           this.sessions.data[diffDay][diffTime].type = el.type;
+          this.sessions.data[diffDay][diffTime].backgroundColor = "#137BF4";
         }
       });
     },
@@ -420,22 +517,22 @@ export default {
     clearSessions() {
       this.sessions.data.forEach((el, index) => {
         this.$set(this.sessions.data, index, [
-          {},
-          {},
-          {},
-          {},
-          {},
-          {},
-          {},
-          {},
-          {},
-          {},
-          {},
-          {},
-          {},
-          {},
-          {},
-          {}
+          { backgroundColor: "rgb(218, 223, 225)" },
+          { backgroundColor: "rgb(218, 223, 225)" },
+          { backgroundColor: "rgb(218, 223, 225)" },
+          { backgroundColor: "rgb(218, 223, 225)" },
+          { backgroundColor: "rgb(218, 223, 225)" },
+          { backgroundColor: "rgb(218, 223, 225)" },
+          { backgroundColor: "rgb(218, 223, 225)" },
+          { backgroundColor: "rgb(218, 223, 225)" },
+          { backgroundColor: "rgb(218, 223, 225)" },
+          { backgroundColor: "rgb(218, 223, 225)" },
+          { backgroundColor: "rgb(218, 223, 225)" },
+          { backgroundColor: "rgb(218, 223, 225)" },
+          { backgroundColor: "rgb(218, 223, 225)" },
+          { backgroundColor: "rgb(218, 223, 225)" },
+          { backgroundColor: "rgb(218, 223, 225)" },
+          { backgroundColor: "rgb(218, 223, 225)" }
         ]);
       });
     }
@@ -633,9 +730,9 @@ export default {
   height: 80px;
 }
 
-.block {
+/* .block {
   background-color: rgb(218, 223, 225);
-}
+} */
 
 /* Model  */
 
