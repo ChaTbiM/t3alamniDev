@@ -343,16 +343,13 @@ export default {
         this.clicked
       ) {
         this.clicked = false;
-        // console.log(event.target.parentElement.children);
-        // console.log(event.target.previousSibling);
       }
       let last = this.targets[this.targets.length - 1];
-      console.log("last", last);
-      console.log("ind", ind);
+      // console.log(ind - this.targets[1]);
       if (
         this.targets[0] === index &&
-        event.target.style.backgroundColor === "rgb(218, 223, 225)" &&
-        (last - ind === 1 || ind - last === 1)
+        (event.target.style.backgroundColor === "rgb(218, 223, 225)" &&
+          (last - ind === 1 || ind - last === 1 || this.targets[1] - ind === 1))
       ) {
         this.clicked = true;
       }

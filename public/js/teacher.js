@@ -2410,15 +2410,12 @@ __webpack_require__.r(__webpack_exports__);
       event.preventDefault();
 
       if ((event.target.style.backgroundColor === "rgb(42, 210, 49)" || event.target.style.backgroundColor === "rgb(19, 123, 244)") && this.targets[0] === index && this.clicked) {
-        this.clicked = false; // console.log(event.target.parentElement.children);
-        // console.log(event.target.previousSibling);
+        this.clicked = false;
       }
 
-      var last = this.targets[this.targets.length - 1];
-      console.log("last", last);
-      console.log("ind", ind);
+      var last = this.targets[this.targets.length - 1]; // console.log(ind - this.targets[1]);
 
-      if (this.targets[0] === index && event.target.style.backgroundColor === "rgb(218, 223, 225)" && (last - ind === 1 || ind - last === 1)) {
+      if (this.targets[0] === index && event.target.style.backgroundColor === "rgb(218, 223, 225)" && (last - ind === 1 || ind - last === 1 || this.targets[1] - ind === 1)) {
         this.clicked = true;
       }
 
