@@ -2383,6 +2383,7 @@ __webpack_require__.r(__webpack_exports__);
       //selecting blocks
       clicked: false,
       targets: [],
+      blocked: [],
       //
       currentDay: "",
       wkStart: "",
@@ -2396,29 +2397,39 @@ __webpack_require__.r(__webpack_exports__);
     stepOne: function stepOne(event, index, ind) {
       event.preventDefault();
 
-      if (event.target.style.backgroundColor === "rgb(218, 223, 225)") {
+      if (event.target.style.backgroundColor === "rgb(218, 223, 225)" && this.targets[0] === undefined) {
         this.clicked = true;
-        event.target.style.backgroundColor = "#ADD8E6";
-        var target = [index, ind];
-        this.targets.push(target);
-        console.log("clicked");
+        event.target.style.backgroundColor = "#ADD8E6"; // let target = [index, ind];
+        // this.targets.push(target);
+
+        this.targets.push(index);
+        this.targets.push(ind);
       }
     },
     stepTwo: function stepTwo(event, index, ind) {
       event.preventDefault();
 
-      if ((event.target.style.backgroundColor === "rgb(42, 210, 49)" || event.target.style.backgroundColor === "rgb(19, 123, 244)") && this.targets[0][0] === index) {
-        this.clicked = false;
+      if ((event.target.style.backgroundColor === "rgb(42, 210, 49)" || event.target.style.backgroundColor === "rgb(19, 123, 244)") && this.targets[0] === index && this.clicked) {
+        this.clicked = false; // console.log(event.target.parentElement.children);
+        // console.log(event.target.previousSibling);
       }
 
-      if (this.clicked && this.targets[0][0] === index && event.target.style.backgroundColor === "rgb(218, 223, 225)") {
+      var last = this.targets[this.targets.length - 1];
+      console.log("last", last);
+      console.log("ind", ind);
+
+      if (this.targets[0] === index && event.target.style.backgroundColor === "rgb(218, 223, 225)" && (last - ind === 1 || ind - last === 1)) {
+        this.clicked = true;
+      }
+
+      if (this.clicked && this.targets[0] === index && event.target.style.backgroundColor === "rgb(218, 223, 225)") {
+        this.targets.push(ind);
         event.target.style.backgroundColor = "#ADD8E6";
       }
     },
     stepThree: function stepThree(event, index, ind) {
       event.preventDefault();
       this.clicked = false;
-      console.log("done");
     },
     getCurrentWeek: function getCurrentWeek() {
       var newWeek;
