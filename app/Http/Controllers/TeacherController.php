@@ -12,45 +12,44 @@ use Spatie\Permission\Models\Permission;
 
 class TeacherController extends Controller
 {
-
     public function __construct()
     {
-        $this->middleware(['auth:teacher','verifiedTeacher']);
-
+        $this->middleware(['auth:teacher', 'verifiedTeacher']);
     }
 
-    public function index(){
+    public function index()
+    {
         // if(Auth::guard('teacher')->check()){
         //    dd(Auth::user()->hasRole('full-time'));
-            
-            
 
-            $fixedSessions = json_encode(auth::user()->fixedSessions);
-            $simpleSessions = json_encode(auth::user()->simpleSessions);
-            $groups = auth::user()->groups;
+        // if (auth::user()->fixedSessions) {
+        //     dd(sizeof(auth::user()->fixedSessions));
+        // } else {
+        //     dd('he dont have');
+        // }
 
-            // dd($groups[0]->module->name);
-            $modules = [];
+        $fixedSessions = json_encode(auth::user()->fixedSessions);
+        $simpleSessions = json_encode(auth::user()->simpleSessions);
+        $groups = auth::user()->groups;
+        $modules = [];
 
-            
-            foreach($groups as $group){
-                array_push($modules, array("module"=> $group->module->name, "groupId"=>$group->id ));
-            }   
+        foreach ($groups as $group) {
+            array_push($modules, array(
+                "module" => $group->module->name,
+                "groupId" => $group->id
+            ));
+        }
 
-            $modules = json_encode($modules);
+        $modules = json_encode($modules);
 
-           
-            
-            return view('teacher.teacher' , [
-                'fixedSessions' => $fixedSessions,
-                'simpleSessions' => $simpleSessions,
-                'modules' => $modules,
-            ]);
-
+        return view('teacher.teacher', [
+            'fixedSessions' => $fixedSessions,
+            'simpleSessions' => $simpleSessions,
+            'modules' => $modules
+        ]);
 
         // }
-        
+
         // return redirect()->route('teacher.login');
     }
-    
 }

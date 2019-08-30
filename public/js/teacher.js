@@ -2010,11 +2010,9 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
-//
-//
 /* harmony default export */ __webpack_exports__["default"] = ({
   mounted: function mounted() {
-    console.log('Component mounted. for teachers');
+    console.log("Component mounted. for teachers");
   }
 });
 
@@ -2126,26 +2124,30 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
 
 /* harmony default export */ __webpack_exports__["default"] = ({
-  name: 'schedule',
-  props: ['fixed', 'simple', 'module'],
+  name: "schedule",
+  props: ["fixed", "simple", "module"],
   data: function data() {
     return {
       sessions2: {
-        time: ['07:00', '08:00', '09:00', '10:00', '11:00', '12:00', '13:00', '14:00', '15:00', '16:00', '17:00', '18:00', '19:00', '20:00', '21:00', '22:00'],
+        time: ["07:00", "    08:00", "09:00", "10:00", "11:00", "12:00", "13:00", "14:00", "15:00", "16:00", "17:00", "18:00", "19:00", "20:00", "21:00", "22:00"],
         data: [[{}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}], [{}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}], [{}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}], [{}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}], [{}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}], [{}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}], [{}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}]]
       },
       sessions: {
-        time: ['07:00', '08:00', '09:00', '10:00', '11:00', '12:00', '13:00', '14:00', '15:00', '16:00', '17:00', '18:00', '19:00', '20:00', '21:00', '22:00'],
+        time: ["07:00", "08:00", "09:00", "10:00", "11:00", "12:00", "13:00", "14:00", "15:00", "16:00", "17:00", "18:00", "19:00", "20:00", "21:00", "22:00"],
         data: [[{}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}], [{}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}], [{}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}], [{}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}], [{}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}], [{}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}], [{}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}]]
       },
-      days: ['samedi', 'dimance', 'lundi', 'mardi', 'mercredi', 'jeudi', 'vendredi'],
+      days: ["samedi", "dimance", "lundi", "mardi", "mercredi", "jeudi", "vendredi"],
       addSessionsOpen: this.$store.getters.addSessionsOpen,
       AddSimpleSessionOpen: this.$store.getters.AddSimpleSessionOpen,
       AddFixedSessionOpen: this.$store.getters.AddFixedSessionOpen,
       addGroupOpen: this.$store.getters.addGroupOpen,
-      addGroup: '',
+      addGroup: "",
       componentLoaded: false,
       fixedSessions: JSON.parse(this.fixed),
       simpleSessions: JSON.parse(this.simple),
@@ -2159,12 +2161,12 @@ __webpack_require__.r(__webpack_exports__);
       clicked: false,
       target: [],
       //
-      currentDay: '',
-      wkStart: '',
-      wkEnd: '',
-      currentWeek: '',
+      currentDay: "",
+      wkStart: "",
+      wkEnd: "",
+      currentWeek: "",
       weekDays: ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"],
-      months: ['janvier', 'fevrier', 'mars', 'avril', 'mai', 'juin', 'juillet', 'auot', 'septembre', 'octobre', 'novembre', 'decembre']
+      months: ["janvier", "fevrier", "mars", "avril", "mai", "juin", "juillet", "auot", "septembre", "octobre", "novembre", "decembre"]
     };
   },
   methods: {
@@ -2196,53 +2198,59 @@ __webpack_require__.r(__webpack_exports__);
         }
       };
 
-      var wkStart = new Date(curr.setDate(curr.getDate() + diff()));
+      var wkStart = new Date(curr.setDate(curr.getDate() + diff())); // wkStart.setHours(0, 0, 0);
+
       this.wkStart = wkStart;
-      var wkEnd = new Date(curr.setDate(wkStart.getDate() + 6));
+      var wkEnd = new Date(curr.setDate(wkStart.getDate() + 6)); // wkEnd.setHours(0, 0, 0);
+
       this.wkEnd = wkEnd;
       this.currentWeek = wkStart.getDate();
-      this.currentWeek += ' ' + this.weekDays[wkStart.getDay()];
-      this.currentWeek += ' ' + this.months[wkStart.getMonth()];
-      this.currentWeek += ' ' + wkStart.getFullYear();
-      this.currentWeek += ' - ' + wkEnd.getDate();
-      this.currentWeek += ' ' + this.weekDays[wkEnd.getDay()];
-      this.currentWeek += ' ' + this.months[wkEnd.getMonth()];
-      this.currentWeek += ' ' + wkEnd.getFullYear();
+      this.currentWeek += " " + this.weekDays[wkStart.getDay()];
+      this.currentWeek += " " + this.months[wkStart.getMonth()];
+      this.currentWeek += " " + wkStart.getFullYear();
+      this.currentWeek += " - " + wkEnd.getDate();
+      this.currentWeek += " " + this.weekDays[wkEnd.getDay()];
+      this.currentWeek += " " + this.months[wkEnd.getMonth()];
+      this.currentWeek += " " + wkEnd.getFullYear();
       this.showSimpleSessions();
       this.showFixedSessions();
     },
     getNextWeek: function getNextWeek() {
       var curr = new Date(this.wkEnd);
-      var wkStart = new Date(curr.setDate(curr.getDate() + 1));
+      var wkStart = new Date(curr.setDate(curr.getDate() + 1)); // wkStart.setHours(0, 0, 0);
+
       this.wkStart = wkStart;
-      var wkEnd = new Date(curr.setDate(wkStart.getDate() + 6));
+      var wkEnd = new Date(curr.setDate(wkStart.getDate() + 6)); // wkEnd.setHours(0, 0, 0);
+
       this.wkEnd = wkEnd;
       this.currentWeek = wkStart.getDate();
-      this.currentWeek += ' ' + this.weekDays[wkStart.getDay()];
-      this.currentWeek += ' ' + this.months[wkStart.getMonth()];
-      this.currentWeek += ' ' + wkStart.getFullYear();
-      this.currentWeek += ' - ' + wkEnd.getDate();
-      this.currentWeek += ' ' + this.weekDays[wkEnd.getDay()];
-      this.currentWeek += ' ' + this.months[wkEnd.getMonth()];
-      this.currentWeek += ' ' + wkEnd.getFullYear();
+      this.currentWeek += " " + this.weekDays[wkStart.getDay()];
+      this.currentWeek += " " + this.months[wkStart.getMonth()];
+      this.currentWeek += " " + wkStart.getFullYear();
+      this.currentWeek += " - " + wkEnd.getDate();
+      this.currentWeek += " " + this.weekDays[wkEnd.getDay()];
+      this.currentWeek += " " + this.months[wkEnd.getMonth()];
+      this.currentWeek += " " + wkEnd.getFullYear();
       this.clearSessions();
       this.showSimpleSessions();
       this.showFixedSessions();
     },
     getPreviousWeek: function getPreviousWeek() {
       var curr = new Date(this.wkStart);
-      var wkEnd = new Date(curr.setDate(curr.getDate() - 1));
+      var wkEnd = new Date(curr.setDate(curr.getDate() - 1)); // wkEnd.setHours(0, 0, 0);
+
       this.wkEnd = wkEnd;
-      var wkStart = new Date(curr.setDate(wkEnd.getDate() - 6));
+      var wkStart = new Date(curr.setDate(wkEnd.getDate() - 6)); // wkStart.setHours(0, 0, 0);
+
       this.wkStart = wkStart;
       this.currentWeek = wkStart.getDate();
-      this.currentWeek += ' ' + this.weekDays[wkStart.getDay()];
-      this.currentWeek += ' ' + this.months[wkStart.getMonth()];
-      this.currentWeek += ' ' + wkStart.getFullYear();
-      this.currentWeek += ' - ' + wkEnd.getDate();
-      this.currentWeek += ' ' + this.weekDays[wkEnd.getDay()];
-      this.currentWeek += ' ' + this.months[wkEnd.getMonth()];
-      this.currentWeek += ' ' + wkEnd.getFullYear();
+      this.currentWeek += " " + this.weekDays[wkStart.getDay()];
+      this.currentWeek += " " + this.months[wkStart.getMonth()];
+      this.currentWeek += " " + wkStart.getFullYear();
+      this.currentWeek += " - " + wkEnd.getDate();
+      this.currentWeek += " " + this.weekDays[wkEnd.getDay()];
+      this.currentWeek += " " + this.months[wkEnd.getMonth()];
+      this.currentWeek += " " + wkEnd.getFullYear();
       this.clearSessions();
       this.showSimpleSessions();
       this.showFixedSessions();
@@ -2264,70 +2272,73 @@ __webpack_require__.r(__webpack_exports__);
         top = e.target.offsetTop;
       }
 
-      var model = document.getElementById('model');
+      var model = document.getElementById("model");
       model.style.top = "".concat(top, "px");
       model.style.left = "".concat(left, "px"); // return  this.addSessionsOpen = !this.addSessionsOpen;
 
-      this.$store.commit('changeState', 'addSessionsOpen');
+      this.$store.commit("changeState", "addSessionsOpen");
       this.addSessionsOpen = this.$store.getters.addSessionsOpen;
     },
     closeAddSessions: function closeAddSessions(e) {
       e.preventDefault();
-      this.$store.commit('changeState', 'addSessionsOpen');
+      this.$store.commit("changeState", "addSessionsOpen");
       this.addSessionsOpen = this.$store.getters.addSessionsOpen;
     },
     showFixedSessions: function showFixedSessions() {
       var _this = this;
 
-      var firstDay = this.currentWeek.split(' ')[0];
-      var date = new Date(this.wkStart);
-      var firstDayMonth = date.getMonth() + 1;
-      var firstDayYear = date.getFullYear();
+      var wkStart = this.wkStart;
+      var wkEnd = this.wkEnd;
+      wkStart.setHours(0, 0, 0);
+      wkEnd.setHours(23, 59, 59);
       this.fixedSessions.forEach(function (el) {
-        // const filled=[];
-        var year = Number(el.date.split('-')[0]);
-        var month = Number(el.date.split('-')[1]);
-        var date = el.date.split('-')[2];
-        var time = el.time.split(':')[0];
-        var diffTime = time - 7;
-        var diffDay = date - firstDay;
+        var date = new Date(el.date);
+        var day = date.getUTCDate();
 
-        var module = _this.modules.find(function (element) {
-          return element.groupId === el.group_id;
-        });
+        if (date >= wkStart && date <= wkEnd) {
+          var diffTime = el.time.split(":")[0] - 7;
+          var diffDay;
 
-        if (diffDay <= 6 && diffDay >= 0 && firstDayMonth === month && firstDayYear === year) {
+          var module = _this.modules.find(function (element) {
+            return element.groupId === el.group_id;
+          });
+
+          if (day <= 6) {
+            diffDay = day;
+          } else {
+            diffDay = day - wkStart.getUTCDate() - 1;
+          }
+
           _this.sessions.data[diffDay][diffTime].groupId = el.group_id;
           _this.sessions.data[diffDay][diffTime].type = el.type;
-          _this.sessions.data[diffDay][diffTime].module = module.module; // filled.push(diffDay);
-          // filled.push(diffTime);
-        } // this.filledIn.push(filled);
-
+          _this.sessions.data[diffDay][diffTime].module = module.module;
+        }
       });
     },
     showSimpleSessions: function showSimpleSessions() {
       var _this2 = this;
 
-      var firstDay = this.currentWeek.split(' ')[0];
-      var date = new Date(this.wkStart);
-      var firstDayMonth = date.getMonth() + 1;
-      var firstDayYear = date.getFullYear();
+      var wkStart = this.wkStart;
+      var wkEnd = this.wkEnd;
+      wkStart.setHours(0, 0, 0);
+      wkEnd.setHours(23, 59, 59);
       this.simpleSessions.forEach(function (el) {
-        // const filled=[];
-        var year = Number(el.date.split('-')[0]);
-        var month = Number(el.date.split('-')[1]);
-        var date = el.date.split('-')[2];
-        var time = el.time.split(':')[0];
-        var diffTime = time - 7;
-        var diffDay = date - firstDay;
+        var date = new Date(el.date);
+        var day = date.getUTCDate();
 
-        if (diffDay <= 6 && diffDay >= 0 && firstDayMonth === month && firstDayYear === year) {
-          console.log(true);
+        if (date >= wkStart && date <= wkEnd) {
+          var diffTime = el.time.split(":")[0] - 7;
+          var diffDay;
+
+          if (day <= 6) {
+            diffDay = day;
+          } else {
+            diffDay = day - wkStart.getUTCDate() - 1;
+          }
+
           _this2.sessions.data[diffDay][diffTime].subject = el.subject;
-          _this2.sessions.data[diffDay][diffTime].type = el.type; // filled.push(diffDay);
-          // filled.push(diffTime);
-        } // this.filledIn.push(filled);
-
+          _this2.sessions.data[diffDay][diffTime].type = el.type;
+        }
       });
     },
     clearSessions: function clearSessions() {
@@ -2342,13 +2353,12 @@ __webpack_require__.r(__webpack_exports__);
     this.getCurrentWeek();
   },
   mounted: function mounted() {
-    this.$store.commit('initFixed', this.fixed);
+    this.$store.commit("initFixed", this.fixed);
     this.fixedSessions = this.$store.getters.fixedSessions;
-    this.$store.commit('initSimple', this.simple);
+    this.$store.commit("initSimple", this.simple);
     this.simpleSessions = this.$store.getters.simpleSessions;
-    this.$store.commit('initModules', this.module);
-    this.modules = this.$store.getters.modules; // move these two to computed property
-
+    this.$store.commit("initModules", this.module);
+    this.modules = this.$store.getters.modules;
     this.componentLoaded = true;
   },
   computed: {
@@ -2359,12 +2369,12 @@ __webpack_require__.r(__webpack_exports__);
 
       if (this.componentLoaded) {
         var fixedType = this.filters.sessionsType.find(function (el) {
-          return el === 'fixed';
+          return el === "fixed";
         });
         var simpleType = this.filters.sessionsType.find(function (el) {
-          return el === 'simple';
+          return el === "simple";
         });
-        var groups = Object.assign([], this.filters.checkedGroups); // const groups = JSON.parse(JSON.stringify(this.filters.checkedGroups));  
+        var groups = Object.assign([], this.filters.checkedGroups); // const groups = JSON.parse(JSON.stringify(this.filters.checkedGroups));
 
         this.sessions.data.forEach(function (el, i) {
           var dayData = [];
@@ -6918,7 +6928,7 @@ exports = module.exports = __webpack_require__(/*! ../../../node_modules/css-loa
 
 
 // module
-exports.push([module.i, "\n.container[data-v-5f748482] {\r\n  display: flex;\r\n\r\n  font-family: Roboto, \"Helvetica Neue\", \"sans-serif\";\n}\n.left[data-v-5f748482] {\r\n  flex-basis: 19%;\r\n  background-color: #edeff0;\r\n  height: 500px;\r\n  overflow-y: scroll;\r\n  align-self: flex-end;\r\n\r\n  margin-right: 1rem;\n}\n.schedule[data-v-5f748482] {\r\n  /* flex-basis:72%;\r\n    height: 400px;\r\n    overflow-y: scroll;\r\n    margin: 0 auto;\r\n    min-width: 950px; */\r\n  flex-basis: auto;\r\n  margin-top: 16px;\n}\n.schedule__header[data-v-5f748482] {\r\n  display: flex;\r\n  justify-content: flex-start;\r\n  align-items: center;\r\n  align-content: center;\r\n  margin-bottom: 0.5rem;\n}\n.previous[data-v-5f748482],\r\n.next[data-v-5f748482] {\r\n  width: 15px;\r\n  padding: 0.5rem;\r\n  text-align: center;\r\n\r\n  border-top: solid 1px grey;\r\n  border-bottom: solid 1px grey;\r\n\r\n  border-right: solid 1px grey;\n}\n.previous[data-v-5f748482] {\r\n  border-left: solid 1px grey;\n}\n.schedule__header__date[data-v-5f748482] {\r\n  margin-left: 1.4rem;\r\n\r\n  font-size: 16px;\r\n  color: rgb(56, 64, 71);\r\n  font-weight: 500;\n}\n.line[data-v-5f748482] {\r\n  font-size: 5px;\n}\r\n\r\n/* Calender */\n.calender[data-v-5f748482] {\r\n  display: flex;\r\n  flex-direction: row;\r\n  flex-wrap: wrap;\r\n\r\n  flex-basis: 100%;\r\n  height: 400px;\r\n  overflow-y: scroll;\r\n  /* margin: 0 auto; */\r\n  min-width: 950px;\r\n\r\n  /* for position .offsetTop*/\r\n  position: relative;\n}\n.days[data-v-5f748482] {\r\n  display: flex;\r\n  width: auto;\r\n  padding-left: 34px;\r\n  border-top: solid 1px grey;\n}\r\n\r\n/* .day:first-child {\r\n    margin-left: 36px;\r\n} */\n.day[data-v-5f748482] {\r\n  flex-basis: 140px;\r\n  text-align: center;\r\n  margin-bottom: 0.5rem;\r\n  margin-top: 0.5rem;\r\n  color: rgb(131, 131, 131);\r\n  height: 16px;\n}\n.hour[data-v-5f748482] {\r\n  font-size: 12px;\r\n  color: #384047;\r\n  margin-right: 5px;\n}\n.cell[data-v-5f748482] {\r\n  display: block;\r\n  width: 145px;\r\n  height: 80px;\r\n  border-collapse: collapse;\r\n  border-spacing: 0;\r\n  /* margin: 1px; */\r\n  border-right: solid 1px grey;\r\n  /* border-left: solid 1px grey; */\r\n  border-bottom: solid 1px grey;\r\n\r\n  text-align: center;\n}\n.hour[data-v-5f748482] {\r\n  display: block;\r\n  height: 80px;\n}\n.block[data-v-5f748482] {\r\n  background-color: rgb(218, 223, 225);\n}\r\n\r\n/* Model  */\n#model[data-v-5f748482] {\r\n  position: absolute;\r\n  background-color: gray;\r\n  text-align: center;\r\n  background-color: rgba(243, 242, 235, 0.74);\n}\n.model__close[data-v-5f748482] {\r\n  text-align: right;\r\n  position: absolute;\r\n  bottom: 100%;\r\n  color: black;\r\n  background-color: rgba(243, 242, 235, 1);\r\n  border-top-left-radius: 100px;\r\n  border-top-right-radius: 100px;\r\n  padding: 5px;\r\n  /* z-index: -1; */\r\n  /* display: inline-block;\r\n    width: 100%;\r\n    text-align: right; */\n}\n.btn[data-v-5f748482] {\r\n  padding: 1rem;\n}\nlabel[data-v-5f748482] {\r\n  display: block;\n}\r\n", ""]);
+exports.push([module.i, "\n.container[data-v-5f748482] {\r\n  display: flex;\r\n\r\n  font-family: Roboto, \"Helvetica Neue\", \"sans-serif\";\n}\n.left[data-v-5f748482] {\r\n  flex-basis: 19%;\r\n  background-color: #edeff0;\r\n  height: 500px;\r\n  overflow-y: scroll;\r\n  align-self: flex-end;\r\n\r\n  margin-right: 1rem;\n}\n.schedule[data-v-5f748482] {\r\n  /* flex-basis:72%;\r\n    height: 400px;\r\n    overflow-y: scroll;\r\n    margin: 0 auto;\r\n    min-width: 950px; */\r\n  flex-basis: auto;\r\n  margin-top: 16px;\n}\n.schedule__header[data-v-5f748482] {\r\n  display: flex;\r\n  justify-content: flex-start;\r\n  align-items: center;\r\n  align-content: center;\r\n  margin-bottom: 0.5rem;\n}\n.previous[data-v-5f748482],\r\n.next[data-v-5f748482] {\r\n  width: 15px;\r\n  padding: 0.5rem;\r\n  text-align: center;\r\n\r\n  border-top: solid 1px grey;\r\n  border-bottom: solid 1px grey;\r\n\r\n  border-right: solid 1px grey;\n}\n.previous[data-v-5f748482] {\r\n  border-left: solid 1px grey;\n}\n.schedule__header__date[data-v-5f748482] {\r\n  margin-left: 1.4rem;\r\n  color: red;\r\n  font-size: 16px;\r\n  color: rgb(56, 64, 71);\r\n  font-weight: 500;\n}\n.line[data-v-5f748482] {\r\n  font-size: 5px;\n}\r\n\r\n/* Calender */\n.calender[data-v-5f748482] {\r\n  display: flex;\r\n  flex-direction: row;\r\n  flex-wrap: wrap;\r\n\r\n  flex-basis: 100%;\r\n  height: 400px;\r\n  overflow-y: scroll;\r\n  /* margin: 0 auto; */\r\n  min-width: 950px;\r\n\r\n  /* for position .offsetTop*/\r\n  position: relative;\n}\n.days[data-v-5f748482] {\r\n  display: flex;\r\n  width: auto;\r\n  padding-left: 34px;\r\n  border-top: solid 1px grey;\n}\r\n\r\n/* .day:first-child {\r\n    margin-left: 36px;\r\n} */\n.day[data-v-5f748482] {\r\n  flex-basis: 140px;\r\n  text-align: center;\r\n  margin-bottom: 0.5rem;\r\n  margin-top: 0.5rem;\r\n  color: rgb(131, 131, 131);\r\n  height: 16px;\n}\n.hour[data-v-5f748482] {\r\n  font-size: 12px;\r\n  color: #384047;\r\n  margin-right: 5px;\n}\n.cell[data-v-5f748482] {\r\n  display: block;\r\n  width: 145px;\r\n  height: 80px;\r\n  border-collapse: collapse;\r\n  border-spacing: 0;\r\n  /* margin: 1px; */\r\n  border-right: solid 1px grey;\r\n  /* border-left: solid 1px grey; */\r\n  border-bottom: solid 1px grey;\r\n\r\n  text-align: center;\n}\n.hour[data-v-5f748482] {\r\n  display: block;\r\n  height: 80px;\n}\n.block[data-v-5f748482] {\r\n  background-color: rgb(218, 223, 225);\n}\r\n\r\n/* Model  */\n#model[data-v-5f748482] {\r\n  position: absolute;\r\n  background-color: gray;\r\n  text-align: center;\r\n  background-color: rgba(243, 242, 235, 0.74);\n}\n.model__close[data-v-5f748482] {\r\n  text-align: right;\r\n  position: absolute;\r\n  bottom: 100%;\r\n  color: black;\r\n  background-color: rgba(243, 242, 235, 1);\r\n  border-top-left-radius: 100px;\r\n  border-top-right-radius: 100px;\r\n  padding: 5px;\r\n  /* z-index: -1; */\r\n  /* display: inline-block;\r\n    width    : 100%;\r\n    text-align: right; */\n}\n.btn[data-v-5f748482] {\r\n  padding: 1rem;\n}\nlabel[data-v-5f748482] {\r\n  display: block;\n}\r\n", ""]);
 
 // exports
 
@@ -38809,9 +38819,7 @@ var staticRenderFns = [
             ]),
             _vm._v(" "),
             _c("div", { staticClass: "card-body" }, [
-              _vm._v(
-                "\n                    I'm an example component. for teacher\n                "
-              )
+              _vm._v("I'm an example component. for teacher")
             ])
           ])
         ])
@@ -39095,7 +39103,13 @@ var render = function() {
                       : _vm._e(),
                     _vm._v(" "),
                     cell.type == "simple"
-                      ? _c("span", [_vm._v(_vm._s(cell.subject))])
+                      ? _c("span", [
+                          _vm._v(
+                            "\n            " +
+                              _vm._s(cell.subject) +
+                              "\n          "
+                          )
+                        ])
                       : _vm._e()
                   ]
                 )

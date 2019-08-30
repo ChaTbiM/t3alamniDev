@@ -257,9 +257,11 @@ export default {
       };
 
       let wkStart = new Date(curr.setDate(curr.getDate() + diff()));
+      // wkStart.setHours(0, 0, 0);
       this.wkStart = wkStart;
 
       let wkEnd = new Date(curr.setDate(wkStart.getDate() + 6));
+      // wkEnd.setHours(0, 0, 0);
       this.wkEnd = wkEnd;
 
       this.currentWeek = wkStart.getDate();
@@ -279,9 +281,11 @@ export default {
       let curr = new Date(this.wkEnd);
 
       let wkStart = new Date(curr.setDate(curr.getDate() + 1));
+      // wkStart.setHours(0, 0, 0);
       this.wkStart = wkStart;
 
       let wkEnd = new Date(curr.setDate(wkStart.getDate() + 6));
+      // wkEnd.setHours(0, 0, 0);
       this.wkEnd = wkEnd;
 
       this.currentWeek = wkStart.getDate();
@@ -302,9 +306,11 @@ export default {
       let curr = new Date(this.wkStart);
 
       let wkEnd = new Date(curr.setDate(curr.getDate() - 1));
+      // wkEnd.setHours(0, 0, 0);
       this.wkEnd = wkEnd;
 
       let wkStart = new Date(curr.setDate(wkEnd.getDate() - 6));
+      // wkStart.setHours(0, 0, 0);
       this.wkStart = wkStart;
 
       this.currentWeek = wkStart.getDate();
@@ -358,73 +364,56 @@ export default {
     },
 
     showFixedSessions() {
-      const firstDay = this.currentWeek.split(" ")[0];
-      const date = new Date(this.wkStart);
-      const firstDayMonth = date.getMonth() + 1;
-      const firstDayYear = date.getFullYear();
+      const wkStart = this.wkStart;
+      const wkEnd = this.wkEnd;
+      wkStart.setHours(0, 0, 0);
+      wkEnd.setHours(23, 59, 59);
 
       this.fixedSessions.forEach(el => {
-        // const filled=[];
-        const year = Number(el.date.split("-")[0]);
-        const month = Number(el.date.split("-")[1]);
-        const date = el.date.split("-")[2];
-        const time = el.time.split(":")[0];
+        const date = new Date(el.date);
+        const day = date.getUTCDate();
 
-        const diffTime = time - 7;
-        const diffDay = date - firstDay;
+        if (date >= wkStart && date <= wkEnd) {
+          const diffTime = el.time.split(":")[0] - 7;
+          let diffDay;
 
-        const module = this.modules.find(function(element) {
-          return element.groupId === el.group_id;
-        });
+          const module = this.modules.find(function(element) {
+            return element.groupId === el.group_id;
+          });
 
-        if (
-          diffDay <= 6 &&
-          diffDay >= 0 &&
-          firstDayMonth === month &&
-          firstDayYear === year
-        ) {
+          if (day <= 6) {
+            diffDay = day;
+          } else {
+            diffDay = day - wkStart.getUTCDate() - 1;
+          }
           this.sessions.data[diffDay][diffTime].groupId = el.group_id;
           this.sessions.data[diffDay][diffTime].type = el.type;
           this.sessions.data[diffDay][diffTime].module = module.module;
-
-          // filled.push(diffDay);
-          // filled.push(diffTime);
         }
-
-        // this.filledIn.push(filled);
       });
     },
 
     showSimpleSessions() {
-      const firstDay = this.currentWeek.split(" ")[0];
-      const date = new Date(this.wkStart);
-      const firstDayMonth = date.getMonth() + 1;
-      const firstDayYear = date.getFullYear();
+      const wkStart = this.wkStart;
+      const wkEnd = this.wkEnd;
+      wkStart.setHours(0, 0, 0);
+      wkEnd.setHours(23, 59, 59);
 
       this.simpleSessions.forEach(el => {
-        // const filled=[];
+        const date = new Date(el.date);
+        const day = date.getUTCDate();
 
-        const year = Number(el.date.split("-")[0]);
-        const month = Number(el.date.split("-")[1]);
-        const date = el.date.split("-")[2];
-        const time = el.time.split(":")[0];
-
-        const diffTime = time - 7;
-        const diffDay = date - firstDay;
-        if (
-          diffDay <= 6 &&
-          diffDay >= 0 &&
-          firstDayMonth === month &&
-          firstDayYear === year
-        ) {
-          console.log(true);
+        if (date >= wkStart && date <= wkEnd) {
+          const diffTime = el.time.split(":")[0] - 7;
+          let diffDay;
+          if (day <= 6) {
+            diffDay = day;
+          } else {
+            diffDay = day - wkStart.getUTCDate() - 1;
+          }
           this.sessions.data[diffDay][diffTime].subject = el.subject;
           this.sessions.data[diffDay][diffTime].type = el.type;
-          // filled.push(diffDay);
-          // filled.push(diffTime);
         }
-
-        // this.filledIn.push(filled);
       });
     },
 
