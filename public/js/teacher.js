@@ -2382,7 +2382,7 @@ __webpack_require__.r(__webpack_exports__);
       // filledIn:[],
       //selecting blocks
       clicked: false,
-      target: [],
+      targets: [],
       //
       currentDay: "",
       wkStart: "",
@@ -2395,18 +2395,29 @@ __webpack_require__.r(__webpack_exports__);
   methods: {
     stepOne: function stepOne(event, index, ind) {
       event.preventDefault();
-      this.clicked = true;
+
+      if (event.target.style.backgroundColor === "rgb(218, 223, 225)") {
+        this.clicked = true;
+        event.target.style.backgroundColor = "#ADD8E6";
+        var target = [index, ind];
+        this.targets.push(target);
+        console.log("clicked");
+      }
     },
     stepTwo: function stepTwo(event, index, ind) {
       event.preventDefault();
 
-      if (this.clicked) {
-        console.log(event.target);
+      if ((event.target.style.backgroundColor === "rgb(42, 210, 49)" || event.target.style.backgroundColor === "rgb(19, 123, 244)") && this.targets[0][0] === index) {
+        this.clicked = false;
+      }
+
+      if (this.clicked && this.targets[0][0] === index && event.target.style.backgroundColor === "rgb(218, 223, 225)") {
+        event.target.style.backgroundColor = "#ADD8E6";
       }
     },
     stepThree: function stepThree(event, index, ind) {
       event.preventDefault();
-      this.click = false;
+      this.clicked = false;
       console.log("done");
     },
     getCurrentWeek: function getCurrentWeek() {
