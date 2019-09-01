@@ -2131,6 +2131,8 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
 
 /* harmony default export */ __webpack_exports__["default"] = ({
   name: "schedule",
@@ -2384,6 +2386,9 @@ __webpack_require__.r(__webpack_exports__);
       clicked: false,
       targets: [],
       blocked: [],
+      direction: "",
+      min: "",
+      max: "",
       //
       currentDay: "",
       wkStart: "",
@@ -2394,39 +2399,82 @@ __webpack_require__.r(__webpack_exports__);
     };
   },
   methods: {
+    // "rgb(218, 223, 225)" grey
+    // light blue "#ADD8E6"
+    // rgb(42, 210, 49) , rgb(19, 123, 244) .. green and blue
     stepOne: function stepOne(event, index, ind) {
       event.preventDefault();
+      this.clicked = true;
+      this.targets.push(index);
+      this.targets.push(ind);
+      event.target.style.backgroundColor = "#ADD8E6";
 
-      if (event.target.style.backgroundColor === "rgb(218, 223, 225)" && this.targets[0] === undefined) {
-        this.clicked = true;
-        event.target.style.backgroundColor = "#ADD8E6"; // let target = [index, ind];
-        // this.targets.push(target);
+      for (var i = this.targets[1]; i >= 0; i--) {
+        var selector = "cell".concat(index, "-").concat(i);
 
-        this.targets.push(index);
-        this.targets.push(ind);
+        if (this.$refs[selector][0].style.backgroundColor === "rgb(42, 210, 49)" || this.$refs[selector][0].style.backgroundColor === "rgb(19, 123, 244)") {
+          this.min = i + 1;
+          break;
+        } else {
+          this.min = 0;
+        }
+      }
+
+      for (var _i = this.targets[1]; _i < 16; _i++) {
+        var _selector = "cell".concat(index, "-").concat(_i);
+
+        if (this.$refs[_selector][0].style.backgroundColor === "rgb(42, 210, 49)" || this.$refs[_selector][0].style.backgroundColor === "rgb(19, 123, 244)") {
+          this.max = _i - 1;
+          break;
+        } else {
+          this.max = 15;
+        }
       }
     },
     stepTwo: function stepTwo(event, index, ind) {
       event.preventDefault();
 
-      if ((event.target.style.backgroundColor === "rgb(42, 210, 49)" || event.target.style.backgroundColor === "rgb(19, 123, 244)") && this.targets[0] === index && this.clicked) {
-        this.clicked = false;
-      }
+      if (this.clicked && this.targets[0] === index) {
+        // "rgb(218, 223, 225)" grey
+        // light blue "#ADD8E6"
+        // rgb(42, 210, 49) , rgb(19, 123, 244) .. green and blue
+        // let selector = `cell${index}-${i}`;
+        //   this.$refs[selector][0].style.backgroundColor = "#ADD8E6";
+        var low;
+        var high;
+        var max = this.max;
+        var min = this.min;
 
-      var last = this.targets[this.targets.length - 1]; // console.log(ind - this.targets[1]);
+        if (this.targets[1] > ind) {
+          high = this.targets[1];
+          low = ind;
+        } else {
+          low = this.targets[1];
+          high = ind;
+        }
 
-      if (this.targets[0] === index && event.target.style.backgroundColor === "rgb(218, 223, 225)" && (last - ind === 1 || ind - last === 1 || this.targets[1] - ind === 1)) {
-        this.clicked = true;
-      }
+        console.log(low, "low");
+        console.log(high, "high");
 
-      if (this.clicked && this.targets[0] === index && event.target.style.backgroundColor === "rgb(218, 223, 225)") {
-        this.targets.push(ind);
-        event.target.style.backgroundColor = "#ADD8E6";
+        for (var i = min; i <= max; i++) {
+          var selector = "cell".concat(index, "-").concat(i);
+
+          if (i >= low && i <= high) {
+            this.$refs[selector][0].style.backgroundColor = "#ADD8E6";
+          } else {
+            this.$refs[selector][0].style.backgroundColor = "rgb(218, 223, 225)";
+          }
+        }
       }
     },
     stepThree: function stepThree(event, index, ind) {
       event.preventDefault();
       this.clicked = false;
+    },
+    stepFour: function stepFour(event, index, ind) {
+      event.preventDefault(); // if (this.direction) {
+      //   console.log(event);
+      // }
     },
     getCurrentWeek: function getCurrentWeek() {
       var newWeek;
@@ -39362,6 +39410,8 @@ var render = function() {
                   "div",
                   {
                     key: ind,
+                    ref: "cell" + index + "-" + ind,
+                    refInFor: true,
                     staticClass: "cell block",
                     style: { backgroundColor: cell.backgroundColor },
                     on: {
@@ -39374,6 +39424,9 @@ var render = function() {
                       },
                       mouseup: function($event) {
                         return _vm.stepThree($event, index, ind)
+                      },
+                      mouseleave: function($event) {
+                        return _vm.stepFour($event, index, ind)
                       }
                     }
                   },

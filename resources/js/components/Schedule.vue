@@ -73,9 +73,11 @@
             @mousedown="stepOne($event, index, ind)"
             @mouseenter="stepTwo($event, index, ind)"
             @mouseup="stepThree($event, index, ind)"
+            @mouseleave="stepFour($event, index, ind)"
             v-for="(cell, ind) in filterSessions[index]"
             v-bind:key="ind"
             :style="{backgroundColor:cell.backgroundColor}"
+            :ref=" 'cell' + index + '-' + ind "
           >
             <span v-if="cell.type === 'fixed'">groupe {{ cell.groupId }} {{ cell.module }}</span>
             <span v-if="cell.type == 'simple'">
@@ -288,6 +290,9 @@ export default {
       clicked: false,
       targets: [],
       blocked: [],
+      direction: "",
+      min: "",
+      max: "",
       //
 
       currentDay: "",
@@ -320,53 +325,96 @@ export default {
     };
   },
   methods: {
+    // "rgb(218, 223, 225)" grey
+    // light blue "#ADD8E6"
+    // rgb(42, 210, 49) , rgb(19, 123, 244) .. green and blue
+
     stepOne(event, index, ind) {
       event.preventDefault();
-      if (
-        event.target.style.backgroundColor === "rgb(218, 223, 225)" &&
-        this.targets[0] === undefined
-      ) {
-        this.clicked = true;
-        event.target.style.backgroundColor = "#ADD8E6";
-        // let target = [index, ind];
-        // this.targets.push(target);
-        this.targets.push(index);
-        this.targets.push(ind);
+
+      this.clicked = true;
+      this.targets.push(index);
+      this.targets.push(ind);
+      event.target.style.backgroundColor = "#ADD8E6";
+
+      for (let i = this.targets[1]; i >= 0; i--) {
+        let selector = `cell${index}-${i}`;
+        if (
+          this.$refs[selector][0].style.backgroundColor ===
+            "rgb(42, 210, 49)" ||
+          this.$refs[selector][0].style.backgroundColor === "rgb(19, 123, 244)"
+        ) {
+          this.min = i + 1;
+          break;
+        } else {
+          this.min = 0;
+        }
+      }
+
+      for (let i = this.targets[1]; i < 16; i++) {
+        let selector = `cell${index}-${i}`;
+        if (
+          this.$refs[selector][0].style.backgroundColor ===
+            "rgb(42, 210, 49)" ||
+          this.$refs[selector][0].style.backgroundColor === "rgb(19, 123, 244)"
+        ) {
+          this.max = i - 1;
+          break;
+        } else {
+          this.max = 15;
+        }
       }
     },
     stepTwo(event, index, ind) {
       event.preventDefault();
-      if (
-        (event.target.style.backgroundColor === "rgb(42, 210, 49)" ||
-          event.target.style.backgroundColor === "rgb(19, 123, 244)") &&
-        this.targets[0] === index &&
-        this.clicked
-      ) {
-        this.clicked = false;
-      }
-      let last = this.targets[this.targets.length - 1];
-      // console.log(ind - this.targets[1]);
-      if (
-        this.targets[0] === index &&
-        (event.target.style.backgroundColor === "rgb(218, 223, 225)" &&
-          (last - ind === 1 || ind - last === 1 || this.targets[1] - ind === 1))
-      ) {
-        this.clicked = true;
-      }
 
-      if (
-        this.clicked &&
-        this.targets[0] === index &&
-        event.target.style.backgroundColor === "rgb(218, 223, 225)"
-      ) {
-        this.targets.push(ind);
-        event.target.style.backgroundColor = "#ADD8E6";
+      if (this.clicked && this.targets[0] === index) {
+        // "rgb(218, 223, 225)" grey
+        // light blue "#ADD8E6"
+        // rgb(42, 210, 49) , rgb(19, 123, 244) .. green and blue
+        // let selector = `cell${index}-${i}`;
+        //   this.$refs[selector][0].style.backgroundColor = "#ADD8E6";
+        let low;
+        let high;
+
+        let max = this.max;
+        let min = this.min;
+
+        if (this.targets[1] > ind) {
+          high = this.targets[1];
+          low = ind;
+        } else {
+          low = this.targets[1];
+          high = ind;
+        }
+
+        console.log(low, "low");
+        console.log(high, "high");
+
+        for (let i = min; i <= max; i++) {
+          let selector = `cell${index}-${i}`;
+
+          if (i >= low && i <= high) {
+            this.$refs[selector][0].style.backgroundColor = "#ADD8E6";
+          } else {
+            this.$refs[selector][0].style.backgroundColor =
+              "rgb(218, 223, 225)";
+          }
+        }
       }
     },
+
     stepThree(event, index, ind) {
       event.preventDefault();
 
       this.clicked = false;
+    },
+    stepFour(event, index, ind) {
+      event.preventDefault();
+
+      // if (this.direction) {
+      //   console.log(event);
+      // }
     },
 
     getCurrentWeek() {
