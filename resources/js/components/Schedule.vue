@@ -88,6 +88,13 @@
 
         <div id="model" class="model" v-show="addSessionsOpen">
           <div class="model__close" @click="closeAddSessions">X</div>
+          <div class="model__info">
+            <span class="model__day">
+              <span>{{ this.selected.date }}</span>
+              <span>{{this.days[this.selected.dayIndex]}}</span>
+            </span>
+            <span class="model__hours">{{this.selected.hours.min}} -> {{this.selected.hours.max}}</span>
+          </div>
           <div class="model__add__fix btn">add fix session</div>
           <div class="model__add__simple btn">add simple session</div>
         </div>
@@ -259,7 +266,7 @@ export default {
       },
       days: [
         "samedi",
-        "dimance",
+        "dimanche",
         "lundi",
         "mardi",
         "mercredi",
@@ -292,6 +299,11 @@ export default {
       high: "",
       min: "",
       max: "",
+      selected: {
+        hours: {},
+        dayIndex: "",
+        date: ""
+      },
       //
 
       currentDay: "",
@@ -428,13 +440,31 @@ export default {
       event.preventDefault();
       //showing the add session in the right place
       if (this.high && this.low) {
-        let targets = _.range(this.low - 1, this.high);
+        let targets = _.range(this.low - 1, this.high, 1);
+
         this.targets.push(...targets);
-        console.log(this.targets, "thi.stargets");
       }
 
-      this.showAddSessions(event);
+      let hoursInfo = this.targets.slice(1);
+
+      let minHours = Math.min(...hoursInfo);
+      let maxHours = Math.max(...hoursInfo) + 1;
+
+      let dayIndex = this.targets[0];
+      this.selected.dayIndex = dayIndex;
+
+      let day = this.wkStart;
+      day.setDate(day.getDate() + dayIndex);
+      // console.log(day.getUTCDate());
+      let date = this.months[day.getMonth()] + " " + day.getDate();
+      this.selected.date = date;
+      console.log(date);
+      this.selected.hours.min = this.sessions.time[minHours];
+      this.selected.hours.max = this.sessions.time[maxHours];
+      console.log(this.selected, "selected");
+
       this.clicked = false;
+      this.showAddSessions(event);
     },
 
     getCurrentWeek() {
@@ -495,6 +525,11 @@ export default {
       this.currentWeek += " " + wkEnd.getFullYear();
 
       this.clearSessions();
+      this.clearSelections();
+      if (this.addSessionsOpen) {
+        this.$store.commit("changeState", "addSessionsOpen");
+        this.addSessionsOpen = this.$store.getters.addSessionsOpen;
+      }
       this.showSimpleSessions();
       this.showFixedSessions();
     },
@@ -520,6 +555,11 @@ export default {
       this.currentWeek += " " + wkEnd.getFullYear();
 
       this.clearSessions();
+      this.clearSelections();
+      if (this.addSessionsOpen) {
+        this.$store.commit("changeState", "addSessionsOpen");
+        this.addSessionsOpen = this.$store.getters.addSessionsOpen;
+      }
       this.showSimpleSessions();
       this.showFixedSessions();
     },
@@ -860,6 +900,8 @@ export default {
 
 #model {
   position: absolute;
+  color: #7e8389;
+  background-color: #fff;
   /*background-color: gray;
   text-align: center;
   background-color: rgba(243, 242, 235, 0.74); */
