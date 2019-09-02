@@ -2029,6 +2029,14 @@ __webpack_require__.r(__webpack_exports__);
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var timers__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! timers */ "./node_modules/timers-browserify/main.js");
 /* harmony import */ var timers__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(timers__WEBPACK_IMPORTED_MODULE_0__);
+function _toConsumableArray(arr) { return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _nonIterableSpread(); }
+
+function _nonIterableSpread() { throw new TypeError("Invalid attempt to spread non-iterable instance"); }
+
+function _iterableToArray(iter) { if (Symbol.iterator in Object(iter) || Object.prototype.toString.call(iter) === "[object Arguments]") return Array.from(iter); }
+
+function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = new Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } }
+
 //
 //
 //
@@ -2131,8 +2139,9 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
-//
-//
+
+
+var _ = __webpack_require__(/*! lodash */ "./node_modules/lodash/lodash.js");
 
 /* harmony default export */ __webpack_exports__["default"] = ({
   name: "schedule",
@@ -2385,8 +2394,8 @@ __webpack_require__.r(__webpack_exports__);
       //selecting blocks
       clicked: false,
       targets: [],
-      blocked: [],
-      direction: "",
+      low: "",
+      high: "",
       min: "",
       max: "",
       //
@@ -2404,30 +2413,51 @@ __webpack_require__.r(__webpack_exports__);
     // rgb(42, 210, 49) , rgb(19, 123, 244) .. green and blue
     stepOne: function stepOne(event, index, ind) {
       event.preventDefault();
-      this.clicked = true;
-      this.targets.push(index);
-      this.targets.push(ind);
-      event.target.style.backgroundColor = "#ADD8E6";
 
-      for (var i = this.targets[1]; i >= 0; i--) {
-        var selector = "cell".concat(index, "-").concat(i);
-
-        if (this.$refs[selector][0].style.backgroundColor === "rgb(42, 210, 49)" || this.$refs[selector][0].style.backgroundColor === "rgb(19, 123, 244)") {
-          this.min = i + 1;
-          break;
-        } else {
-          this.min = 0;
-        }
+      if (this.addSessionsOpen) {
+        this.$store.commit("changeState", "addSessionsOpen");
+        this.addSessionsOpen = this.$store.getters.addSessionsOpen;
       }
 
-      for (var _i = this.targets[1]; _i < 16; _i++) {
-        var _selector = "cell".concat(index, "-").concat(_i);
+      console.log(this.targets);
+      this.clearSelections();
 
-        if (this.$refs[_selector][0].style.backgroundColor === "rgb(42, 210, 49)" || this.$refs[_selector][0].style.backgroundColor === "rgb(19, 123, 244)") {
-          this.max = _i - 1;
-          break;
-        } else {
-          this.max = 15;
+      if (event.target.style.backgroundColor === "rgb(218, 223, 225)") {
+        this.clicked = true;
+      } else {
+        this.clicked = false;
+      }
+
+      if (this.clicked) {
+        this.targets = [];
+        this.low = 0;
+        this.high = 0;
+        this.max = 0;
+        this.min = 0;
+        this.targets.push(index);
+        this.targets.push(ind);
+        event.target.style.backgroundColor = "#ADD8E6";
+
+        for (var i = this.targets[1]; i >= 0; i--) {
+          var selector = "cell".concat(index, "-").concat(i);
+
+          if (this.$refs[selector][0].style.backgroundColor === "rgb(42, 210, 49)" || this.$refs[selector][0].style.backgroundColor === "rgb(19, 123, 244)") {
+            this.min = i + 1;
+            break;
+          } else {
+            this.min = 0;
+          }
+        }
+
+        for (var _i = this.targets[1]; _i < 16; _i++) {
+          var _selector = "cell".concat(index, "-").concat(_i);
+
+          if (this.$refs[_selector][0].style.backgroundColor === "rgb(42, 210, 49)" || this.$refs[_selector][0].style.backgroundColor === "rgb(19, 123, 244)") {
+            this.max = _i - 1;
+            break;
+          } else {
+            this.max = 15;
+          }
         }
       }
     },
@@ -2453,9 +2483,6 @@ __webpack_require__.r(__webpack_exports__);
           high = ind;
         }
 
-        console.log(low, "low");
-        console.log(high, "high");
-
         for (var i = min; i <= max; i++) {
           var selector = "cell".concat(index, "-").concat(i);
 
@@ -2465,16 +2492,26 @@ __webpack_require__.r(__webpack_exports__);
             this.$refs[selector][0].style.backgroundColor = "rgb(218, 223, 225)";
           }
         }
+
+        this.low = low + 1;
+        this.high = high + 1;
       }
     },
     stepThree: function stepThree(event, index, ind) {
-      event.preventDefault();
+      event.preventDefault(); //showing the add session in the right place
+
+      if (this.high && this.low) {
+        var _this$targets;
+
+        var targets = _.range(this.low - 1, this.high);
+
+        (_this$targets = this.targets).push.apply(_this$targets, _toConsumableArray(targets));
+
+        console.log(this.targets, "thi.stargets");
+      }
+
+      this.showAddSessions(event);
       this.clicked = false;
-    },
-    stepFour: function stepFour(event, index, ind) {
-      event.preventDefault(); // if (this.direction) {
-      //   console.log(event);
-      // }
     },
     getCurrentWeek: function getCurrentWeek() {
       var newWeek;
@@ -2555,9 +2592,9 @@ __webpack_require__.r(__webpack_exports__);
       var left; //
 
       if (e.target.offsetLeft >= 700) {
-        left = e.target.offsetLeft - 180;
+        left = e.target.offsetLeft - 145;
       } else {
-        left = e.target.offsetLeft + 140;
+        left = e.target.offsetLeft + 145;
       }
 
       if (e.target.offsetTop >= 1020) {
@@ -2675,6 +2712,25 @@ __webpack_require__.r(__webpack_exports__);
           backgroundColor: "rgb(218, 223, 225)"
         }]);
       });
+    },
+    clearSelections: function clearSelections() {
+      var len = this.targets.length;
+      var low = this.low;
+      var high = this.high;
+
+      for (var i = 1; i < len; i++) {
+        var selector = void 0;
+
+        if (len === 2) {
+          selector = "cell".concat(this.targets[0], "-").concat(this.targets[1]);
+        } else {
+          selector = "cell".concat(this.targets[0], "-").concat(this.targets[i]);
+        }
+
+        if (this.$refs[selector][0].style.backgroundColor === "rgb(173, 216, 230)") {
+          this.$refs[selector][0].style.backgroundColor = "rgb(218, 223, 225)";
+        }
+      }
     }
   },
   created: function created() {
@@ -7256,7 +7312,7 @@ exports = module.exports = __webpack_require__(/*! ../../../node_modules/css-loa
 
 
 // module
-exports.push([module.i, "\n.container[data-v-5f748482] {\r\n  display: flex;\r\n\r\n  font-family: Roboto, \"Helvetica Neue\", \"sans-serif\";\n}\n.left[data-v-5f748482] {\r\n  flex-basis: 19%;\r\n  background-color: #edeff0;\r\n  height: 500px;\r\n  overflow-y: scroll;\r\n  align-self: flex-end;\r\n\r\n  margin-right: 1rem;\n}\n.schedule[data-v-5f748482] {\r\n  /* flex-basis:72%;\r\n    height: 400px;\r\n    overflow-y: scroll;\r\n    margin: 0 auto;\r\n    min-width: 950px; */\r\n  flex-basis: auto;\r\n  margin-top: 16px;\n}\n.schedule__header[data-v-5f748482] {\r\n  display: flex;\r\n  justify-content: flex-start;\r\n  align-items: center;\r\n  align-content: center;\r\n  margin-bottom: 0.5rem;\n}\n.previous[data-v-5f748482],\r\n.next[data-v-5f748482] {\r\n  width: 15px;\r\n  padding: 0.5rem;\r\n  text-align: center;\r\n\r\n  border-top: solid 1px grey;\r\n  border-bottom: solid 1px grey;\r\n\r\n  border-right: solid 1px grey;\n}\n.previous[data-v-5f748482] {\r\n  border-left: solid 1px grey;\n}\n.schedule__header__date[data-v-5f748482] {\r\n  margin-left: 1.4rem;\r\n  color: red;\r\n  font-size: 16px;\r\n  color: rgb(56, 64, 71);\r\n  font-weight: 500;\n}\n.line[data-v-5f748482] {\r\n  font-size: 5px;\n}\r\n\r\n/* Calender */\n.calender[data-v-5f748482] {\r\n  display: flex;\r\n  flex-direction: row;\r\n  flex-wrap: wrap;\r\n\r\n  flex-basis: 100%;\r\n  height: 400px;\r\n  overflow-y: scroll;\r\n  /* margin: 0 auto; */\r\n  min-width: 950px;\r\n\r\n  /* for position .offsetTop*/\r\n  position: relative;\n}\n.days[data-v-5f748482] {\r\n  display: flex;\r\n  width: auto;\r\n  padding-left: 34px;\r\n  border-top: solid 1px grey;\n}\r\n\r\n/* .day:first-child {\r\n    margin-left: 36px;\r\n} */\n.day[data-v-5f748482] {\r\n  flex-basis: 140px;\r\n  text-align: center;\r\n  margin-bottom: 0.5rem;\r\n  margin-top: 0.5rem;\r\n  color: rgb(131, 131, 131);\r\n  height: 16px;\n}\n.hour[data-v-5f748482] {\r\n  font-size: 12px;\r\n  color: #384047;\r\n  margin-right: 5px;\n}\n.cell[data-v-5f748482] {\r\n  display: block;\r\n  width: 145px;\r\n  height: 80px;\r\n  border-collapse: collapse;\r\n  border-spacing: 0;\r\n  /* margin: 1px; */\r\n  border-right: solid 1px grey;\r\n  /* border-left: solid 1px grey; */\r\n  border-bottom: solid 1px grey;\r\n\r\n  text-align: center;\n}\n.hour[data-v-5f748482] {\r\n  display: block;\r\n  height: 80px;\n}\r\n\r\n/* .block {\r\n  background-color: rgb(218, 223, 225);\r\n} */\r\n\r\n/* Model  */\n#model[data-v-5f748482] {\r\n  position: absolute;\r\n  background-color: gray;\r\n  text-align: center;\r\n  background-color: rgba(243, 242, 235, 0.74);\n}\n.model__close[data-v-5f748482] {\r\n  text-align: right;\r\n  position: absolute;\r\n  bottom: 100%;\r\n  color: black;\r\n  background-color: rgba(243, 242, 235, 1);\r\n  border-top-left-radius: 100px;\r\n  border-top-right-radius: 100px;\r\n  padding: 5px;\r\n  /* z-index: -1; */\r\n  /* display: inline-block;\r\n    width    : 100%;\r\n    text-align: right; */\n}\n.btn[data-v-5f748482] {\r\n  padding: 1rem;\n}\nlabel[data-v-5f748482] {\r\n  display: block;\n}\r\n", ""]);
+exports.push([module.i, "\n.container[data-v-5f748482] {\r\n  display: flex;\r\n\r\n  font-family: Roboto, \"Helvetica Neue\", \"sans-serif\";\n}\n.left[data-v-5f748482] {\r\n  flex-basis: 19%;\r\n  background-color: #edeff0;\r\n  height: 500px;\r\n  overflow-y: scroll;\r\n  align-self: flex-end;\r\n\r\n  margin-right: 1rem;\n}\n.schedule[data-v-5f748482] {\r\n  /* flex-basis:72%;\r\n    height: 400px;\r\n    overflow-y: scroll;\r\n    margin: 0 auto;\r\n    min-width: 950px; */\r\n  flex-basis: auto;\r\n  margin-top: 16px;\n}\n.schedule__header[data-v-5f748482] {\r\n  display: flex;\r\n  justify-content: flex-start;\r\n  align-items: center;\r\n  align-content: center;\r\n  margin-bottom: 0.5rem;\n}\n.previous[data-v-5f748482],\r\n.next[data-v-5f748482] {\r\n  width: 15px;\r\n  padding: 0.5rem;\r\n  text-align: center;\r\n\r\n  border-top: solid 1px grey;\r\n  border-bottom: solid 1px grey;\r\n\r\n  border-right: solid 1px grey;\n}\n.previous[data-v-5f748482] {\r\n  border-left: solid 1px grey;\n}\n.schedule__header__date[data-v-5f748482] {\r\n  margin-left: 1.4rem;\r\n  color: red;\r\n  font-size: 16px;\r\n  color: rgb(56, 64, 71);\r\n  font-weight: 500;\n}\n.line[data-v-5f748482] {\r\n  font-size: 5px;\n}\r\n\r\n/* Calender */\n.calender[data-v-5f748482] {\r\n  display: flex;\r\n  flex-direction: row;\r\n  flex-wrap: wrap;\r\n\r\n  flex-basis: 100%;\r\n  height: 400px;\r\n  overflow-y: scroll;\r\n  /* margin: 0 auto; */\r\n  min-width: 950px;\r\n\r\n  /* for position .offsetTop*/\r\n  position: relative;\n}\n.days[data-v-5f748482] {\r\n  display: flex;\r\n  width: auto;\r\n  padding-left: 34px;\r\n  border-top: solid 1px grey;\n}\r\n\r\n/* .day:first-child {\r\n    margin-left: 36px;\r\n} */\n.day[data-v-5f748482] {\r\n  flex-basis: 140px;\r\n  text-align: center;\r\n  margin-bottom: 0.5rem;\r\n  margin-top: 0.5rem;\r\n  color: rgb(131, 131, 131);\r\n  height: 16px;\n}\n.hour[data-v-5f748482] {\r\n  font-size: 12px;\r\n  color: #384047;\r\n  margin-right: 5px;\n}\n.cell[data-v-5f748482] {\r\n  display: block;\r\n  width: 145px;\r\n  height: 80px;\r\n  border-collapse: collapse;\r\n  border-spacing: 0;\r\n  /* margin: 1px; */\r\n  border-right: solid 1px grey;\r\n  /* border-left: solid 1px grey; */\r\n  border-bottom: solid 1px grey;\r\n\r\n  text-align: center;\n}\n.hour[data-v-5f748482] {\r\n  display: block;\r\n  height: 80px;\n}\r\n\r\n/* .block {\r\n  background-color: rgb(218, 223, 225);\r\n} */\r\n\r\n/* Model  */\n#model[data-v-5f748482] {\r\n  position: absolute;\r\n  /*background-color: gray;\r\n  text-align: center;\r\n  background-color: rgba(243, 242, 235, 0.74); */\n}\n.model__close[data-v-5f748482] {\r\n  text-align: right;\r\n  /*position: absolute;\r\n  bottom: 100%;\r\n  color: black;\r\n  background-color: rgba(243, 242, 235, 1);\r\n  border-top-left-radius: 100px;\r\n  border-top-right-radius: 100px;\r\n  padding: 5px; */\r\n  /* z-index: -1; */\r\n  /* display: inline-block;\r\n    width    : 100%;\r\n    text-align: right; */\n}\n.btn[data-v-5f748482] {\r\n  padding: 1rem;\n}\nlabel[data-v-5f748482] {\r\n  display: block;\n}\r\n", ""]);
 
 // exports
 
@@ -39415,7 +39471,6 @@ var render = function() {
                     staticClass: "cell block",
                     style: { backgroundColor: cell.backgroundColor },
                     on: {
-                      click: _vm.showAddSessions,
                       mousedown: function($event) {
                         return _vm.stepOne($event, index, ind)
                       },
@@ -39424,9 +39479,6 @@ var render = function() {
                       },
                       mouseup: function($event) {
                         return _vm.stepThree($event, index, ind)
-                      },
-                      mouseleave: function($event) {
-                        return _vm.stepFour($event, index, ind)
                       }
                     }
                   },
@@ -39469,6 +39521,7 @@ var render = function() {
                   expression: "addSessionsOpen"
                 }
               ],
+              staticClass: "model",
               attrs: { id: "model" }
             },
             [
@@ -53203,8 +53256,7 @@ var store = new vuex__WEBPACK_IMPORTED_MODULE_1__["default"].Store({
     addGroupOpen: false,
     fixed: "",
     simple: "",
-    modules: "",
-    data: [[{}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}], [{}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}], [{}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}], [{}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}], [{}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}], [{}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}], [{}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}]]
+    modules: ""
   },
   mutations: {
     changeState: function changeState(state, target) {

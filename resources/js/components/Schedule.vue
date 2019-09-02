@@ -69,11 +69,9 @@
           <!-- <div class=" day">{{day}}</div> -->
           <div
             class="cell block"
-            @click="showAddSessions"
             @mousedown="stepOne($event, index, ind)"
             @mouseenter="stepTwo($event, index, ind)"
             @mouseup="stepThree($event, index, ind)"
-            @mouseleave="stepFour($event, index, ind)"
             v-for="(cell, ind) in filterSessions[index]"
             v-bind:key="ind"
             :style="{backgroundColor:cell.backgroundColor}"
@@ -88,7 +86,7 @@
           </div>
         </div>
 
-        <div id="model" v-show="addSessionsOpen">
+        <div id="model" class="model" v-show="addSessionsOpen">
           <div class="model__close" @click="closeAddSessions">X</div>
           <div class="model__add__fix btn">add fix session</div>
           <div class="model__add__simple btn">add simple session</div>
@@ -104,6 +102,7 @@
 
 <script>
 import { setTimeout } from "timers";
+var _ = require("lodash");
 
 export default {
   name: "schedule",
@@ -289,8 +288,8 @@ export default {
       //selecting blocks
       clicked: false,
       targets: [],
-      blocked: [],
-      direction: "",
+      low: "",
+      high: "",
       min: "",
       max: "",
       //
@@ -332,36 +331,58 @@ export default {
     stepOne(event, index, ind) {
       event.preventDefault();
 
-      this.clicked = true;
-      this.targets.push(index);
-      this.targets.push(ind);
-      event.target.style.backgroundColor = "#ADD8E6";
-
-      for (let i = this.targets[1]; i >= 0; i--) {
-        let selector = `cell${index}-${i}`;
-        if (
-          this.$refs[selector][0].style.backgroundColor ===
-            "rgb(42, 210, 49)" ||
-          this.$refs[selector][0].style.backgroundColor === "rgb(19, 123, 244)"
-        ) {
-          this.min = i + 1;
-          break;
-        } else {
-          this.min = 0;
-        }
+      if (this.addSessionsOpen) {
+        this.$store.commit("changeState", "addSessionsOpen");
+        this.addSessionsOpen = this.$store.getters.addSessionsOpen;
+      }
+      console.log(this.targets);
+      this.clearSelections();
+      if (event.target.style.backgroundColor === "rgb(218, 223, 225)") {
+        this.clicked = true;
+      } else {
+        this.clicked = false;
       }
 
-      for (let i = this.targets[1]; i < 16; i++) {
-        let selector = `cell${index}-${i}`;
-        if (
-          this.$refs[selector][0].style.backgroundColor ===
-            "rgb(42, 210, 49)" ||
-          this.$refs[selector][0].style.backgroundColor === "rgb(19, 123, 244)"
-        ) {
-          this.max = i - 1;
-          break;
-        } else {
-          this.max = 15;
+      if (this.clicked) {
+        this.targets = [];
+        this.low = 0;
+        this.high = 0;
+        this.max = 0;
+        this.min = 0;
+
+        this.targets.push(index);
+        this.targets.push(ind);
+
+        event.target.style.backgroundColor = "#ADD8E6";
+
+        for (let i = this.targets[1]; i >= 0; i--) {
+          let selector = `cell${index}-${i}`;
+          if (
+            this.$refs[selector][0].style.backgroundColor ===
+              "rgb(42, 210, 49)" ||
+            this.$refs[selector][0].style.backgroundColor ===
+              "rgb(19, 123, 244)"
+          ) {
+            this.min = i + 1;
+            break;
+          } else {
+            this.min = 0;
+          }
+        }
+
+        for (let i = this.targets[1]; i < 16; i++) {
+          let selector = `cell${index}-${i}`;
+          if (
+            this.$refs[selector][0].style.backgroundColor ===
+              "rgb(42, 210, 49)" ||
+            this.$refs[selector][0].style.backgroundColor ===
+              "rgb(19, 123, 244)"
+          ) {
+            this.max = i - 1;
+            break;
+          } else {
+            this.max = 15;
+          }
         }
       }
     },
@@ -388,9 +409,6 @@ export default {
           high = ind;
         }
 
-        console.log(low, "low");
-        console.log(high, "high");
-
         for (let i = min; i <= max; i++) {
           let selector = `cell${index}-${i}`;
 
@@ -401,20 +419,22 @@ export default {
               "rgb(218, 223, 225)";
           }
         }
+        this.low = low + 1;
+        this.high = high + 1;
       }
     },
 
     stepThree(event, index, ind) {
       event.preventDefault();
+      //showing the add session in the right place
+      if (this.high && this.low) {
+        let targets = _.range(this.low - 1, this.high);
+        this.targets.push(...targets);
+        console.log(this.targets, "thi.stargets");
+      }
 
+      this.showAddSessions(event);
       this.clicked = false;
-    },
-    stepFour(event, index, ind) {
-      event.preventDefault();
-
-      // if (this.direction) {
-      //   console.log(event);
-      // }
     },
 
     getCurrentWeek() {
@@ -511,9 +531,9 @@ export default {
       //
 
       if (e.target.offsetLeft >= 700) {
-        left = e.target.offsetLeft - 180;
+        left = e.target.offsetLeft - 145;
       } else {
-        left = e.target.offsetLeft + 140;
+        left = e.target.offsetLeft + 145;
       }
 
       if (e.target.offsetTop >= 1020) {
@@ -616,6 +636,27 @@ export default {
           { backgroundColor: "rgb(218, 223, 225)" }
         ]);
       });
+    },
+
+    clearSelections() {
+      let len = this.targets.length;
+      let low = this.low;
+      let high = this.high;
+
+      for (let i = 1; i < len; i++) {
+        let selector;
+        if (len === 2) {
+          selector = `cell${this.targets[0]}-${this.targets[1]}`;
+        } else {
+          selector = `cell${this.targets[0]}-${this.targets[i]}`;
+        }
+
+        if (
+          this.$refs[selector][0].style.backgroundColor === "rgb(173, 216, 230)"
+        ) {
+          this.$refs[selector][0].style.backgroundColor = "rgb(218, 223, 225)";
+        }
+      }
     }
   },
 
@@ -819,20 +860,20 @@ export default {
 
 #model {
   position: absolute;
-  background-color: gray;
+  /*background-color: gray;
   text-align: center;
-  background-color: rgba(243, 242, 235, 0.74);
+  background-color: rgba(243, 242, 235, 0.74); */
 }
 
 .model__close {
   text-align: right;
-  position: absolute;
+  /*position: absolute;
   bottom: 100%;
   color: black;
   background-color: rgba(243, 242, 235, 1);
   border-top-left-radius: 100px;
   border-top-right-radius: 100px;
-  padding: 5px;
+  padding: 5px; */
   /* z-index: -1; */
   /* display: inline-block;
     width    : 100%;
