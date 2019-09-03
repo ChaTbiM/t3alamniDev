@@ -1,6 +1,6 @@
 <template>
   <div class="container">
-    <div class="left">
+    <div ref="left" class="left">
       <div class="left__calender"></div>
       <div class="left__add__fix">add fix session</div>
       <div class="left__add__simple">add simple session</div>
@@ -40,7 +40,7 @@
       </label>
     </div>
 
-    <div class="schedule">
+    <div ref="schedule" class="schedule">
       <div class="schedule__header">
         <div class="prevWeek" @click="getPreviousWeek">
           <img src="arrow-left-solid.svg" alt="previous week" class="previous" />
@@ -69,9 +69,9 @@
           <!-- <div class=" day">{{day}}</div> -->
           <div
             class="cell block"
-            @mousedown="stepOne($event, index, ind)"
-            @mouseenter="stepTwo($event, index, ind)"
-            @mouseup="stepThree($event, index, ind)"
+            @mousedown="startSelect($event, index, ind)"
+            @mouseenter="duringSelect($event, index, ind)"
+            @mouseup="endOfSelect($event, index, ind)"
             v-for="(cell, ind) in filterSessions[index]"
             v-bind:key="ind"
             :style="{backgroundColor:cell.backgroundColor}"
@@ -95,15 +95,19 @@
             </span>
             <span class="model__hours">{{this.selected.hours.min}} -> {{this.selected.hours.max}}</span>
           </div>
-          <div class="model__add__fix btn">add fix session</div>
-          <div class="model__add__simple btn">add simple session</div>
+          <div class="model__add__fix btn" @click="showChooseGroup">add fix session</div>
+          <div class="model__add__simple btn" @click="showAddSimpleSessions">add simple session</div>
         </div>
 
-        <add-simple-session v-show="AddSimpleSessionOpen"></add-simple-session>
+        <!-- <add-simple-session v-show="AddSimpleSessionOpen"></add-simple-session>
         <add-group v-show="addGroupOpen"></add-group>
-        <add-fixed-session v-show="AddFixedSessionOpen"></add-fixed-session>
+        <add-fixed-session v-show="AddFixedSessionOpen"></add-fixed-session>-->
       </div>
     </div>
+
+    <add-simple-session v-show="AddSimpleSessionOpen"></add-simple-session>
+    <add-group v-show="addGroupOpen"></add-group>
+    <add-fixed-session v-show="AddFixedSessionOpen"></add-fixed-session>
   </div>
 </template>
 
@@ -340,14 +344,13 @@ export default {
     // light blue "#ADD8E6"
     // rgb(42, 210, 49) , rgb(19, 123, 244) .. green and blue
 
-    stepOne(event, index, ind) {
+    startSelect(event, index, ind) {
       event.preventDefault();
 
       if (this.addSessionsOpen) {
         this.$store.commit("changeState", "addSessionsOpen");
         this.addSessionsOpen = this.$store.getters.addSessionsOpen;
       }
-      console.log(this.targets);
       this.clearSelections();
       if (event.target.style.backgroundColor === "rgb(218, 223, 225)") {
         this.clicked = true;
@@ -398,7 +401,7 @@ export default {
         }
       }
     },
-    stepTwo(event, index, ind) {
+    duringSelect(event, index, ind) {
       event.preventDefault();
 
       if (this.clicked && this.targets[0] === index) {
@@ -436,7 +439,7 @@ export default {
       }
     },
 
-    stepThree(event, index, ind) {
+    endOfSelect(event, index, ind) {
       event.preventDefault();
       //showing the add session in the right place
       if (this.high && this.low) {
@@ -453,15 +456,15 @@ export default {
       let dayIndex = this.targets[0];
       this.selected.dayIndex = dayIndex;
 
-      let day = this.wkStart;
+      let day = new Date(JSON.parse(JSON.stringify(this.wkStart)));
+      console.log(this.wkStart);
+      console.log("day", day);
       day.setDate(day.getDate() + dayIndex);
-      // console.log(day.getUTCDate());
-      let date = this.months[day.getMonth()] + " " + day.getDate();
+
+      let date = this.months[day.getUTCMonth()] + " " + day.getDate();
       this.selected.date = date;
-      console.log(date);
       this.selected.hours.min = this.sessions.time[minHours];
       this.selected.hours.max = this.sessions.time[maxHours];
-      console.log(this.selected, "selected");
 
       this.clicked = false;
       this.showAddSessions(event);
@@ -588,8 +591,16 @@ export default {
       model.style.left = `${left}px`;
 
       // return  this.addSessionsOpen = !this.addSessionsOpen;
-      this.$store.commit("changeState", "addSessionsOpen");
-      this.addSessionsOpen = this.$store.getters.addSessionsOpen;
+      if (
+        this.$refs[`cell${this.targets[0]}-${this.targets[1]}`][0].style
+          .backgroundColor === "rgb(173, 216, 230)"
+        // event.target.style.backgroundColor === "rgb(173, 216, 230)"
+        // ||
+        // event.target.style.backgroundColor !== "rgb(19, 123, 244)"
+      ) {
+        this.$store.commit("changeState", "addSessionsOpen");
+        this.addSessionsOpen = this.$store.getters.addSessionsOpen;
+      }
     },
 
     closeAddSessions: function(e) {
@@ -653,6 +664,21 @@ export default {
           this.sessions.data[diffDay][diffTime].backgroundColor = "#137BF4";
         }
       });
+    },
+
+    showAddSimpleSessions() {
+      this.$store.commit("changeState", "AddSimpleSessionOpen");
+      this.AddSimpleSessionOpen = this.$store.getters.AddSimpleSessionOpen;
+    },
+
+    showAddFixedSessions() {
+      this.$store.commit("changeState", "AddFixedSessionOpen");
+      this.AddFixedSessionOpen = this.$store.getters.AddFixedSessionOpen;
+    },
+
+    showChooseGroup() {
+      this.$store.commit("changeState", "addGroupOpen");
+      this.addGroupOpen = this.$store.getters.addGroupOpen;
     },
 
     clearSessions() {
@@ -734,7 +760,7 @@ export default {
             if (element.type === fixedType || element.type === simpleType) {
               dayData.push(element);
             } else {
-              dayData.push({});
+              dayData.push({ backgroundColor: "rgb(218, 223, 225)" });
             }
           });
 

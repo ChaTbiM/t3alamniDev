@@ -1872,12 +1872,14 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
-//
-//
-//
 /* harmony default export */ __webpack_exports__["default"] = ({
   mounted: function mounted() {
-    console.log('Component mounted. for teachers');
+    console.log("Component mounted. for teachers");
+  },
+  methods: {
+    showAddFixedSessions: function showAddFixedSessions() {
+      this.$parent.showAddFixedSessions();
+    }
   }
 });
 
@@ -1909,9 +1911,30 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
 /* harmony default export */ __webpack_exports__["default"] = ({
   mounted: function mounted() {
-    console.log('Component mounted. for teachers');
+    console.log("Component mounted. for teachers");
+  },
+  data: function data() {
+    return {
+      choosedGroup: ""
+    };
+  },
+  methods: {
+    showAddFixedSessions: function showAddFixedSessions() {
+      this.$store.commit("chooseGroup", this.choosedGroup);
+      this.$parent.showAddFixedSessions();
+      this.$parent.showChooseGroup();
+      console.log(this.$store.getters.choosedGroup);
+    },
+    showChooseGroup: function showChooseGroup() {
+      this.$parent.showChooseGroup();
+    }
   }
 });
 
@@ -1982,6 +2005,11 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony default export */ __webpack_exports__["default"] = ({
   mounted: function mounted() {
     console.log("Component mounted. for teachers");
+  },
+  methods: {
+    showAddSimpleSessions: function showAddSimpleSessions() {
+      this.$parent.showAddSimpleSessions();
+    }
   }
 });
 
@@ -2037,6 +2065,10 @@ function _iterableToArray(iter) { if (Symbol.iterator in Object(iter) || Object.
 
 function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = new Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } }
 
+//
+//
+//
+//
 //
 //
 //
@@ -2423,7 +2455,7 @@ var _ = __webpack_require__(/*! lodash */ "./node_modules/lodash/lodash.js");
     // "rgb(218, 223, 225)" grey
     // light blue "#ADD8E6"
     // rgb(42, 210, 49) , rgb(19, 123, 244) .. green and blue
-    stepOne: function stepOne(event, index, ind) {
+    startSelect: function startSelect(event, index, ind) {
       event.preventDefault();
 
       if (this.addSessionsOpen) {
@@ -2431,7 +2463,6 @@ var _ = __webpack_require__(/*! lodash */ "./node_modules/lodash/lodash.js");
         this.addSessionsOpen = this.$store.getters.addSessionsOpen;
       }
 
-      console.log(this.targets);
       this.clearSelections();
 
       if (event.target.style.backgroundColor === "rgb(218, 223, 225)") {
@@ -2473,7 +2504,7 @@ var _ = __webpack_require__(/*! lodash */ "./node_modules/lodash/lodash.js");
         }
       }
     },
-    stepTwo: function stepTwo(event, index, ind) {
+    duringSelect: function duringSelect(event, index, ind) {
       event.preventDefault();
 
       if (this.clicked && this.targets[0] === index) {
@@ -2509,7 +2540,7 @@ var _ = __webpack_require__(/*! lodash */ "./node_modules/lodash/lodash.js");
         this.high = high + 1;
       }
     },
-    stepThree: function stepThree(event, index, ind) {
+    endOfSelect: function endOfSelect(event, index, ind) {
       event.preventDefault(); //showing the add session in the right place
 
       if (this.high && this.low) {
@@ -2525,15 +2556,14 @@ var _ = __webpack_require__(/*! lodash */ "./node_modules/lodash/lodash.js");
       var maxHours = Math.max.apply(Math, _toConsumableArray(hoursInfo)) + 1;
       var dayIndex = this.targets[0];
       this.selected.dayIndex = dayIndex;
-      var day = this.wkStart;
-      day.setDate(day.getDate() + dayIndex); // console.log(day.getUTCDate());
-
-      var date = this.months[day.getMonth()] + " " + day.getDate();
+      var day = new Date(JSON.parse(JSON.stringify(this.wkStart)));
+      console.log(this.wkStart);
+      console.log("day", day);
+      day.setDate(day.getDate() + dayIndex);
+      var date = this.months[day.getUTCMonth()] + " " + day.getDate();
       this.selected.date = date;
-      console.log(date);
       this.selected.hours.min = this.sessions.time[minHours];
       this.selected.hours.max = this.sessions.time[maxHours];
-      console.log(this.selected, "selected");
       this.clicked = false;
       this.showAddSessions(event);
     },
@@ -2645,8 +2675,13 @@ var _ = __webpack_require__(/*! lodash */ "./node_modules/lodash/lodash.js");
       model.style.top = "".concat(top, "px");
       model.style.left = "".concat(left, "px"); // return  this.addSessionsOpen = !this.addSessionsOpen;
 
-      this.$store.commit("changeState", "addSessionsOpen");
-      this.addSessionsOpen = this.$store.getters.addSessionsOpen;
+      if (this.$refs["cell".concat(this.targets[0], "-").concat(this.targets[1])][0].style.backgroundColor === "rgb(173, 216, 230)" // event.target.style.backgroundColor === "rgb(173, 216, 230)"
+      // ||
+      // event.target.style.backgroundColor !== "rgb(19, 123, 244)"
+      ) {
+          this.$store.commit("changeState", "addSessionsOpen");
+          this.addSessionsOpen = this.$store.getters.addSessionsOpen;
+        }
     },
     closeAddSessions: function closeAddSessions(e) {
       e.preventDefault();
@@ -2711,6 +2746,18 @@ var _ = __webpack_require__(/*! lodash */ "./node_modules/lodash/lodash.js");
           _this2.sessions.data[diffDay][diffTime].backgroundColor = "#137BF4";
         }
       });
+    },
+    showAddSimpleSessions: function showAddSimpleSessions() {
+      this.$store.commit("changeState", "AddSimpleSessionOpen");
+      this.AddSimpleSessionOpen = this.$store.getters.AddSimpleSessionOpen;
+    },
+    showAddFixedSessions: function showAddFixedSessions() {
+      this.$store.commit("changeState", "AddFixedSessionOpen");
+      this.AddFixedSessionOpen = this.$store.getters.AddFixedSessionOpen;
+    },
+    showChooseGroup: function showChooseGroup() {
+      this.$store.commit("changeState", "addGroupOpen");
+      this.addGroupOpen = this.$store.getters.addGroupOpen;
     },
     clearSessions: function clearSessions() {
       var _this3 = this;
@@ -2804,7 +2851,9 @@ var _ = __webpack_require__(/*! lodash */ "./node_modules/lodash/lodash.js");
             if (element.type === fixedType || element.type === simpleType) {
               dayData.push(element);
             } else {
-              dayData.push({});
+              dayData.push({
+                backgroundColor: "rgb(218, 223, 225)"
+              });
             }
           });
           data.push(dayData);
@@ -7293,7 +7342,7 @@ exports = module.exports = __webpack_require__(/*! ../../../node_modules/css-loa
 
 
 // module
-exports.push([module.i, "\n.container[data-v-634a02b0] {\n    position:absolute;\n    top:10%;\n    left: 50%;\n    right: 50%;\n    transform: translateX(-50%);\n    width: 50%;\n\n    /* margin: 0 auto; */\n    background-color:  rgba(243, 242, 235, 1);\n    display: flex;\n}\n.form[data-v-634a02b0]{\n    flex-basis: 100%;\n}\nlabel[data-v-634a02b0] {\n    display:inline-block;\n    width: 20%;\n    margin-right: 2rem;\n    vertical-align: baseline;\n    margin-top: 2rem;\n    margin-left: 3rem;\n}\n.description[data-v-634a02b0] {\n    vertical-align: top;\n}\ninput[data-v-634a02b0],\ntextarea[data-v-634a02b0] {\n    width: 50%;\n    margin-top: 2rem;\n    padding:  .7rem;\n}\n.close[data-v-634a02b0] {\n    background-color:  rgba(243, 242, 235, 1);\n    color: black;\n    position: absolute;\n    right: 0;\n    top:-6%;\n    z-index: -1;\n    padding: 5px;\n    font-size: 1.2rem;\n    border-top-left-radius: 50px;\n    border-top-right-radius: 50px;\n}\n\n", ""]);
+exports.push([module.i, "\n.container[data-v-634a02b0] {\r\n  position: absolute;\r\n  top: 25%;\r\n  left: 50%;\r\n\r\n  transform: translate(-50%, -25%);\r\n\r\n  /* margin: 0 auto; */\r\n  background-color: rgba(243, 242, 235, 1);\r\n  display: flex;\r\n  flex-direction: column;\n}\n.form[data-v-634a02b0] {\r\n  flex-basis: 100%;\n}\nlabel[data-v-634a02b0] {\r\n  display: inline-block;\r\n  width: 20%;\r\n  margin-right: 2rem;\r\n  vertical-align: baseline;\r\n  margin-top: 2rem;\r\n  margin-left: 3rem;\n}\n.description[data-v-634a02b0] {\r\n  vertical-align: top;\n}\ninput[data-v-634a02b0],\r\ntextarea[data-v-634a02b0] {\r\n  width: 50%;\r\n  margin-top: 2rem;\r\n  padding: 0.7rem;\n}\n.close[data-v-634a02b0] {\r\n  background-color: rgba(243, 242, 235, 1);\r\n  color: black;\r\n  /* position: absolute;\r\n        right: 0;\r\n        top:-6%;\r\n        z-index: -1; */\r\n  padding: 5px;\r\n  font-size: 1.2rem;\r\n  border-top-left-radius: 50px;\r\n  border-top-right-radius: 50px;\n}\r\n", ""]);
 
 // exports
 
@@ -7312,7 +7361,7 @@ exports = module.exports = __webpack_require__(/*! ../../../node_modules/css-loa
 
 
 // module
-exports.push([module.i, "\n.container[data-v-8cdafe6e] {\r\n    position: absolute;\r\n    top:25%;\r\n    left:50%;\r\n    transform: translate(-50%,-25%);\r\n    background-color:  rgba(243, 242, 235, 1);\r\n    padding: 1rem;\n}\n.close[data-v-8cdafe6e] {\r\n        background-color:  rgba(243, 242, 235, 1);\r\n        color: black;\r\n        position: absolute;\r\n        right: 0;\r\n        top:-26%;\r\n        z-index: -1;\r\n        padding: 5px;\r\n        font-size: 1.2rem;\r\n        border-top-left-radius: 50px;\r\n        border-top-right-radius: 50px;\n}\nlabel[data-v-8cdafe6e] {\r\n        margin-right: 1rem;\n}\nselect[data-v-8cdafe6e] {\r\n        width: 180px;\n}\n.btn[data-v-8cdafe6e] {\r\n        margin-top: 1rem;\n}\r\n\r\n", ""]);
+exports.push([module.i, "\n.container[data-v-8cdafe6e] {\r\n  position: absolute;\r\n  top: 50%;\r\n  left: 50%;\r\n  transform: translate(-50%, -25%);\r\n  background-color: rgba(243, 242, 235, 1);\r\n  padding: 1rem;\n}\n.close[data-v-8cdafe6e] {\r\n  background-color: rgba(243, 242, 235, 1);\r\n  color: black;\r\n  position: absolute;\r\n  right: 0;\r\n  top: -26%;\r\n  z-index: -1;\r\n  padding: 5px;\r\n  font-size: 1.2rem;\r\n  border-top-left-radius: 50px;\r\n  border-top-right-radius: 50px;\n}\nlabel[data-v-8cdafe6e] {\r\n  margin-right: 1rem;\n}\nselect[data-v-8cdafe6e] {\r\n  width: 180px;\n}\n.btn[data-v-8cdafe6e] {\r\n  margin-top: 1rem;\n}\r\n", ""]);
 
 // exports
 
@@ -7331,7 +7380,7 @@ exports = module.exports = __webpack_require__(/*! ../../../node_modules/css-loa
 
 
 // module
-exports.push([module.i, "\n.container[data-v-2286ab64] {\r\n  position: absolute;\r\n  top: 10%;\r\n  left: 50%;\r\n  right: 50%;\r\n  transform: translateX(-50%);\r\n  width: 50%;\r\n\r\n  /* margin: 0 auto; */\r\n  background-color: rgba(243, 242, 235, 1);\r\n  display: flex;\n}\n.form[data-v-2286ab64] {\r\n  flex-basis: 100%;\n}\r\n/* \r\n    .form__content{\r\n        flex-basis: 100%;\r\n        display: flex;\r\n        justify-content: space-between;\r\n        align-items: center;\r\n    }  */\nlabel[data-v-2286ab64] {\r\n  display: inline-block;\r\n  width: 20%;\r\n  margin-right: 2rem;\r\n  vertical-align: baseline;\r\n  margin-top: 2rem;\r\n  margin-left: 3rem;\n}\n.description[data-v-2286ab64] {\r\n  vertical-align: top;\n}\ninput[data-v-2286ab64],\r\ntextarea[data-v-2286ab64] {\r\n  width: 50%;\r\n  margin-top: 2rem;\r\n  padding: 0.7rem;\n}\n.close[data-v-2286ab64] {\r\n  background-color: rgba(243, 242, 235, 1);\r\n  color: black;\r\n  position: absolute;\r\n  right: 0;\r\n  top: -3%;\r\n  z-index: -1;\r\n  padding: 5px;\r\n  font-size: 1.2rem;\r\n  border-top-left-radius: 50px;\r\n  border-top-right-radius: 50px;\n}\r\n", ""]);
+exports.push([module.i, "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\r\n/* body {\r\n  position: relative;\r\n} */\n.container[data-v-2286ab64] {\r\n  position: absolute;\r\n  /* top: 10%; */\r\n  top: 10%;\r\n  left: 50%;\r\n  right: 50%;\r\n  transform: translateX(-50%);\r\n  width: 50%;\r\n  /* margin: 0 auto; */\r\n  background-color: rgba(243, 242, 235, 1);\r\n  display: flex;\r\n  flex-direction: column;\n}\n.form[data-v-2286ab64] {\r\n  flex-basis: 100%;\n}\r\n/* \r\n    .form__content{\r\n        flex-basis: 100%;\r\n        display: flex;\r\n        justify-content: space-between;\r\n        align-items: center;\r\n    }  */\nlabel[data-v-2286ab64] {\r\n  display: inline-block;\r\n  width: 20%;\r\n  margin-right: 2rem;\r\n  vertical-align: baseline;\r\n  margin-top: 2rem;\r\n  margin-left: 3rem;\n}\n.description[data-v-2286ab64] {\r\n  vertical-align: top;\n}\ninput[data-v-2286ab64],\r\ntextarea[data-v-2286ab64] {\r\n  width: 50%;\r\n  margin-top: 2rem;\r\n  padding: 0.7rem;\n}\n.close[data-v-2286ab64] {\r\n  background-color: rgba(243, 242, 235, 1);\r\n  color: black;\r\n  /* position: absolute;\r\n  right: 0;\r\n  top: -3%;\r\n  z-index: -1; */\r\n  padding: 5px;\r\n  font-size: 1.2rem;\r\n  border-top-left-radius: 50px;\r\n  border-top-right-radius: 50px;\n}\r\n", ""]);
 
 // exports
 
@@ -38922,73 +38971,78 @@ var render = function() {
   var _vm = this
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
-  return _vm._m(0)
+  return _c("div", { staticClass: "container" }, [
+    _c(
+      "div",
+      { staticClass: "close", on: { click: _vm.showAddFixedSessions } },
+      [_vm._v("X")]
+    ),
+    _vm._v(" "),
+    _vm._m(0)
+  ])
 }
 var staticRenderFns = [
   function() {
     var _vm = this
     var _h = _vm.$createElement
     var _c = _vm._self._c || _h
-    return _c("div", { staticClass: "container" }, [
-      _c("div", { staticClass: "close" }, [_vm._v("X")]),
-      _vm._v(" "),
-      _c(
-        "form",
-        { staticClass: "form", attrs: { action: "", method: "post" } },
-        [
-          _c("fieldset", { staticClass: "form__content" }, [
-            _c("legend", { staticClass: "legend" }, [_vm._v("Add Session")]),
+    return _c(
+      "form",
+      {
+        staticClass: "form",
+        attrs: { action: "/teacher/fixed", method: "post" }
+      },
+      [
+        _c("fieldset", { staticClass: "form__content" }, [
+          _c("legend", { staticClass: "legend" }, [_vm._v("Add Session")]),
+          _vm._v(" "),
+          _c("label", { attrs: { for: "title" } }, [_vm._v("date")]),
+          _vm._v(" "),
+          _c("input", {
+            staticClass: "date",
+            attrs: { type: "text", name: "date", id: "date" }
+          }),
+          _vm._v(" "),
+          _c("br"),
+          _vm._v(" "),
+          _c("label", { attrs: { for: "temps" } }, [_vm._v("temps")]),
+          _vm._v(" "),
+          _c("input", {
+            staticClass: "temps",
+            attrs: { type: "time", name: "temps", id: "temps" }
+          }),
+          _vm._v(" "),
+          _c("br"),
+          _vm._v(" "),
+          _c("br"),
+          _vm._v(" "),
+          _c("label", { attrs: { for: "duree" } }, [_vm._v("duree")]),
+          _vm._v(" "),
+          _c("select", { attrs: { name: "duree", id: "duree" } }, [
+            _c("option", { attrs: { value: "1" } }, [_vm._v("1 hour")]),
             _vm._v(" "),
-            _c("label", { attrs: { for: "title" } }, [
-              _vm._v("date\n            ")
-            ]),
-            _vm._v(" "),
-            _c("input", {
-              staticClass: "date",
-              attrs: { type: "text", name: "date", id: "date" }
-            }),
-            _c("br"),
-            _vm._v(" "),
-            _c("label", { attrs: { for: "temps" } }, [
-              _vm._v("temps\n            ")
-            ]),
-            _vm._v(" "),
-            _c("input", {
-              staticClass: "temps",
-              attrs: { type: "time", name: "temps", id: "temps" }
-            }),
-            _c("br"),
-            _vm._v(" "),
-            _c("br"),
-            _vm._v(" "),
-            _c("label", { attrs: { for: "duree" } }, [
-              _vm._v("duree\n            ")
-            ]),
-            _vm._v(" "),
-            _c("select", { attrs: { name: "duree", id: "duree" } }, [
-              _c("option", { attrs: { value: "1" } }, [_vm._v("1 hour")]),
-              _vm._v(" "),
-              _c("option", { attrs: { value: "2" } }, [_vm._v("2 hour")])
-            ]),
-            _c("br"),
-            _vm._v(" "),
-            _c("label", { attrs: { for: "document" } }, [
-              _vm._v("document attache\n            ")
-            ]),
-            _vm._v(" "),
-            _c("input", {
-              staticClass: "document",
-              attrs: { type: "file", name: "document", id: "document" }
-            }),
-            _c("br"),
-            _vm._v(" "),
-            _c("button", { attrs: { type: "submit" } }, [_vm._v("Add")]),
-            _vm._v(" "),
-            _c("button", { attrs: { type: "reset" } }, [_vm._v("Reset")])
-          ])
-        ]
-      )
-    ])
+            _c("option", { attrs: { value: "2" } }, [_vm._v("2 hour")])
+          ]),
+          _vm._v(" "),
+          _c("br"),
+          _vm._v(" "),
+          _c("label", { attrs: { for: "document" } }, [
+            _vm._v("document attache")
+          ]),
+          _vm._v(" "),
+          _c("input", {
+            staticClass: "document",
+            attrs: { type: "file", name: "document", id: "document" }
+          }),
+          _vm._v(" "),
+          _c("br"),
+          _vm._v(" "),
+          _c("button", { attrs: { type: "submit" } }, [_vm._v("Add")]),
+          _vm._v(" "),
+          _c("button", { attrs: { type: "reset" } }, [_vm._v("Reset")])
+        ])
+      ]
+    )
   }
 ]
 render._withStripped = true
@@ -39012,36 +39066,74 @@ var render = function() {
   var _vm = this
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
-  return _vm._m(0)
-}
-var staticRenderFns = [
-  function() {
-    var _vm = this
-    var _h = _vm.$createElement
-    var _c = _vm._self._c || _h
-    return _c("div", { staticClass: "container" }, [
-      _c("div", { staticClass: "close" }, [_vm._v("X")]),
-      _vm._v(" "),
-      _c("form", { attrs: { action: "", method: "post" } }, [
-        _c("fieldset", [
-          _c("legend", [_vm._v("Add Fixed Session")]),
-          _vm._v(" "),
-          _c("label", { attrs: { for: "group" } }, [_vm._v("select groupe")]),
-          _vm._v(" "),
-          _c("select", { attrs: { name: "group", id: "group" } }, [
-            _c("option", { attrs: { value: "ex1" } }, [_vm._v("ex1")]),
-            _vm._v(" "),
-            _c("option", { attrs: { value: "ex2" } }, [_vm._v("ex2")])
-          ])
-        ]),
+  return _c("div", { staticClass: "container" }, [
+    _c("div", { staticClass: "close", on: { click: _vm.showChooseGroup } }, [
+      _vm._v("X")
+    ]),
+    _vm._v(" "),
+    _c("form", { attrs: { action: "", method: "post" } }, [
+      _c("fieldset", [
+        _c("legend", [_vm._v("Add Fixed Session")]),
         _vm._v(" "),
-        _c("button", { staticClass: "btn", attrs: { type: "submit" } }, [
-          _vm._v("Add Group")
-        ])
-      ])
+        _c("label", { attrs: { for: "group" } }, [_vm._v("select groupe")]),
+        _vm._v(" "),
+        _c(
+          "select",
+          {
+            directives: [
+              {
+                name: "model",
+                rawName: "v-model",
+                value: _vm.choosedGroup,
+                expression: "choosedGroup"
+              }
+            ],
+            attrs: { name: "group", id: "group" },
+            on: {
+              change: function($event) {
+                var $$selectedVal = Array.prototype.filter
+                  .call($event.target.options, function(o) {
+                    return o.selected
+                  })
+                  .map(function(o) {
+                    var val = "_value" in o ? o._value : o.value
+                    return val
+                  })
+                _vm.choosedGroup = $event.target.multiple
+                  ? $$selectedVal
+                  : $$selectedVal[0]
+              }
+            }
+          },
+          _vm._l(this.$store.getters.modules, function(group, index) {
+            return _c(
+              "option",
+              { key: index, domProps: { value: "groupe" + group.groupId } },
+              [_vm._v("groupe " + _vm._s(group.groupId))]
+            )
+          }),
+          0
+        )
+      ]),
+      _vm._v(" "),
+      _c(
+        "button",
+        {
+          staticClass: "btn",
+          attrs: { type: "submit" },
+          on: {
+            click: function($event) {
+              $event.preventDefault()
+              return _vm.showAddFixedSessions($event)
+            }
+          }
+        },
+        [_vm._v("Ok")]
+      )
     ])
-  }
-]
+  ])
+}
+var staticRenderFns = []
 render._withStripped = true
 
 
@@ -39063,145 +39155,147 @@ var render = function() {
   var _vm = this
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
-  return _vm._m(0)
+  return _c("div", { staticClass: "container" }, [
+    _c(
+      "div",
+      { staticClass: "close", on: { click: _vm.showAddSimpleSessions } },
+      [_vm._v("X")]
+    ),
+    _vm._v(" "),
+    _vm._m(0)
+  ])
 }
 var staticRenderFns = [
   function() {
     var _vm = this
     var _h = _vm.$createElement
     var _c = _vm._self._c || _h
-    return _c("div", { staticClass: "container" }, [
-      _c("div", { staticClass: "close" }, [_vm._v("X")]),
-      _vm._v(" "),
-      _c(
-        "form",
-        { staticClass: "form", attrs: { action: "", method: "post" } },
-        [
-          _c("fieldset", { staticClass: "form__content" }, [
-            _c("legend", { staticClass: "legend" }, [_vm._v("Add Session")]),
-            _vm._v(" "),
-            _c("label", { attrs: { for: "title" } }, [_vm._v("titre")]),
-            _vm._v(" "),
-            _c("input", {
-              staticClass: "titre",
-              attrs: { type: "text", name: "titre", id: "titre" }
-            }),
-            _vm._v(" "),
-            _c("br"),
-            _vm._v(" "),
-            _c("label", { attrs: { for: "module" } }, [_vm._v("module")]),
-            _vm._v(" "),
-            _c("input", {
-              staticClass: "module",
-              attrs: { type: "text", name: "module", id: "module" }
-            }),
-            _vm._v(" "),
-            _c("br"),
-            _vm._v(" "),
-            _c("label", { attrs: { for: "title" } }, [_vm._v("niveau")]),
-            _vm._v(" "),
-            _c("input", {
-              staticClass: "niveau",
-              attrs: { type: "text", name: "niveau", id: "niveau" }
-            }),
-            _vm._v(" "),
-            _c("br"),
-            _vm._v(" "),
-            _c("label", { attrs: { for: "title" } }, [_vm._v("specialite")]),
-            _vm._v(" "),
-            _c("input", {
-              staticClass: "specialite",
-              attrs: { type: "text", name: "specialite", id: "specialite" }
-            }),
-            _vm._v(" "),
-            _c("br"),
-            _vm._v(" "),
-            _c("label", { attrs: { for: "title" } }, [_vm._v("annee")]),
-            _vm._v(" "),
-            _c("input", {
-              staticClass: "annee",
-              attrs: { type: "text", name: "annee", id: "annee" }
-            }),
-            _vm._v(" "),
-            _c("br"),
-            _vm._v(" "),
-            _c(
-              "label",
-              { staticClass: "description", attrs: { for: "title" } },
-              [_vm._v("description")]
-            ),
-            _vm._v(" "),
-            _c("textarea", {
-              attrs: {
-                name: "description",
-                id: "description",
-                cols: "30",
-                rows: "10"
-              }
-            }),
-            _vm._v(" "),
-            _c("br"),
-            _vm._v(" "),
-            _c("br"),
-            _vm._v(" "),
-            _c("label", { attrs: { for: "document" } }, [
-              _vm._v("document attache")
-            ]),
-            _vm._v(" "),
-            _c("input", {
-              staticClass: "document",
-              attrs: { type: "file", name: "document", id: "document" }
-            }),
-            _vm._v(" "),
-            _c("br"),
-            _vm._v(" "),
-            _c("label", { attrs: { for: "title" } }, [_vm._v("date")]),
-            _vm._v(" "),
-            _c("input", {
-              staticClass: "date",
-              attrs: { type: "text", name: "date", id: "date" }
-            }),
-            _vm._v(" "),
-            _c("br"),
-            _vm._v(" "),
-            _c("label", { attrs: { for: "temps" } }, [_vm._v("temps")]),
-            _vm._v(" "),
-            _c("input", {
-              staticClass: "temps",
-              attrs: { type: "time", name: "temps", id: "temps" }
-            }),
-            _vm._v(" "),
-            _c("br"),
-            _vm._v(" "),
-            _c("br"),
-            _vm._v(" "),
-            _c("label", { attrs: { for: "nombre" } }, [
-              _vm._v("nombre de place")
-            ]),
-            _vm._v(" "),
-            _c("input", {
-              staticClass: "nombre",
-              attrs: { type: "text", name: "nombre", id: "nombre" }
-            }),
-            _vm._v(" "),
-            _c("br"),
-            _vm._v(" "),
-            _c("label", { attrs: { for: "prix" } }, [_vm._v("prix")]),
-            _vm._v(" "),
-            _c("input", {
-              staticClass: "prix",
-              attrs: { type: "text", name: "prix", id: "prix" }
-            }),
-            _vm._v(" "),
-            _c("br"),
-            _vm._v(" "),
-            _c("button", { attrs: { type: "submit" } }, [_vm._v("Add")]),
-            _vm._v(" "),
-            _c("button", { attrs: { type: "reset" } }, [_vm._v("Reset")])
-          ])
-        ]
-      )
-    ])
+    return _c(
+      "form",
+      { staticClass: "form", attrs: { action: "", method: "post" } },
+      [
+        _c("fieldset", { staticClass: "form__content" }, [
+          _c("legend", { staticClass: "legend" }, [_vm._v("Add Session")]),
+          _vm._v(" "),
+          _c("label", { attrs: { for: "title" } }, [_vm._v("titre")]),
+          _vm._v(" "),
+          _c("input", {
+            staticClass: "titre",
+            attrs: { type: "text", name: "titre", id: "titre" }
+          }),
+          _vm._v(" "),
+          _c("br"),
+          _vm._v(" "),
+          _c("label", { attrs: { for: "module" } }, [_vm._v("module")]),
+          _vm._v(" "),
+          _c("input", {
+            staticClass: "module",
+            attrs: { type: "text", name: "module", id: "module" }
+          }),
+          _vm._v(" "),
+          _c("br"),
+          _vm._v(" "),
+          _c("label", { attrs: { for: "title" } }, [_vm._v("niveau")]),
+          _vm._v(" "),
+          _c("input", {
+            staticClass: "niveau",
+            attrs: { type: "text", name: "niveau", id: "niveau" }
+          }),
+          _vm._v(" "),
+          _c("br"),
+          _vm._v(" "),
+          _c("label", { attrs: { for: "title" } }, [_vm._v("specialite")]),
+          _vm._v(" "),
+          _c("input", {
+            staticClass: "specialite",
+            attrs: { type: "text", name: "specialite", id: "specialite" }
+          }),
+          _vm._v(" "),
+          _c("br"),
+          _vm._v(" "),
+          _c("label", { attrs: { for: "title" } }, [_vm._v("annee")]),
+          _vm._v(" "),
+          _c("input", {
+            staticClass: "annee",
+            attrs: { type: "text", name: "annee", id: "annee" }
+          }),
+          _vm._v(" "),
+          _c("br"),
+          _vm._v(" "),
+          _c("label", { staticClass: "description", attrs: { for: "title" } }, [
+            _vm._v("description")
+          ]),
+          _vm._v(" "),
+          _c("textarea", {
+            attrs: {
+              name: "description",
+              id: "description",
+              cols: "30",
+              rows: "10"
+            }
+          }),
+          _vm._v(" "),
+          _c("br"),
+          _vm._v(" "),
+          _c("br"),
+          _vm._v(" "),
+          _c("label", { attrs: { for: "document" } }, [
+            _vm._v("document attache")
+          ]),
+          _vm._v(" "),
+          _c("input", {
+            staticClass: "document",
+            attrs: { type: "file", name: "document", id: "document" }
+          }),
+          _vm._v(" "),
+          _c("br"),
+          _vm._v(" "),
+          _c("label", { attrs: { for: "title" } }, [_vm._v("date")]),
+          _vm._v(" "),
+          _c("input", {
+            staticClass: "date",
+            attrs: { type: "text", name: "date", id: "date" }
+          }),
+          _vm._v(" "),
+          _c("br"),
+          _vm._v(" "),
+          _c("label", { attrs: { for: "temps" } }, [_vm._v("temps")]),
+          _vm._v(" "),
+          _c("input", {
+            staticClass: "temps",
+            attrs: { type: "time", name: "temps", id: "temps" }
+          }),
+          _vm._v(" "),
+          _c("br"),
+          _vm._v(" "),
+          _c("br"),
+          _vm._v(" "),
+          _c("label", { attrs: { for: "nombre" } }, [
+            _vm._v("nombre de place")
+          ]),
+          _vm._v(" "),
+          _c("input", {
+            staticClass: "nombre",
+            attrs: { type: "text", name: "nombre", id: "nombre" }
+          }),
+          _vm._v(" "),
+          _c("br"),
+          _vm._v(" "),
+          _c("label", { attrs: { for: "prix" } }, [_vm._v("prix")]),
+          _vm._v(" "),
+          _c("input", {
+            staticClass: "prix",
+            attrs: { type: "text", name: "prix", id: "prix" }
+          }),
+          _vm._v(" "),
+          _c("br"),
+          _vm._v(" "),
+          _c("button", { attrs: { type: "submit" } }, [_vm._v("Add")]),
+          _vm._v(" "),
+          _c("button", { attrs: { type: "reset" } }, [_vm._v("Reset")])
+        ])
+      ]
+    )
   }
 ]
 render._withStripped = true
@@ -39270,373 +39364,397 @@ var render = function() {
   var _vm = this
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
-  return _c("div", { staticClass: "container" }, [
-    _c(
-      "div",
-      { staticClass: "left" },
-      [
-        _c("div", { staticClass: "left__calender" }),
-        _vm._v(" "),
-        _c("div", { staticClass: "left__add__fix" }, [
-          _vm._v("add fix session")
-        ]),
-        _vm._v(" "),
-        _c("div", { staticClass: "left__add__simple" }, [
-          _vm._v("add simple session")
-        ]),
-        _vm._v(" "),
-        _c("label", { attrs: { for: "fix" } }, [
-          _vm._v("\n      all fix sessions\n      "),
-          _c("input", {
-            directives: [
-              {
-                name: "model",
-                rawName: "v-model",
-                value: _vm.filters.sessionsType,
-                expression: "filters.sessionsType"
-              }
-            ],
-            attrs: { type: "checkbox", name: "fix", id: "fix", value: "fixed" },
-            domProps: {
-              checked: Array.isArray(_vm.filters.sessionsType)
-                ? _vm._i(_vm.filters.sessionsType, "fixed") > -1
-                : _vm.filters.sessionsType
-            },
-            on: {
-              change: function($event) {
-                var $$a = _vm.filters.sessionsType,
-                  $$el = $event.target,
-                  $$c = $$el.checked ? true : false
-                if (Array.isArray($$a)) {
-                  var $$v = "fixed",
-                    $$i = _vm._i($$a, $$v)
-                  if ($$el.checked) {
-                    $$i < 0 &&
-                      _vm.$set(_vm.filters, "sessionsType", $$a.concat([$$v]))
-                  } else {
-                    $$i > -1 &&
-                      _vm.$set(
-                        _vm.filters,
-                        "sessionsType",
-                        $$a.slice(0, $$i).concat($$a.slice($$i + 1))
-                      )
-                  }
-                } else {
-                  _vm.$set(_vm.filters, "sessionsType", $$c)
-                }
-              }
-            }
-          })
-        ]),
-        _vm._v(" "),
-        _c("label", { attrs: { for: "simple" } }, [
-          _vm._v("\n      all simple sessions\n      "),
-          _c("input", {
-            directives: [
-              {
-                name: "model",
-                rawName: "v-model",
-                value: _vm.filters.sessionsType,
-                expression: "filters.sessionsType"
-              }
-            ],
-            attrs: {
-              type: "checkbox",
-              name: "simple",
-              id: "simple",
-              value: "simple"
-            },
-            domProps: {
-              checked: Array.isArray(_vm.filters.sessionsType)
-                ? _vm._i(_vm.filters.sessionsType, "simple") > -1
-                : _vm.filters.sessionsType
-            },
-            on: {
-              change: function($event) {
-                var $$a = _vm.filters.sessionsType,
-                  $$el = $event.target,
-                  $$c = $$el.checked ? true : false
-                if (Array.isArray($$a)) {
-                  var $$v = "simple",
-                    $$i = _vm._i($$a, $$v)
-                  if ($$el.checked) {
-                    $$i < 0 &&
-                      _vm.$set(_vm.filters, "sessionsType", $$a.concat([$$v]))
-                  } else {
-                    $$i > -1 &&
-                      _vm.$set(
-                        _vm.filters,
-                        "sessionsType",
-                        $$a.slice(0, $$i).concat($$a.slice($$i + 1))
-                      )
-                  }
-                } else {
-                  _vm.$set(_vm.filters, "sessionsType", $$c)
-                }
-              }
-            }
-          })
-        ]),
-        _vm._v(" "),
-        _c("br"),
-        _vm._v(" "),
-        _vm._l(_vm.modules, function(module, index) {
-          return _c(
-            "label",
-            { key: index, attrs: { for: "group" + (index + 1) } },
-            [
-              _vm._v("\n      group " + _vm._s(index + 1) + "\n      "),
-              _c("input", {
-                directives: [
-                  {
-                    name: "model",
-                    rawName: "v-model",
-                    value: _vm.filters.checkedGroups,
-                    expression: "filters.checkedGroups"
-                  }
-                ],
-                attrs: {
-                  type: "checkbox",
-                  name: "group" + (index + 1),
-                  id: "group" + (index + 1)
-                },
-                domProps: {
-                  value: index + 1,
-                  checked: Array.isArray(_vm.filters.checkedGroups)
-                    ? _vm._i(_vm.filters.checkedGroups, index + 1) > -1
-                    : _vm.filters.checkedGroups
-                },
-                on: {
-                  change: function($event) {
-                    var $$a = _vm.filters.checkedGroups,
-                      $$el = $event.target,
-                      $$c = $$el.checked ? true : false
-                    if (Array.isArray($$a)) {
-                      var $$v = index + 1,
-                        $$i = _vm._i($$a, $$v)
-                      if ($$el.checked) {
-                        $$i < 0 &&
-                          _vm.$set(
-                            _vm.filters,
-                            "checkedGroups",
-                            $$a.concat([$$v])
-                          )
-                      } else {
-                        $$i > -1 &&
-                          _vm.$set(
-                            _vm.filters,
-                            "checkedGroups",
-                            $$a.slice(0, $$i).concat($$a.slice($$i + 1))
-                          )
-                      }
-                    } else {
-                      _vm.$set(_vm.filters, "checkedGroups", $$c)
-                    }
-                  }
-                }
-              })
-            ]
-          )
-        })
-      ],
-      2
-    ),
-    _vm._v(" "),
-    _c("div", { staticClass: "schedule" }, [
-      _c("div", { staticClass: "schedule__header" }, [
-        _c(
-          "div",
-          { staticClass: "prevWeek", on: { click: _vm.getPreviousWeek } },
-          [
-            _c("img", {
-              staticClass: "previous",
-              attrs: { src: "arrow-left-solid.svg", alt: "previous week" }
-            })
-          ]
-        ),
-        _vm._v(" "),
-        _c("div", { staticClass: "nextWeek", on: { click: _vm.getNextWeek } }, [
-          _c("img", {
-            staticClass: "next",
-            attrs: { src: "arrow-right-solid.svg", alt: "next week" }
-          })
-        ]),
-        _vm._v(" "),
-        _c("h2", { staticClass: "schedule__header__date" }, [
-          _vm._v(_vm._s(_vm.currentWeek))
-        ])
-      ]),
-      _vm._v(" "),
+  return _c(
+    "div",
+    { staticClass: "container" },
+    [
       _c(
         "div",
-        { staticClass: "days" },
-        _vm._l(_vm.days, function(day, index) {
-          return _c("div", { key: index, staticClass: "day" }, [
-            _vm._v(_vm._s(day))
-          ])
-        }),
-        0
-      ),
-      _vm._v(" "),
-      _c("hr", { staticClass: "line" }),
-      _vm._v(" "),
-      _c(
-        "div",
-        { staticClass: "calender" },
+        { ref: "left", staticClass: "left" },
         [
-          _c(
-            "div",
-            { staticClass: "column" },
-            _vm._l(_vm.sessions.time, function(cell, index) {
-              return _c("div", { key: index, staticClass: "hour" }, [
-                _vm._v(_vm._s(cell))
-              ])
-            }),
-            0
-          ),
+          _c("div", { staticClass: "left__calender" }),
           _vm._v(" "),
-          _vm._l(_vm.days, function(day, index) {
-            return _c(
-              "div",
-              { key: index, staticClass: "column" },
-              _vm._l(_vm.filterSessions[index], function(cell, ind) {
-                return _c(
-                  "div",
-                  {
-                    key: ind,
-                    ref: "cell" + index + "-" + ind,
-                    refInFor: true,
-                    staticClass: "cell block",
-                    style: { backgroundColor: cell.backgroundColor },
-                    on: {
-                      mousedown: function($event) {
-                        return _vm.stepOne($event, index, ind)
-                      },
-                      mouseenter: function($event) {
-                        return _vm.stepTwo($event, index, ind)
-                      },
-                      mouseup: function($event) {
-                        return _vm.stepThree($event, index, ind)
-                      }
-                    }
-                  },
-                  [
-                    cell.type === "fixed"
-                      ? _c("span", [
-                          _vm._v(
-                            "groupe " +
-                              _vm._s(cell.groupId) +
-                              " " +
-                              _vm._s(cell.module)
-                          )
-                        ])
-                      : _vm._e(),
-                    _vm._v(" "),
-                    cell.type == "simple"
-                      ? _c("span", [
-                          _vm._v(
-                            "\n            " +
-                              _vm._s(cell.subject) +
-                              "\n          "
-                          )
-                        ])
-                      : _vm._e()
-                  ]
-                )
-              }),
-              0
-            )
-          }),
+          _c("div", { staticClass: "left__add__fix" }, [
+            _vm._v("add fix session")
+          ]),
           _vm._v(" "),
-          _c(
-            "div",
-            {
+          _c("div", { staticClass: "left__add__simple" }, [
+            _vm._v("add simple session")
+          ]),
+          _vm._v(" "),
+          _c("label", { attrs: { for: "fix" } }, [
+            _vm._v("\n      all fix sessions\n      "),
+            _c("input", {
               directives: [
                 {
-                  name: "show",
-                  rawName: "v-show",
-                  value: _vm.addSessionsOpen,
-                  expression: "addSessionsOpen"
+                  name: "model",
+                  rawName: "v-model",
+                  value: _vm.filters.sessionsType,
+                  expression: "filters.sessionsType"
                 }
               ],
-              staticClass: "model",
-              attrs: { id: "model" }
-            },
-            [
-              _c(
-                "div",
+              attrs: {
+                type: "checkbox",
+                name: "fix",
+                id: "fix",
+                value: "fixed"
+              },
+              domProps: {
+                checked: Array.isArray(_vm.filters.sessionsType)
+                  ? _vm._i(_vm.filters.sessionsType, "fixed") > -1
+                  : _vm.filters.sessionsType
+              },
+              on: {
+                change: function($event) {
+                  var $$a = _vm.filters.sessionsType,
+                    $$el = $event.target,
+                    $$c = $$el.checked ? true : false
+                  if (Array.isArray($$a)) {
+                    var $$v = "fixed",
+                      $$i = _vm._i($$a, $$v)
+                    if ($$el.checked) {
+                      $$i < 0 &&
+                        _vm.$set(_vm.filters, "sessionsType", $$a.concat([$$v]))
+                    } else {
+                      $$i > -1 &&
+                        _vm.$set(
+                          _vm.filters,
+                          "sessionsType",
+                          $$a.slice(0, $$i).concat($$a.slice($$i + 1))
+                        )
+                    }
+                  } else {
+                    _vm.$set(_vm.filters, "sessionsType", $$c)
+                  }
+                }
+              }
+            })
+          ]),
+          _vm._v(" "),
+          _c("label", { attrs: { for: "simple" } }, [
+            _vm._v("\n      all simple sessions\n      "),
+            _c("input", {
+              directives: [
                 {
-                  staticClass: "model__close",
-                  on: { click: _vm.closeAddSessions }
-                },
-                [_vm._v("X")]
-              ),
-              _vm._v(" "),
-              _c("div", { staticClass: "model__info" }, [
-                _c("span", { staticClass: "model__day" }, [
-                  _c("span", [_vm._v(_vm._s(this.selected.date))]),
-                  _vm._v(" "),
-                  _c("span", [
-                    _vm._v(_vm._s(this.days[this.selected.dayIndex]))
-                  ])
-                ]),
-                _vm._v(" "),
-                _c("span", { staticClass: "model__hours" }, [
-                  _vm._v(
-                    _vm._s(this.selected.hours.min) +
-                      " -> " +
-                      _vm._s(this.selected.hours.max)
-                  )
-                ])
-              ]),
-              _vm._v(" "),
-              _c("div", { staticClass: "model__add__fix btn" }, [
-                _vm._v("add fix session")
-              ]),
-              _vm._v(" "),
-              _c("div", { staticClass: "model__add__simple btn" }, [
-                _vm._v("add simple session")
-              ])
-            ]
-          ),
-          _vm._v(" "),
-          _c("add-simple-session", {
-            directives: [
-              {
-                name: "show",
-                rawName: "v-show",
-                value: _vm.AddSimpleSessionOpen,
-                expression: "AddSimpleSessionOpen"
+                  name: "model",
+                  rawName: "v-model",
+                  value: _vm.filters.sessionsType,
+                  expression: "filters.sessionsType"
+                }
+              ],
+              attrs: {
+                type: "checkbox",
+                name: "simple",
+                id: "simple",
+                value: "simple"
+              },
+              domProps: {
+                checked: Array.isArray(_vm.filters.sessionsType)
+                  ? _vm._i(_vm.filters.sessionsType, "simple") > -1
+                  : _vm.filters.sessionsType
+              },
+              on: {
+                change: function($event) {
+                  var $$a = _vm.filters.sessionsType,
+                    $$el = $event.target,
+                    $$c = $$el.checked ? true : false
+                  if (Array.isArray($$a)) {
+                    var $$v = "simple",
+                      $$i = _vm._i($$a, $$v)
+                    if ($$el.checked) {
+                      $$i < 0 &&
+                        _vm.$set(_vm.filters, "sessionsType", $$a.concat([$$v]))
+                    } else {
+                      $$i > -1 &&
+                        _vm.$set(
+                          _vm.filters,
+                          "sessionsType",
+                          $$a.slice(0, $$i).concat($$a.slice($$i + 1))
+                        )
+                    }
+                  } else {
+                    _vm.$set(_vm.filters, "sessionsType", $$c)
+                  }
+                }
               }
-            ]
-          }),
+            })
+          ]),
           _vm._v(" "),
-          _c("add-group", {
-            directives: [
-              {
-                name: "show",
-                rawName: "v-show",
-                value: _vm.addGroupOpen,
-                expression: "addGroupOpen"
-              }
-            ]
-          }),
+          _c("br"),
           _vm._v(" "),
-          _c("add-fixed-session", {
-            directives: [
-              {
-                name: "show",
-                rawName: "v-show",
-                value: _vm.AddFixedSessionOpen,
-                expression: "AddFixedSessionOpen"
-              }
-            ]
+          _vm._l(_vm.modules, function(module, index) {
+            return _c(
+              "label",
+              { key: index, attrs: { for: "group" + (index + 1) } },
+              [
+                _vm._v("\n      group " + _vm._s(index + 1) + "\n      "),
+                _c("input", {
+                  directives: [
+                    {
+                      name: "model",
+                      rawName: "v-model",
+                      value: _vm.filters.checkedGroups,
+                      expression: "filters.checkedGroups"
+                    }
+                  ],
+                  attrs: {
+                    type: "checkbox",
+                    name: "group" + (index + 1),
+                    id: "group" + (index + 1)
+                  },
+                  domProps: {
+                    value: index + 1,
+                    checked: Array.isArray(_vm.filters.checkedGroups)
+                      ? _vm._i(_vm.filters.checkedGroups, index + 1) > -1
+                      : _vm.filters.checkedGroups
+                  },
+                  on: {
+                    change: function($event) {
+                      var $$a = _vm.filters.checkedGroups,
+                        $$el = $event.target,
+                        $$c = $$el.checked ? true : false
+                      if (Array.isArray($$a)) {
+                        var $$v = index + 1,
+                          $$i = _vm._i($$a, $$v)
+                        if ($$el.checked) {
+                          $$i < 0 &&
+                            _vm.$set(
+                              _vm.filters,
+                              "checkedGroups",
+                              $$a.concat([$$v])
+                            )
+                        } else {
+                          $$i > -1 &&
+                            _vm.$set(
+                              _vm.filters,
+                              "checkedGroups",
+                              $$a.slice(0, $$i).concat($$a.slice($$i + 1))
+                            )
+                        }
+                      } else {
+                        _vm.$set(_vm.filters, "checkedGroups", $$c)
+                      }
+                    }
+                  }
+                })
+              ]
+            )
           })
         ],
         2
-      )
-    ])
-  ])
+      ),
+      _vm._v(" "),
+      _c("div", { ref: "schedule", staticClass: "schedule" }, [
+        _c("div", { staticClass: "schedule__header" }, [
+          _c(
+            "div",
+            { staticClass: "prevWeek", on: { click: _vm.getPreviousWeek } },
+            [
+              _c("img", {
+                staticClass: "previous",
+                attrs: { src: "arrow-left-solid.svg", alt: "previous week" }
+              })
+            ]
+          ),
+          _vm._v(" "),
+          _c(
+            "div",
+            { staticClass: "nextWeek", on: { click: _vm.getNextWeek } },
+            [
+              _c("img", {
+                staticClass: "next",
+                attrs: { src: "arrow-right-solid.svg", alt: "next week" }
+              })
+            ]
+          ),
+          _vm._v(" "),
+          _c("h2", { staticClass: "schedule__header__date" }, [
+            _vm._v(_vm._s(_vm.currentWeek))
+          ])
+        ]),
+        _vm._v(" "),
+        _c(
+          "div",
+          { staticClass: "days" },
+          _vm._l(_vm.days, function(day, index) {
+            return _c("div", { key: index, staticClass: "day" }, [
+              _vm._v(_vm._s(day))
+            ])
+          }),
+          0
+        ),
+        _vm._v(" "),
+        _c("hr", { staticClass: "line" }),
+        _vm._v(" "),
+        _c(
+          "div",
+          { staticClass: "calender" },
+          [
+            _c(
+              "div",
+              { staticClass: "column" },
+              _vm._l(_vm.sessions.time, function(cell, index) {
+                return _c("div", { key: index, staticClass: "hour" }, [
+                  _vm._v(_vm._s(cell))
+                ])
+              }),
+              0
+            ),
+            _vm._v(" "),
+            _vm._l(_vm.days, function(day, index) {
+              return _c(
+                "div",
+                { key: index, staticClass: "column" },
+                _vm._l(_vm.filterSessions[index], function(cell, ind) {
+                  return _c(
+                    "div",
+                    {
+                      key: ind,
+                      ref: "cell" + index + "-" + ind,
+                      refInFor: true,
+                      staticClass: "cell block",
+                      style: { backgroundColor: cell.backgroundColor },
+                      on: {
+                        mousedown: function($event) {
+                          return _vm.startSelect($event, index, ind)
+                        },
+                        mouseenter: function($event) {
+                          return _vm.duringSelect($event, index, ind)
+                        },
+                        mouseup: function($event) {
+                          return _vm.endOfSelect($event, index, ind)
+                        }
+                      }
+                    },
+                    [
+                      cell.type === "fixed"
+                        ? _c("span", [
+                            _vm._v(
+                              "groupe " +
+                                _vm._s(cell.groupId) +
+                                " " +
+                                _vm._s(cell.module)
+                            )
+                          ])
+                        : _vm._e(),
+                      _vm._v(" "),
+                      cell.type == "simple"
+                        ? _c("span", [
+                            _vm._v(
+                              "\n            " +
+                                _vm._s(cell.subject) +
+                                "\n          "
+                            )
+                          ])
+                        : _vm._e()
+                    ]
+                  )
+                }),
+                0
+              )
+            }),
+            _vm._v(" "),
+            _c(
+              "div",
+              {
+                directives: [
+                  {
+                    name: "show",
+                    rawName: "v-show",
+                    value: _vm.addSessionsOpen,
+                    expression: "addSessionsOpen"
+                  }
+                ],
+                staticClass: "model",
+                attrs: { id: "model" }
+              },
+              [
+                _c(
+                  "div",
+                  {
+                    staticClass: "model__close",
+                    on: { click: _vm.closeAddSessions }
+                  },
+                  [_vm._v("X")]
+                ),
+                _vm._v(" "),
+                _c("div", { staticClass: "model__info" }, [
+                  _c("span", { staticClass: "model__day" }, [
+                    _c("span", [_vm._v(_vm._s(this.selected.date))]),
+                    _vm._v(" "),
+                    _c("span", [
+                      _vm._v(_vm._s(this.days[this.selected.dayIndex]))
+                    ])
+                  ]),
+                  _vm._v(" "),
+                  _c("span", { staticClass: "model__hours" }, [
+                    _vm._v(
+                      _vm._s(this.selected.hours.min) +
+                        " -> " +
+                        _vm._s(this.selected.hours.max)
+                    )
+                  ])
+                ]),
+                _vm._v(" "),
+                _c(
+                  "div",
+                  {
+                    staticClass: "model__add__fix btn",
+                    on: { click: _vm.showChooseGroup }
+                  },
+                  [_vm._v("add fix session")]
+                ),
+                _vm._v(" "),
+                _c(
+                  "div",
+                  {
+                    staticClass: "model__add__simple btn",
+                    on: { click: _vm.showAddSimpleSessions }
+                  },
+                  [_vm._v("add simple session")]
+                )
+              ]
+            )
+          ],
+          2
+        )
+      ]),
+      _vm._v(" "),
+      _c("add-simple-session", {
+        directives: [
+          {
+            name: "show",
+            rawName: "v-show",
+            value: _vm.AddSimpleSessionOpen,
+            expression: "AddSimpleSessionOpen"
+          }
+        ]
+      }),
+      _vm._v(" "),
+      _c("add-group", {
+        directives: [
+          {
+            name: "show",
+            rawName: "v-show",
+            value: _vm.addGroupOpen,
+            expression: "addGroupOpen"
+          }
+        ]
+      }),
+      _vm._v(" "),
+      _c("add-fixed-session", {
+        directives: [
+          {
+            name: "show",
+            rawName: "v-show",
+            value: _vm.AddFixedSessionOpen,
+            expression: "AddFixedSessionOpen"
+          }
+        ]
+      })
+    ],
+    1
+  )
 }
 var staticRenderFns = []
 render._withStripped = true
@@ -53306,10 +53424,13 @@ vue__WEBPACK_IMPORTED_MODULE_0___default.a.use(vuex__WEBPACK_IMPORTED_MODULE_1__
 var store = new vuex__WEBPACK_IMPORTED_MODULE_1__["default"].Store({
   state: {
     test: "this is test state",
+    //adding Sessions
     addSessionsOpen: false,
     AddSimpleSessionOpen: false,
     AddFixedSessionOpen: false,
     addGroupOpen: false,
+    choosedGroup: "",
+    //sessions data
     fixed: "",
     simple: "",
     modules: ""
@@ -53326,12 +53447,19 @@ var store = new vuex__WEBPACK_IMPORTED_MODULE_1__["default"].Store({
     },
     initModules: function initModules(state, data) {
       state.modules = JSON.parse(data);
+    },
+    chooseGroup: function chooseGroup(state, data) {
+      state.choosedGroup = data;
     }
   },
   getters: {
     test: function test(state) {
       return state.test;
     },
+    initState: function initState(state) {
+      return state.data;
+    },
+    //adding sessions
     addSessionsOpen: function addSessionsOpen(state) {
       return state.addSessionsOpen;
     },
@@ -53344,6 +53472,10 @@ var store = new vuex__WEBPACK_IMPORTED_MODULE_1__["default"].Store({
     addGroupOpen: function addGroupOpen(state) {
       return state.addGroupOpen;
     },
+    choosedGroup: function choosedGroup(state) {
+      return state.choosedGroup;
+    },
+    //sessions data
     fixedSessions: function fixedSessions(state) {
       return state.fixed;
     },
@@ -53352,9 +53484,6 @@ var store = new vuex__WEBPACK_IMPORTED_MODULE_1__["default"].Store({
     },
     modules: function modules(state) {
       return state.modules;
-    },
-    initState: function initState(state) {
-      return state.data;
     }
   }
 });

@@ -1,6 +1,6 @@
 <template>
   <div class="container">
-    <div class="close">X</div>
+    <div class="close" @click="showAddSimpleSessions">X</div>
     <form class="form" action method="post">
       <fieldset class="form__content">
         <legend class="legend">Add Session</legend>
@@ -55,22 +55,32 @@
 export default {
   mounted() {
     console.log("Component mounted. for teachers");
+  },
+  methods: {
+    showAddSimpleSessions() {
+      this.$parent.showAddSimpleSessions();
+    }
   }
 };
 </script>
 
-<style  scoped>
+<style scoped >
+/* body {
+  position: relative;
+} */
+
 .container {
   position: absolute;
+  /* top: 10%; */
   top: 10%;
   left: 50%;
   right: 50%;
   transform: translateX(-50%);
   width: 50%;
-
   /* margin: 0 auto; */
   background-color: rgba(243, 242, 235, 1);
   display: flex;
+  flex-direction: column;
 }
 
 .form {
@@ -107,10 +117,10 @@ textarea {
 .close {
   background-color: rgba(243, 242, 235, 1);
   color: black;
-  position: absolute;
+  /* position: absolute;
   right: 0;
   top: -3%;
-  z-index: -1;
+  z-index: -1; */
   padding: 5px;
   font-size: 1.2rem;
   border-top-left-radius: 50px;

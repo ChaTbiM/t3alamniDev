@@ -52,4 +52,9 @@ class TeacherController extends Controller
 
         // return redirect()->route('teacher.login');
     }
+
+    public function addFixed()
+    {
+        dd('whooo');
+    }
 }
