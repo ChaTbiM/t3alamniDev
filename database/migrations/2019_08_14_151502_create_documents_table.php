@@ -20,16 +20,20 @@ class CreateDocumentsTable extends Migration
             $table->timestamps();
 
             //references
-            // fixed session documents            
+            // fixed session documents
             $table->unsignedBigInteger('fixed_session_id')->nullable();
-            $table->foreign('fixed_session_id')
-                ->references('id')->on('fixed_sessions')
+            $table
+                ->foreign('fixed_session_id')
+                ->references('id')
+                ->on('fixed_sessions')
                 ->onDelete('cascade');
 
-            // simple session documents            
+            // simple session documents
             $table->unsignedBigInteger('simple_session_id')->nullable();
-            $table->foreign('simple_session_id')
-                ->references('id')->on('simple_sessions')
+            $table
+                ->foreign('simple_session_id')
+                ->references('id')
+                ->on('simple_sessions')
                 ->onDelete('cascade');
         });
     }

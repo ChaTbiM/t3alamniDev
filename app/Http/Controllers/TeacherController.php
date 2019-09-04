@@ -32,7 +32,7 @@ class TeacherController extends Controller
         $simpleSessions = json_encode(auth::user()->simpleSessions);
         $groups = auth::user()->groups;
         $modules = [];
-
+        $id = json_encode(Auth::id());
         foreach ($groups as $group) {
             array_push($modules, array(
                 "module" => $group->module->name,
@@ -43,6 +43,7 @@ class TeacherController extends Controller
         $modules = json_encode($modules);
 
         return view('teacher.teacher', [
+            'id' => $id,
             'fixedSessions' => $fixedSessions,
             'simpleSessions' => $simpleSessions,
             'modules' => $modules
@@ -53,8 +54,23 @@ class TeacherController extends Controller
         // return redirect()->route('teacher.login');
     }
 
-    public function addFixed()
+    public function addFixed(Request $request)
     {
-        dd('whooo');
+        // if ($request->time) {
+        return response()->json([$request->all()]);
+        // }
+
+        // return response()->json('didnt work');
     }
+
+    //test upload
+    // public function testIndex(Request $request)
+    // {
+    //     return view('teacher.test');
+    // }
+
+    // public function testUpload(Request $request)
+    // {
+    //     dd($request->file('filew'));
+    // }
 }

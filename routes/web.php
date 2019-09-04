@@ -169,4 +169,10 @@ Route::get(
     'TeacherAuth\VerificationController@resend'
 )->name('teacher.verification.resend');
 
-Route::post('teacher/fixed', 'TeacherController@addFixed');
+Route::post('teacher/fixed', 'TeacherController@addFixed')->name(
+    'addFixedSessions'
+);
+
+// test upload
+Route::get('teacher/test', 'TeacherController@testIndex');
+// Route::post('teacher/fixed', 'TeacherController@addFixed')->name('upload');

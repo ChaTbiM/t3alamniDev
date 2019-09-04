@@ -19,7 +19,7 @@
  
      <!-- Styles -->
      <link href="{{ asset('css/teacher.css') }}" rel="stylesheet">
-
+    
     <title>Dashboard </title>
 </head>
 <body>

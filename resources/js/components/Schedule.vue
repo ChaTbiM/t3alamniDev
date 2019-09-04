@@ -117,7 +117,7 @@ var _ = require("lodash");
 
 export default {
   name: "schedule",
-  props: ["fixed", "simple", "module"],
+  props: ["id", "fixed", "simple", "module"],
   data() {
     return {
       sessions: {
@@ -285,7 +285,7 @@ export default {
 
       componentLoaded: false,
 
-      fixedSessions: JSON.parse(this.fixed),
+      fixedSessions: null,
       simpleSessions: JSON.parse(this.simple),
       modules: JSON.parse(this.module),
 
@@ -457,8 +457,7 @@ export default {
       this.selected.dayIndex = dayIndex;
 
       let day = new Date(JSON.parse(JSON.stringify(this.wkStart)));
-      console.log(this.wkStart);
-      console.log("day", day);
+
       day.setDate(day.getDate() + dayIndex);
 
       let date = this.months[day.getUTCMonth()] + " " + day.getDate();
@@ -467,6 +466,16 @@ export default {
       this.selected.hours.max = this.sessions.time[maxHours];
 
       this.clicked = false;
+      if (this.targets.length === 2) {
+        this.$store.commit("setDuration", 1);
+      } else if (this.targets.length > 2) {
+        let hours = this.targets.length - 2;
+        this.$store.commit("setDuration", hours);
+      }
+      date =
+        day.getFullYear() + "-" + day.getUTCMonth() + "-" + day.getUTCDate();
+      this.$store.commit("setHour", this.selected.hours.min.split(":")[0]);
+
       this.showAddSessions(event);
     },
 
@@ -504,7 +513,7 @@ export default {
       this.currentWeek += " " + wkEnd.getFullYear();
 
       this.showSimpleSessions();
-      this.showFixedSessions();
+      // this.showFixedSessions();
     },
     getNextWeek() {
       let curr = new Date(this.wkEnd);
@@ -613,9 +622,9 @@ export default {
     showFixedSessions() {
       const wkStart = this.wkStart;
       const wkEnd = this.wkEnd;
+      let info = this.last;
       wkStart.setHours(0, 0, 0);
       wkEnd.setHours(23, 59, 59);
-
       this.fixedSessions.forEach(el => {
         const date = new Date(el.date);
         const day = date.getUTCDate();
@@ -731,6 +740,8 @@ export default {
   },
 
   mounted() {
+    this.$store.commit("initTeacherID", this.id);
+
     this.$store.commit("initFixed", this.fixed);
     this.fixedSessions = this.$store.getters.fixedSessions;
 
@@ -740,7 +751,15 @@ export default {
     this.$store.commit("initModules", this.module);
     this.modules = this.$store.getters.modules;
 
+    let lastFixedSessionID = this.$store.getters.fixedSessions[
+      this.$store.getters.fixedSessions.length - 1
+    ].id;
+    this.$store.commit("setFixedSessionID", lastFixedSessionID);
     this.componentLoaded = true;
+
+    if (this.componentLoaded) {
+      this.showFixedSessions();
+    }
   },
 
   computed: {

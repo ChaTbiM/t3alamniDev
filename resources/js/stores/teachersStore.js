@@ -12,7 +12,16 @@ export const store = new Vuex.Store({
         AddFixedSessionOpen: false,
         addGroupOpen: false,
 
+        teacherId: "",
+
         choosedGroup: "",
+        duration: "",
+        time: {
+            HH: "",
+            mm: ""
+        },
+        fixedSessionID: "",
+        simpleSessionID: "",
 
         //sessions data
         fixed: "",
@@ -20,6 +29,7 @@ export const store = new Vuex.Store({
         modules: ""
     },
     mutations: {
+        //showing sessions
         changeState(state, target) {
             state[target] = !state[target];
         },
@@ -36,19 +46,53 @@ export const store = new Vuex.Store({
             state.modules = JSON.parse(data);
         },
 
+        initTeacherID(state, id) {
+            state.teacherId = JSON.parse(id);
+        },
+        //adding sessions
         chooseGroup(state, data) {
             state.choosedGroup = data;
+        },
+
+        setTime(state, data) {
+            state.time = data;
+        },
+
+        setHour(state, hour) {
+            state.time.HH = hour;
+        },
+
+        setDuration(state, data) {
+            state.duration = data;
+        },
+
+        setFixedSessionID(state, id) {
+            state.fixedSessionID = id;
+        },
+
+        setSimpleSessionID(state, id) {
+            state.simpleSessionID = id;
         }
     },
     getters: {
         test: state => state.test,
         initState: state => state.data,
+
+        teacherId: state => state.teacherId,
+
         //adding sessions
         addSessionsOpen: state => state.addSessionsOpen,
         AddSimpleSessionOpen: state => state.AddSimpleSessionOpen,
         AddFixedSessionOpen: state => state.AddFixedSessionOpen,
         addGroupOpen: state => state.addGroupOpen,
+
         choosedGroup: state => state.choosedGroup,
+        time: state => state.time,
+        date: state => state.date, // need state init and mutation
+        duration: state => state.duration,
+        fixedSessionID: state => state.fixedSessionID,
+        simpleSessionID: state => state.simpleSessionID,
+
         //sessions data
         fixedSessions: state => state.fixed,
         simpleSessions: state => state.simple,

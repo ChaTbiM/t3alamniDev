@@ -37,13 +37,12 @@
 @endsection --}}
 
 @extends('teacher.layouts.layout')
-
-
+@routes
 @section('content')
-    <schedule-component fixed="{{$fixedSessions}}" simple="{{ $simpleSessions }}" module="{{$modules}}"  ></schedule-component>
+<schedule-component fixed="{{$fixedSessions}}" simple="{{ $simpleSessions }}" module="{{$modules}}" id="{{$id}}" ></schedule-component>
 @endsection
 
 
 <script>
-
+ 
 </script>

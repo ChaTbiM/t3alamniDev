@@ -35,7 +35,6 @@ export default {
       this.$store.commit("chooseGroup", this.choosedGroup);
       this.$parent.showAddFixedSessions();
       this.$parent.showChooseGroup();
-      console.log(this.$store.getters.choosedGroup);
     },
     showChooseGroup() {
       this.$parent.showChooseGroup();
