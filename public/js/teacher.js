@@ -2970,6 +2970,11 @@ var _ = __webpack_require__(/*! lodash */ "./node_modules/lodash/lodash.js");
 
       return this.sessions.data;
     }
+  },
+  watch: {
+    fixedSessions: function fixedSessions(newVal) {
+      this.showFixedSessions();
+    }
   }
 });
 

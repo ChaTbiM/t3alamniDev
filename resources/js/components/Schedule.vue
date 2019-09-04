@@ -810,6 +810,12 @@ export default {
 
       return this.sessions.data;
     }
+  },
+
+  watch: {
+    fixedSessions: function(newVal) {
+      this.showFixedSessions();
+    }
   }
 };
 </script>
