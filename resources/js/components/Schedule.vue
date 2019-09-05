@@ -621,7 +621,6 @@ export default {
     },
 
     showFixedSessions() {
-      console.log("showing fixed");
       const wkStart = this.wkStart;
       const wkEnd = this.wkEnd;
       let info = this.last;

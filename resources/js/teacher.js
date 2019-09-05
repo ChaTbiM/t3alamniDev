@@ -5,6 +5,7 @@
  */
 
 require("./bootstrap");
+import VCalendar from "v-calendar";
 
 window.Vue = require("vue");
 
@@ -49,6 +50,11 @@ Vue.mixin({
     methods: {
         route: route
     }
+});
+
+Vue.use(VCalendar, {
+    componentPrefix: "vc" // Use <vc-calendar /> instead of <v-calendar />
+    // ...other defaults
 });
 
 const teacher = new Vue({

@@ -15,6 +15,13 @@ export const store = new Vuex.Store({
         teacherId: "",
 
         choosedGroup: "",
+        attrs: [
+            {
+                key: "today",
+                dates: new Date(),
+                highlight: "blue"
+            }
+        ],
         duration: "",
         time: {
             HH: "",
@@ -53,7 +60,9 @@ export const store = new Vuex.Store({
         chooseGroup(state, data) {
             state.choosedGroup = data;
         },
-
+        setDate(state, date) {
+            state.attrs[0].dates = new Date(2019, 9, 7);
+        },
         setTime(state, data) {
             state.time = data;
         },
@@ -86,6 +95,8 @@ export const store = new Vuex.Store({
         addGroupOpen: state => state.addGroupOpen,
 
         choosedGroup: state => state.choosedGroup,
+
+        dates: state => state.attrs[0].dates,
         time: state => state.time,
         date: state => state.date, // need state init and mutation
         duration: state => state.duration,

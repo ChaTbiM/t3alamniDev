@@ -11,7 +11,14 @@
         <legend class="legend">Add Session</legend>
 
         <label for="title">date</label>
-        <input v-model="date" type="text" name="date" id="date" class="date" />
+        <vc-calendar
+          ref="calendar"
+          :key="index"
+          @dayclick="consoled"
+          :attributes="attrs"
+          :locale="{ id: 'fr', firstDayOfWeek: 7, masks: { weekdays: 'WW' } }"
+        ></vc-calendar>
+        <!-- <input v-model="date" type="text" name="date" id="date" class="date" /> -->
         <br />
         <label for="temps">temps</label>
         <vue-timepicker
@@ -54,10 +61,20 @@
 
 <script>
 export default {
-  mounted() {},
+  updated() {
+    console.log("calendar udpated");
+  },
+  mounted() {
+    console.log("monted");
+  },
   data() {
     // let id = this.$store.getters.fixedSessionID + 1;
     return {
+      clicked: {
+        event: this.consoled
+      },
+      index: "",
+      attrs: [],
       date: "",
       document: "",
       csrf: document
@@ -108,6 +125,24 @@ export default {
         .catch(err => {
           console.log(err);
         });
+    },
+    consoled(payload) {
+      this.attrs.pop();
+      let date = {
+        key: "today",
+        dates: new Date(payload.date),
+        highlight: "red"
+      };
+      this.attrs.push(date);
+
+      this.index++;
+
+      setTimeout(() => {
+        const calendar = this.$refs.calendar;
+        const target = this.attrs[0].dates;
+
+        calendar.showPageRange(target);
+      }, 0);
     }
   },
 
@@ -133,6 +168,18 @@ export default {
       }
     }
   }
+  // watch: {
+  //   // attrs: {
+  //   //   handler: function(newVal, oldVal) {
+  //   //     const calendar = this.$refs.calendar;
+  //   //     // const page = { month: 2, year: 2020 }; // February, 2020
+  //   //     // Pass a date
+  //   //     calendar.showPageRange(newVal.dates);
+  //   //   },
+  //   //   deep: true,
+  //   //   immediate: false
+  //   // }
+  // }
 };
 </script>
 
