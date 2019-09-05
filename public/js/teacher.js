@@ -1909,16 +1909,16 @@ __webpack_require__.r(__webpack_exports__);
     submitFixedSessions: function submitFixedSessions() {
       var time = this.$store.getters.time.HH;
       time += ":00:00";
+      var id = this.$store.getters.fixedSessionID + 1;
       var groupId = Number(this.$store.getters.choosedGroup[this.$store.getters.choosedGroup.length - 1]);
       var fixedTest = this.$store.getters.fixedSessions;
-      console.log(fixedTest, "fixedTest");
       var data = {
         created_at: null,
         date: "2019-09-01",
         // test DAte
         duration: this.$store.getters.duration,
         group_id: groupId,
-        id: this.$store.getters.fixedSessionID + 1,
+        id: id,
         mark: null,
         state: "en attente",
         teacher_id: this.$store.getters.teacherId,
@@ -1928,6 +1928,7 @@ __webpack_require__.r(__webpack_exports__);
       };
       fixedTest.push(data);
       this.$store.commit("initFixed", JSON.stringify(fixedTest));
+      this.$store.commit("setFixedSessionID", id);
       axios.post(route("addFixedSessions"), data).then(function (response) {
         console.log(response.data, "res");
       })["catch"](function (err) {
@@ -2132,6 +2133,7 @@ __webpack_require__.r(__webpack_exports__);
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var timers__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! timers */ "./node_modules/timers-browserify/main.js");
 /* harmony import */ var timers__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(timers__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var vuex__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! vuex */ "./node_modules/vuex/dist/vuex.esm.js");
 function _toConsumableArray(arr) { return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _nonIterableSpread(); }
 
 function _nonIterableSpread() { throw new TypeError("Invalid attempt to spread non-iterable instance"); }
@@ -2256,6 +2258,7 @@ function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
 
 
 var _ = __webpack_require__(/*! lodash */ "./node_modules/lodash/lodash.js");
+
 
 /* harmony default export */ __webpack_exports__["default"] = ({
   name: "schedule",
@@ -2773,6 +2776,7 @@ var _ = __webpack_require__(/*! lodash */ "./node_modules/lodash/lodash.js");
     showFixedSessions: function showFixedSessions() {
       var _this = this;
 
+      console.log("showing fixed");
       var wkStart = this.wkStart;
       var wkEnd = this.wkEnd;
       var info = this.last;
@@ -2905,9 +2909,12 @@ var _ = __webpack_require__(/*! lodash */ "./node_modules/lodash/lodash.js");
     this.getCurrentWeek();
   },
   mounted: function mounted() {
+    var _this4 = this;
+
     this.$store.commit("initTeacherID", this.id);
     this.$store.commit("initFixed", this.fixed);
     this.fixedSessions = this.$store.getters.fixedSessions;
+    console.log("mounted///");
     this.$store.commit("initSimple", this.simple);
     this.simpleSessions = this.$store.getters.simpleSessions;
     this.$store.commit("initModules", this.module);
@@ -2915,14 +2922,25 @@ var _ = __webpack_require__(/*! lodash */ "./node_modules/lodash/lodash.js");
     var lastFixedSessionID = this.$store.getters.fixedSessions[this.$store.getters.fixedSessions.length - 1].id;
     this.$store.commit("setFixedSessionID", lastFixedSessionID);
     this.componentLoaded = true;
+    this.$store.watch(function (state, getters) {
+      return getters.fixedSessions;
+    }, function (newValue, oldValue) {
+      // Do whatever makes sense now
+      // console.log("updated fixed");
+      _this4.fixedSessions = _this4.$store.getters.fixedSessions;
 
-    if (this.componentLoaded) {
-      this.showFixedSessions();
-    }
+      _this4.showFixedSessions();
+    }, {
+      deep: true,
+      immediate: true
+    });
+  },
+  update: function update() {
+    console.log("here it is");
   },
   computed: {
     filterSessions: function filterSessions() {
-      var _this4 = this;
+      var _this5 = this;
 
       var data = [];
 
@@ -2953,8 +2971,8 @@ var _ = __webpack_require__(/*! lodash */ "./node_modules/lodash/lodash.js");
           data.forEach(function (day, i) {
             day.forEach(function (element, j) {
               groups.forEach(function (gr, k) {
-                if (_this4.sessions.data[i][j].groupId == gr) {
-                  data[i][j] = _this4.sessions.data[i][j];
+                if (_this5.sessions.data[i][j].groupId == gr) {
+                  data[i][j] = _this5.sessions.data[i][j];
                 }
               });
             });
@@ -2969,12 +2987,19 @@ var _ = __webpack_require__(/*! lodash */ "./node_modules/lodash/lodash.js");
       }
 
       return this.sessions.data;
-    }
-  },
-  watch: {
-    fixedSessions: function fixedSessions(newVal) {
-      this.showFixedSessions();
-    }
+    } // fixeSessionsStore: function() {
+    //   return this.$store.getters.fixedSessions;
+    // }
+    // watch: {
+    //   fixedSessions: {
+    //     handler: function(oldVal, newVel) {
+    //       // this.fixedSessions = this.$store.getters.fixedSessions;
+    //       this.showFixedSessions();
+    //     },
+    //     deep: true
+    //   }
+    // }
+
   }
 });
 

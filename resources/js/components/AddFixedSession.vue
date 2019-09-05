@@ -74,6 +74,7 @@ export default {
     submitFixedSessions() {
       let time = this.$store.getters.time.HH;
       time += ":00:00";
+      let id = this.$store.getters.fixedSessionID + 1;
       let groupId = Number(
         this.$store.getters.choosedGroup[
           this.$store.getters.choosedGroup.length - 1
@@ -81,14 +82,12 @@ export default {
       );
       let fixedTest = this.$store.getters.fixedSessions;
 
-      console.log(fixedTest, "fixedTest");
-
       let data = {
         created_at: null,
         date: "2019-09-01", // test DAte
         duration: this.$store.getters.duration,
         group_id: groupId,
-        id: this.$store.getters.fixedSessionID + 1,
+        id: id,
         mark: null,
         state: "en attente",
         teacher_id: this.$store.getters.teacherId,
@@ -99,6 +98,8 @@ export default {
 
       fixedTest.push(data);
       this.$store.commit("initFixed", JSON.stringify(fixedTest));
+      this.$store.commit("setFixedSessionID", id);
+
       axios
         .post(route("addFixedSessions"), data)
         .then(response => {

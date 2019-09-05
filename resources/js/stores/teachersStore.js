@@ -77,7 +77,6 @@ export const store = new Vuex.Store({
     getters: {
         test: state => state.test,
         initState: state => state.data,
-
         teacherId: state => state.teacherId,
 
         //adding sessions

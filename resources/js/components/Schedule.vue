@@ -114,6 +114,7 @@
 <script>
 import { setTimeout } from "timers";
 var _ = require("lodash");
+import { mapState, mapGetters, mapActions } from "vuex";
 
 export default {
   name: "schedule",
@@ -620,6 +621,7 @@ export default {
     },
 
     showFixedSessions() {
+      console.log("showing fixed");
       const wkStart = this.wkStart;
       const wkEnd = this.wkEnd;
       let info = this.last;
@@ -745,6 +747,8 @@ export default {
     this.$store.commit("initFixed", this.fixed);
     this.fixedSessions = this.$store.getters.fixedSessions;
 
+    console.log("mounted///");
+
     this.$store.commit("initSimple", this.simple);
     this.simpleSessions = this.$store.getters.simpleSessions;
 
@@ -757,11 +761,21 @@ export default {
     this.$store.commit("setFixedSessionID", lastFixedSessionID);
     this.componentLoaded = true;
 
-    if (this.componentLoaded) {
-      this.showFixedSessions();
-    }
-  },
+    this.$store.watch(
+      (state, getters) => getters.fixedSessions,
+      (newValue, oldValue) => {
+        // Do whatever makes sense now
+        // console.log("updated fixed");
+        this.fixedSessions = this.$store.getters.fixedSessions;
 
+        this.showFixedSessions();
+      },
+      { deep: true, immediate: true }
+    );
+  },
+  update() {
+    console.log("here it is");
+  },
   computed: {
     filterSessions: function() {
       const data = [];
@@ -810,13 +824,20 @@ export default {
 
       return this.sessions.data;
     }
-  },
-
-  watch: {
-    fixedSessions: function(newVal) {
-      this.showFixedSessions();
-    }
+    // fixeSessionsStore: function() {
+    //   return this.$store.getters.fixedSessions;
+    // }
   }
+
+  // watch: {
+  //   fixedSessions: {
+  //     handler: function(oldVal, newVel) {
+  //       // this.fixedSessions = this.$store.getters.fixedSessions;
+  //       this.showFixedSessions();
+  //     },
+  //     deep: true
+  //   }
+  // }
 };
 </script>
 
