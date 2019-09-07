@@ -477,6 +477,8 @@ export default {
         day.getFullYear() + "-" + day.getUTCMonth() + "-" + day.getUTCDate();
       this.$store.commit("setHour", this.selected.hours.min.split(":")[0]);
 
+      this.$store.commit("setDate", day);
+      console.log(this.$store.getters.date, "day value");
       this.showAddSessions(event);
     },
 
@@ -615,9 +617,10 @@ export default {
 
     closeAddSessions: function(e) {
       e.preventDefault();
-
-      this.$store.commit("changeState", "addSessionsOpen");
-      this.addSessionsOpen = this.$store.getters.addSessionsOpen;
+      if (this.addSessionsOpen) {
+        this.$store.commit("changeState", "addSessionsOpen");
+        this.addSessionsOpen = this.$store.getters.addSessionsOpen;
+      }
     },
 
     showFixedSessions() {
@@ -686,7 +689,9 @@ export default {
       this.AddFixedSessionOpen = this.$store.getters.AddFixedSessionOpen;
     },
 
-    showChooseGroup() {
+    showChooseGroup(e) {
+      this.closeAddSessions(e);
+
       this.$store.commit("changeState", "addGroupOpen");
       this.addGroupOpen = this.$store.getters.addGroupOpen;
     },
@@ -772,9 +777,7 @@ export default {
       { deep: true, immediate: true }
     );
   },
-  update() {
-    console.log("here it is");
-  },
+  update() {},
   computed: {
     filterSessions: function() {
       const data = [];

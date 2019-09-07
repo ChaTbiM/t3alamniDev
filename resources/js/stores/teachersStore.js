@@ -18,10 +18,11 @@ export const store = new Vuex.Store({
         attrs: [
             {
                 key: "today",
-                dates: new Date(),
-                highlight: "blue"
+                dates: null,
+                highlight: "red"
             }
         ],
+        date: new Date(),
         duration: "",
         time: {
             HH: "",
@@ -57,11 +58,18 @@ export const store = new Vuex.Store({
             state.teacherId = JSON.parse(id);
         },
         //adding sessions
-        chooseGroup(state, data) {
-            state.choosedGroup = data;
+        setDates(state, data) {
+            state.attrs[0].dates = new Date(data);
+        },
+
+        setAttrs(state, data) {
+            state.attrs = data;
         },
         setDate(state, date) {
-            state.attrs[0].dates = new Date(2019, 9, 7);
+            state.date = new Date(date);
+        },
+        chooseGroup(state, data) {
+            state.choosedGroup = data;
         },
         setTime(state, data) {
             state.time = data;
@@ -96,7 +104,9 @@ export const store = new Vuex.Store({
 
         choosedGroup: state => state.choosedGroup,
 
+        attrs: state => state.attrs,
         dates: state => state.attrs[0].dates,
+
         time: state => state.time,
         date: state => state.date, // need state init and mutation
         duration: state => state.duration,

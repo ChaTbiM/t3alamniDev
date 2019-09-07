@@ -1,6 +1,6 @@
 <template>
   <div class="container">
-    <div class="close">X</div>
+    <div class="close" @click="showAddFixedSessions">X</div>
     <form
       @submit.prevent="submitFixedSessions"
       class="form"
@@ -9,12 +9,11 @@
     >
       <fieldset class="form__content">
         <legend class="legend">Add Session</legend>
-
         <label for="title">date</label>
         <vc-calendar
           ref="calendar"
           :key="index"
-          @dayclick="consoled"
+          @dayclick="changeDate"
           :attributes="attrs"
           :locale="{ id: 'fr', firstDayOfWeek: 7, masks: { weekdays: 'WW' } }"
         ></vc-calendar>
@@ -61,11 +60,32 @@
 
 <script>
 export default {
-  updated() {
-    console.log("calendar udpated");
-  },
+  updated() {},
   mounted() {
-    console.log("monted");
+    this.$store.watch(
+      (state, getters) => getters.date,
+      (newValue, oldValue) => {
+        // Do whatever makes sense now
+        // console.log("updated fixed");
+        if (this.attrs.length >= 1) {
+          this.attrs.pop();
+        }
+        this.attrs.push({
+          key: "date",
+          highlight: "red",
+          dates: newValue
+        });
+        this.index++;
+
+        setTimeout(() => {
+          const calendar = this.$refs.calendar;
+          const target = this.attrs[0].dates;
+
+          calendar.showPageRange(target);
+        }, 0);
+      },
+      { deep: true, immediate: false }
+    );
   },
   data() {
     // let id = this.$store.getters.fixedSessionID + 1;
@@ -75,7 +95,6 @@ export default {
       },
       index: "",
       attrs: [],
-      date: "",
       document: "",
       csrf: document
         .querySelector('meta[name="csrf-token"]')
@@ -126,17 +145,21 @@ export default {
           console.log(err);
         });
     },
-    consoled(payload) {
+    changeDate(payload) {
       this.attrs.pop();
+      // let attrs = [];
       let date = {
         key: "today",
         dates: new Date(payload.date),
         highlight: "red"
       };
+
+      // attrs.push(date);
       this.attrs.push(date);
 
+      // this.$store.commit("setAttrs", attrs); // store the wanted date
       this.index++;
-
+      // console.log("choosed group", this.$store.getters.choosedGroup);
       setTimeout(() => {
         const calendar = this.$refs.calendar;
         const target = this.attrs[0].dates;
@@ -168,18 +191,6 @@ export default {
       }
     }
   }
-  // watch: {
-  //   // attrs: {
-  //   //   handler: function(newVal, oldVal) {
-  //   //     const calendar = this.$refs.calendar;
-  //   //     // const page = { month: 2, year: 2020 }; // February, 2020
-  //   //     // Pass a date
-  //   //     calendar.showPageRange(newVal.dates);
-  //   //   },
-  //   //   deep: true,
-  //   //   immediate: false
-  //   // }
-  // }
 };
 </script>
 

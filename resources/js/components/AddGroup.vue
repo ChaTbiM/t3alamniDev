@@ -31,13 +31,14 @@ export default {
     };
   },
   methods: {
-    showAddFixedSessions() {
+    showAddFixedSessions(e) {
       this.$store.commit("chooseGroup", this.choosedGroup);
+      this.choosedGroup = "";
       this.$parent.showAddFixedSessions();
-      this.$parent.showChooseGroup();
+      this.$parent.showChooseGroup(e);
     },
-    showChooseGroup() {
-      this.$parent.showChooseGroup();
+    showChooseGroup(e) {
+      this.$parent.showChooseGroup(e);
     }
   }
 };

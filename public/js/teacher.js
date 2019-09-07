@@ -1898,13 +1898,36 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
-//
 /* harmony default export */ __webpack_exports__["default"] = ({
-  updated: function updated() {
-    console.log("calendar udpated");
-  },
+  updated: function updated() {},
   mounted: function mounted() {
-    console.log("monted");
+    var _this = this;
+
+    this.$store.watch(function (state, getters) {
+      return getters.date;
+    }, function (newValue, oldValue) {
+      // Do whatever makes sense now
+      // console.log("updated fixed");
+      if (_this.attrs.length >= 1) {
+        _this.attrs.pop();
+      }
+
+      _this.attrs.push({
+        key: "date",
+        highlight: "red",
+        dates: newValue
+      });
+
+      _this.index++;
+      setTimeout(function () {
+        var calendar = _this.$refs.calendar;
+        var target = _this.attrs[0].dates;
+        calendar.showPageRange(target);
+      }, 0);
+    }, {
+      deep: true,
+      immediate: false
+    });
   },
   data: function data() {
     // let id = this.$store.getters.fixedSessionID + 1;
@@ -1914,7 +1937,6 @@ __webpack_require__.r(__webpack_exports__);
       },
       index: "",
       attrs: [],
-      date: "",
       document: "",
       csrf: document.querySelector('meta[name="csrf-token"]').getAttribute("content")
     };
@@ -1952,20 +1974,24 @@ __webpack_require__.r(__webpack_exports__);
         console.log(err);
       });
     },
-    consoled: function consoled(payload) {
-      var _this = this;
+    changeDate: function changeDate(payload) {
+      var _this2 = this;
 
-      this.attrs.pop();
+      this.attrs.pop(); // let attrs = [];
+
       var date = {
         key: "today",
         dates: new Date(payload.date),
         highlight: "red"
-      };
-      this.attrs.push(date);
-      this.index++;
+      }; // attrs.push(date);
+
+      this.attrs.push(date); // this.$store.commit("setAttrs", attrs); // store the wanted date
+
+      this.index++; // console.log("choosed group", this.$store.getters.choosedGroup);
+
       setTimeout(function () {
-        var calendar = _this.$refs.calendar;
-        var target = _this.attrs[0].dates;
+        var calendar = _this2.$refs.calendar;
+        var target = _this2.attrs[0].dates;
         calendar.showPageRange(target);
       }, 0);
     }
@@ -1990,19 +2016,7 @@ __webpack_require__.r(__webpack_exports__);
       set: function set(val) {
         this.$store.commit("setTime", val);
       }
-    } // watch: {
-    //   // attrs: {
-    //   //   handler: function(newVal, oldVal) {
-    //   //     const calendar = this.$refs.calendar;
-    //   //     // const page = { month: 2, year: 2020 }; // February, 2020
-    //   //     // Pass a date
-    //   //     calendar.showPageRange(newVal.dates);
-    //   //   },
-    //   //   deep: true,
-    //   //   immediate: false
-    //   // }
-    // }
-
+    }
   }
 });
 
@@ -2049,13 +2063,14 @@ __webpack_require__.r(__webpack_exports__);
     };
   },
   methods: {
-    showAddFixedSessions: function showAddFixedSessions() {
+    showAddFixedSessions: function showAddFixedSessions(e) {
       this.$store.commit("chooseGroup", this.choosedGroup);
+      this.choosedGroup = "";
       this.$parent.showAddFixedSessions();
-      this.$parent.showChooseGroup();
+      this.$parent.showChooseGroup(e);
     },
-    showChooseGroup: function showChooseGroup() {
-      this.$parent.showChooseGroup();
+    showChooseGroup: function showChooseGroup(e) {
+      this.$parent.showChooseGroup(e);
     }
   }
 });
@@ -2697,6 +2712,8 @@ var _ = __webpack_require__(/*! lodash */ "./node_modules/lodash/lodash.js");
 
       date = day.getFullYear() + "-" + day.getUTCMonth() + "-" + day.getUTCDate();
       this.$store.commit("setHour", this.selected.hours.min.split(":")[0]);
+      this.$store.commit("setDate", day);
+      console.log(this.$store.getters.date, "day value");
       this.showAddSessions(event);
     },
     getCurrentWeek: function getCurrentWeek() {
@@ -2816,8 +2833,11 @@ var _ = __webpack_require__(/*! lodash */ "./node_modules/lodash/lodash.js");
     },
     closeAddSessions: function closeAddSessions(e) {
       e.preventDefault();
-      this.$store.commit("changeState", "addSessionsOpen");
-      this.addSessionsOpen = this.$store.getters.addSessionsOpen;
+
+      if (this.addSessionsOpen) {
+        this.$store.commit("changeState", "addSessionsOpen");
+        this.addSessionsOpen = this.$store.getters.addSessionsOpen;
+      }
     },
     showFixedSessions: function showFixedSessions() {
       var _this = this;
@@ -2887,7 +2907,8 @@ var _ = __webpack_require__(/*! lodash */ "./node_modules/lodash/lodash.js");
       this.$store.commit("changeState", "AddFixedSessionOpen");
       this.AddFixedSessionOpen = this.$store.getters.AddFixedSessionOpen;
     },
-    showChooseGroup: function showChooseGroup() {
+    showChooseGroup: function showChooseGroup(e) {
+      this.closeAddSessions(e);
       this.$store.commit("changeState", "addGroupOpen");
       this.addGroupOpen = this.$store.getters.addGroupOpen;
     },
@@ -2980,9 +3001,7 @@ var _ = __webpack_require__(/*! lodash */ "./node_modules/lodash/lodash.js");
       immediate: true
     });
   },
-  update: function update() {
-    console.log("here it is");
-  },
+  update: function update() {},
   computed: {
     filterSessions: function filterSessions() {
       var _this5 = this;
@@ -39193,7 +39212,11 @@ var render = function() {
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
   return _c("div", { staticClass: "container" }, [
-    _c("div", { staticClass: "close" }, [_vm._v("X")]),
+    _c(
+      "div",
+      { staticClass: "close", on: { click: _vm.showAddFixedSessions } },
+      [_vm._v("X")]
+    ),
     _vm._v(" "),
     _c(
       "form",
@@ -39227,7 +39250,7 @@ var render = function() {
                   masks: { weekdays: "WW" }
                 }
               },
-              on: { dayclick: _vm.consoled }
+              on: { dayclick: _vm.changeDate }
             }),
             _vm._v(" "),
             _c("br"),
@@ -56626,9 +56649,10 @@ var store = new vuex__WEBPACK_IMPORTED_MODULE_1__["default"].Store({
     choosedGroup: "",
     attrs: [{
       key: "today",
-      dates: new Date(),
-      highlight: "blue"
+      dates: null,
+      highlight: "red"
     }],
+    date: new Date(),
     duration: "",
     time: {
       HH: "",
@@ -56659,11 +56683,17 @@ var store = new vuex__WEBPACK_IMPORTED_MODULE_1__["default"].Store({
       state.teacherId = JSON.parse(id);
     },
     //adding sessions
-    chooseGroup: function chooseGroup(state, data) {
-      state.choosedGroup = data;
+    setDates: function setDates(state, data) {
+      state.attrs[0].dates = new Date(data);
+    },
+    setAttrs: function setAttrs(state, data) {
+      state.attrs = data;
     },
     setDate: function setDate(state, date) {
-      state.attrs[0].dates = new Date(2019, 9, 7);
+      state.date = new Date(date);
+    },
+    chooseGroup: function chooseGroup(state, data) {
+      state.choosedGroup = data;
     },
     setTime: function setTime(state, data) {
       state.time = data;
@@ -56706,6 +56736,9 @@ var store = new vuex__WEBPACK_IMPORTED_MODULE_1__["default"].Store({
     },
     choosedGroup: function choosedGroup(state) {
       return state.choosedGroup;
+    },
+    attrs: function attrs(state) {
+      return state.attrs;
     },
     dates: function dates(state) {
       return state.attrs[0].dates;
