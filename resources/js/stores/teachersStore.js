@@ -66,7 +66,7 @@ export const store = new Vuex.Store({
             state.attrs = data;
         },
         setDate(state, date) {
-            state.date = new Date(date);
+            state.date = date;
         },
         chooseGroup(state, data) {
             state.choosedGroup = data;

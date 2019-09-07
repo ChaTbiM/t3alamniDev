@@ -73,7 +73,7 @@ export default {
         this.attrs.push({
           key: "date",
           highlight: "red",
-          dates: newValue
+          dates: new Date(newValue)
         });
         this.index++;
 
@@ -116,11 +116,29 @@ export default {
           this.$store.getters.choosedGroup.length - 1
         ]
       );
+
+      console.log("store date", this.$store.getters.date);
       let fixedTest = this.$store.getters.fixedSessions;
+      let date = this.$store.getters.date;
+
+      let day =
+        date.getUTCDate() <= 9 ? "0" + date.getUTCDate() : date.getUTCDate();
+      let month =
+        date.getUTCMonth() <= 9
+          ? "0" + (date.getUTCMonth() + 1)
+          : date.getUTCMonth() + 1;
+      let year = date.getFullYear();
+
+      date = year + "-" + month + "-" + day;
+
+      console.log(date, "dateee");
+
+      console.log(day, "day");
+      console.log(month, "month");
 
       let data = {
         created_at: null,
-        date: "2019-09-01", // test DAte
+        date: String(date), // test DAte
         duration: this.$store.getters.duration,
         group_id: groupId,
         id: id,
@@ -159,6 +177,7 @@ export default {
 
       // this.$store.commit("setAttrs", attrs); // store the wanted date
       this.index++;
+      this.$store.commit("setDate", date.dates);
       // console.log("choosed group", this.$store.getters.choosedGroup);
       setTimeout(() => {
         const calendar = this.$refs.calendar;

@@ -627,25 +627,23 @@ export default {
       const wkStart = this.wkStart;
       const wkEnd = this.wkEnd;
       let info = this.last;
-      wkStart.setHours(0, 0, 0);
-      wkEnd.setHours(23, 59, 59);
+      wkStart.setHours(0, 10, 0);
+      wkEnd.setHours(23, 55, 59);
       this.fixedSessions.forEach(el => {
-        const date = new Date(el.date);
+        const date = new Date(el.date + "T" + el.time);
         const day = date.getUTCDate();
 
         if (date >= wkStart && date <= wkEnd) {
           const diffTime = el.time.split(":")[0] - 7;
           let diffDay;
-
+          console.log(date, "target");
           const module = this.modules.find(function(element) {
             return element.groupId === el.group_id;
           });
 
-          if (day <= 6) {
-            diffDay = day;
-          } else {
-            diffDay = day - wkStart.getUTCDate() - 1;
-          }
+          diffDay = new Date(date - wkStart).getUTCDate();
+
+          diffDay--;
           this.sessions.data[diffDay][diffTime].groupId = el.group_id;
           this.sessions.data[diffDay][diffTime].type = el.type;
           this.sessions.data[diffDay][diffTime].module = module.module;

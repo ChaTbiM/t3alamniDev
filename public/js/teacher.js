@@ -1915,7 +1915,7 @@ __webpack_require__.r(__webpack_exports__);
       _this.attrs.push({
         key: "date",
         highlight: "red",
-        dates: newValue
+        dates: new Date(newValue)
       });
 
       _this.index++;
@@ -1950,10 +1950,19 @@ __webpack_require__.r(__webpack_exports__);
       time += ":00:00";
       var id = this.$store.getters.fixedSessionID + 1;
       var groupId = Number(this.$store.getters.choosedGroup[this.$store.getters.choosedGroup.length - 1]);
+      console.log("store date", this.$store.getters.date);
       var fixedTest = this.$store.getters.fixedSessions;
+      var date = this.$store.getters.date;
+      var day = date.getUTCDate() <= 9 ? "0" + date.getUTCDate() : date.getUTCDate();
+      var month = date.getUTCMonth() <= 9 ? "0" + (date.getUTCMonth() + 1) : date.getUTCMonth() + 1;
+      var year = date.getFullYear();
+      date = year + "-" + month + "-" + day;
+      console.log(date, "dateee");
+      console.log(day, "day");
+      console.log(month, "month");
       var data = {
         created_at: null,
-        date: "2019-09-01",
+        date: String(date),
         // test DAte
         duration: this.$store.getters.duration,
         group_id: groupId,
@@ -1987,7 +1996,8 @@ __webpack_require__.r(__webpack_exports__);
 
       this.attrs.push(date); // this.$store.commit("setAttrs", attrs); // store the wanted date
 
-      this.index++; // console.log("choosed group", this.$store.getters.choosedGroup);
+      this.index++;
+      this.$store.commit("setDate", date.dates); // console.log("choosed group", this.$store.getters.choosedGroup);
 
       setTimeout(function () {
         var calendar = _this2.$refs.calendar;
@@ -2845,26 +2855,23 @@ var _ = __webpack_require__(/*! lodash */ "./node_modules/lodash/lodash.js");
       var wkStart = this.wkStart;
       var wkEnd = this.wkEnd;
       var info = this.last;
-      wkStart.setHours(0, 0, 0);
-      wkEnd.setHours(23, 59, 59);
+      wkStart.setHours(0, 10, 0);
+      wkEnd.setHours(23, 55, 59);
       this.fixedSessions.forEach(function (el) {
-        var date = new Date(el.date);
+        var date = new Date(el.date + "T" + el.time);
         var day = date.getUTCDate();
 
         if (date >= wkStart && date <= wkEnd) {
           var diffTime = el.time.split(":")[0] - 7;
           var diffDay;
+          console.log(date, "target");
 
           var module = _this.modules.find(function (element) {
             return element.groupId === el.group_id;
           });
 
-          if (day <= 6) {
-            diffDay = day;
-          } else {
-            diffDay = day - wkStart.getUTCDate() - 1;
-          }
-
+          diffDay = new Date(date - wkStart).getUTCDate();
+          diffDay--;
           _this.sessions.data[diffDay][diffTime].groupId = el.group_id;
           _this.sessions.data[diffDay][diffTime].type = el.type;
           _this.sessions.data[diffDay][diffTime].module = module.module;
@@ -56690,7 +56697,7 @@ var store = new vuex__WEBPACK_IMPORTED_MODULE_1__["default"].Store({
       state.attrs = data;
     },
     setDate: function setDate(state, date) {
-      state.date = new Date(date);
+      state.date = date;
     },
     chooseGroup: function chooseGroup(state, data) {
       state.choosedGroup = data;
