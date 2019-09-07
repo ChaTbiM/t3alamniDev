@@ -478,7 +478,6 @@ export default {
       this.$store.commit("setHour", this.selected.hours.min.split(":")[0]);
 
       this.$store.commit("setDate", day);
-      console.log(this.$store.getters.date, "day value");
       this.showAddSessions(event);
     },
 
@@ -636,7 +635,6 @@ export default {
         if (date >= wkStart && date <= wkEnd) {
           const diffTime = el.time.split(":")[0] - 7;
           let diffDay;
-          console.log(date, "target");
           const module = this.modules.find(function(element) {
             return element.groupId === el.group_id;
           });
@@ -749,7 +747,6 @@ export default {
     this.$store.commit("initFixed", this.fixed);
     this.fixedSessions = this.$store.getters.fixedSessions;
 
-    console.log("mounted///");
 
     this.$store.commit("initSimple", this.simple);
     this.simpleSessions = this.$store.getters.simpleSessions;

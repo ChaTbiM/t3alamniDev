@@ -66,7 +66,6 @@ export default {
       (state, getters) => getters.date,
       (newValue, oldValue) => {
         // Do whatever makes sense now
-        // console.log("updated fixed");
         if (this.attrs.length >= 1) {
           this.attrs.pop();
         }
@@ -105,7 +104,6 @@ export default {
   methods: {
     showAddFixedSessions() {
       this.$parent.showAddFixedSessions();
-      // console.log("monted here");
     },
     submitFixedSessions() {
       let time = this.$store.getters.time.HH;
@@ -117,24 +115,18 @@ export default {
         ]
       );
 
-      console.log("store date", this.$store.getters.date);
       let fixedTest = this.$store.getters.fixedSessions;
       let date = this.$store.getters.date;
 
       let day =
         date.getUTCDate() <= 9 ? "0" + date.getUTCDate() : date.getUTCDate();
       let month =
-        date.getUTCMonth() <= 9
+        date.getUTCMonth() < 9
           ? "0" + (date.getUTCMonth() + 1)
           : date.getUTCMonth() + 1;
       let year = date.getFullYear();
 
       date = year + "-" + month + "-" + day;
-
-      console.log(date, "dateee");
-
-      console.log(day, "day");
-      console.log(month, "month");
 
       let data = {
         created_at: null,
@@ -149,6 +141,8 @@ export default {
         type: "fixed",
         updated_at: null
       };
+
+      console.log(data);
 
       fixedTest.push(data);
       this.$store.commit("initFixed", JSON.stringify(fixedTest));
@@ -178,7 +172,6 @@ export default {
       // this.$store.commit("setAttrs", attrs); // store the wanted date
       this.index++;
       this.$store.commit("setDate", date.dates);
-      // console.log("choosed group", this.$store.getters.choosedGroup);
       setTimeout(() => {
         const calendar = this.$refs.calendar;
         const target = this.attrs[0].dates;

@@ -1907,7 +1907,6 @@ __webpack_require__.r(__webpack_exports__);
       return getters.date;
     }, function (newValue, oldValue) {
       // Do whatever makes sense now
-      // console.log("updated fixed");
       if (_this.attrs.length >= 1) {
         _this.attrs.pop();
       }
@@ -1943,23 +1942,19 @@ __webpack_require__.r(__webpack_exports__);
   },
   methods: {
     showAddFixedSessions: function showAddFixedSessions() {
-      this.$parent.showAddFixedSessions(); // console.log("monted here");
+      this.$parent.showAddFixedSessions();
     },
     submitFixedSessions: function submitFixedSessions() {
       var time = this.$store.getters.time.HH;
       time += ":00:00";
       var id = this.$store.getters.fixedSessionID + 1;
       var groupId = Number(this.$store.getters.choosedGroup[this.$store.getters.choosedGroup.length - 1]);
-      console.log("store date", this.$store.getters.date);
       var fixedTest = this.$store.getters.fixedSessions;
       var date = this.$store.getters.date;
       var day = date.getUTCDate() <= 9 ? "0" + date.getUTCDate() : date.getUTCDate();
-      var month = date.getUTCMonth() <= 9 ? "0" + (date.getUTCMonth() + 1) : date.getUTCMonth() + 1;
+      var month = date.getUTCMonth() < 9 ? "0" + (date.getUTCMonth() + 1) : date.getUTCMonth() + 1;
       var year = date.getFullYear();
       date = year + "-" + month + "-" + day;
-      console.log(date, "dateee");
-      console.log(day, "day");
-      console.log(month, "month");
       var data = {
         created_at: null,
         date: String(date),
@@ -1974,6 +1969,7 @@ __webpack_require__.r(__webpack_exports__);
         type: "fixed",
         updated_at: null
       };
+      console.log(data);
       fixedTest.push(data);
       this.$store.commit("initFixed", JSON.stringify(fixedTest));
       this.$store.commit("setFixedSessionID", id);
@@ -1997,8 +1993,7 @@ __webpack_require__.r(__webpack_exports__);
       this.attrs.push(date); // this.$store.commit("setAttrs", attrs); // store the wanted date
 
       this.index++;
-      this.$store.commit("setDate", date.dates); // console.log("choosed group", this.$store.getters.choosedGroup);
-
+      this.$store.commit("setDate", date.dates);
       setTimeout(function () {
         var calendar = _this2.$refs.calendar;
         var target = _this2.attrs[0].dates;
@@ -2723,7 +2718,6 @@ var _ = __webpack_require__(/*! lodash */ "./node_modules/lodash/lodash.js");
       date = day.getFullYear() + "-" + day.getUTCMonth() + "-" + day.getUTCDate();
       this.$store.commit("setHour", this.selected.hours.min.split(":")[0]);
       this.$store.commit("setDate", day);
-      console.log(this.$store.getters.date, "day value");
       this.showAddSessions(event);
     },
     getCurrentWeek: function getCurrentWeek() {
@@ -2864,7 +2858,6 @@ var _ = __webpack_require__(/*! lodash */ "./node_modules/lodash/lodash.js");
         if (date >= wkStart && date <= wkEnd) {
           var diffTime = el.time.split(":")[0] - 7;
           var diffDay;
-          console.log(date, "target");
 
           var module = _this.modules.find(function (element) {
             return element.groupId === el.group_id;
@@ -2987,7 +2980,6 @@ var _ = __webpack_require__(/*! lodash */ "./node_modules/lodash/lodash.js");
     this.$store.commit("initTeacherID", this.id);
     this.$store.commit("initFixed", this.fixed);
     this.fixedSessions = this.$store.getters.fixedSessions;
-    console.log("mounted///");
     this.$store.commit("initSimple", this.simple);
     this.simpleSessions = this.$store.getters.simpleSessions;
     this.$store.commit("initModules", this.module);

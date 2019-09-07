@@ -6,6 +6,7 @@ use Auth;
 use Illuminate\Http\Request;
 
 use App\Teacher;
+use App\FixedSession;
 
 use Spatie\Permission\Models\Role;
 use Spatie\Permission\Models\Permission;
@@ -56,8 +57,22 @@ class TeacherController extends Controller
 
     public function addFixed(Request $request)
     {
+        // FixedSession::create([$request->all()]);
+        return FixedSession::create([
+            // 'type' => 'fixed',
+            //worked
+            'state' => $request->state,
+            'time' => $request->time,
+            'date' => $request->date,
+            'duration' => $request->duration,
+            'group_id' => $request->group_id,
+            'teacher_id' => $request->teacher_id
+
+            // $request->all()
+        ]);
         // if ($request->time) {
-        return response()->json([$request->all()]);
+        // return response()->json($request->all());
+        // return ['message' => 'whatever'];
         // }
 
         // return response()->json('didnt work');
