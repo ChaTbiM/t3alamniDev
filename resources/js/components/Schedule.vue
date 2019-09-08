@@ -496,12 +496,12 @@ export default {
         }
       };
 
-      let wkStart = new Date(curr.setDate(curr.getDate() + diff()));
+      let wkStart = new Date(curr.setDate(curr.getUTCDate() + diff()));
       // wkStart.setHours(0, 0, 0);
       this.wkStart = wkStart;
 
-      let wkEnd = new Date(curr.setDate(wkStart.getDate() + 6));
-      // wkEnd.setHours(0, 0, 0);
+      let wkEnd = new Date(curr.setDate(wkStart.getUTCDate() + 6));
+      // wkEnd.setHours(23, 59, 0);
       this.wkEnd = wkEnd;
 
       this.currentWeek = wkStart.getDate();
@@ -514,7 +514,7 @@ export default {
       this.currentWeek += " " + this.months[wkEnd.getMonth()];
       this.currentWeek += " " + wkEnd.getFullYear();
 
-      this.showSimpleSessions();
+      // this.showSimpleSessions();
       // this.showFixedSessions();
     },
     getNextWeek() {
@@ -657,17 +657,16 @@ export default {
       wkEnd.setHours(23, 59, 59);
 
       this.simpleSessions.forEach(el => {
-        const date = new Date(el.date);
+        const date = new Date(el.date + "T" + el.time);
         const day = date.getUTCDate();
 
         if (date >= wkStart && date <= wkEnd) {
           const diffTime = el.time.split(":")[0] - 7;
           let diffDay;
-          if (day <= 6) {
-            diffDay = day;
-          } else {
-            diffDay = day - wkStart.getUTCDate() - 1;
-          }
+
+          diffDay = new Date(date - wkStart).getUTCDate();
+          diffDay--;
+
           this.sessions.data[diffDay][diffTime].subject = el.subject;
           this.sessions.data[diffDay][diffTime].type = el.type;
           this.sessions.data[diffDay][diffTime].backgroundColor = "#137BF4";
@@ -675,9 +674,11 @@ export default {
       });
     },
 
-    showAddSimpleSessions() {
+    showAddSimpleSessions(e) {
       this.$store.commit("changeState", "AddSimpleSessionOpen");
       this.AddSimpleSessionOpen = this.$store.getters.AddSimpleSessionOpen;
+
+      this.closeAddSessions(e);
     },
 
     showAddFixedSessions() {
@@ -747,7 +748,6 @@ export default {
     this.$store.commit("initFixed", this.fixed);
     this.fixedSessions = this.$store.getters.fixedSessions;
 
-
     this.$store.commit("initSimple", this.simple);
     this.simpleSessions = this.$store.getters.simpleSessions;
 
@@ -758,6 +758,11 @@ export default {
       this.$store.getters.fixedSessions.length - 1
     ].id;
     this.$store.commit("setFixedSessionID", lastFixedSessionID);
+
+    let lastSimpleSessionID = this.$store.getters.simpleSessions[
+      this.$store.getters.simpleSessions.length - 1
+    ].id;
+    this.$store.commit("setSimpleSessionID", lastSimpleSessionID);
     this.componentLoaded = true;
 
     this.$store.watch(
@@ -765,9 +770,21 @@ export default {
       (newValue, oldValue) => {
         // Do whatever makes sense now
         // console.log("updated fixed");
-        this.fixedSessions = this.$store.getters.fixedSessions;
+        this.fixedSessions = newValue;
 
         this.showFixedSessions();
+      },
+      { deep: true, immediate: true }
+    );
+
+    this.$store.watch(
+      (state, getters) => getters.simpleSessions,
+      (newValue, oldValue) => {
+        // Do whatever makes sense now
+        // console.log("updated fixed");
+        this.simpleSessions = newValue;
+
+        this.showSimpleSessions();
       },
       { deep: true, immediate: true }
     );

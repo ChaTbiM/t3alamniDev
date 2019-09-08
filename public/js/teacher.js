@@ -1898,6 +1898,13 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
 /* harmony default export */ __webpack_exports__["default"] = ({
   updated: function updated() {},
   mounted: function mounted() {
@@ -1931,9 +1938,11 @@ __webpack_require__.r(__webpack_exports__);
   data: function data() {
     // let id = this.$store.getters.fixedSessionID + 1;
     return {
-      clicked: {
-        event: this.consoled
-      },
+      // clicked: {
+      //   event: this.consoled
+      // },
+      file: "",
+      formData: {},
       index: "",
       attrs: [],
       document: "",
@@ -1944,12 +1953,15 @@ __webpack_require__.r(__webpack_exports__);
     showAddFixedSessions: function showAddFixedSessions() {
       this.$parent.showAddFixedSessions();
     },
+    addFile: function addFile() {
+      this.file = this.$refs.file.files[0];
+    },
     submitFixedSessions: function submitFixedSessions() {
       var time = this.$store.getters.time.HH;
       time += ":00:00";
       var id = this.$store.getters.fixedSessionID + 1;
       var groupId = Number(this.$store.getters.choosedGroup[this.$store.getters.choosedGroup.length - 1]);
-      var fixedTest = this.$store.getters.fixedSessions;
+      var fixedSessions = this.$store.getters.fixedSessions;
       var date = this.$store.getters.date;
       var day = date.getUTCDate() <= 9 ? "0" + date.getUTCDate() : date.getUTCDate();
       var month = date.getUTCMonth() < 9 ? "0" + (date.getUTCMonth() + 1) : date.getUTCMonth() + 1;
@@ -1969,11 +1981,24 @@ __webpack_require__.r(__webpack_exports__);
         type: "fixed",
         updated_at: null
       };
-      console.log(data);
-      fixedTest.push(data);
-      this.$store.commit("initFixed", JSON.stringify(fixedTest));
+      fixedSessions.push(data);
+      this.$store.commit("initFixed", JSON.stringify(fixedSessions));
       this.$store.commit("setFixedSessionID", id);
-      axios.post(route("addFixedSessions"), data).then(function (response) {
+      var formData = new FormData();
+      Object.keys(data).map(function (e) {
+        formData.append(e, data[e]);
+      });
+
+      if (this.file) {
+        formData.append("file", this.file, this.file.name);
+        formData.append("fileName", this.file.name);
+      }
+
+      axios.post(route("addFixedSessions"), formData, {
+        headers: {
+          "Content-Type": "multipart/form-data"
+        }
+      }).then(function (response) {
         console.log(response.data, "res");
       })["catch"](function (err) {
         console.log(err);
@@ -2002,10 +2027,6 @@ __webpack_require__.r(__webpack_exports__);
     }
   },
   computed: {
-    // ...mapState({
-    //   duration: state => state.duration
-    //   // weatherData: state=>state.yearData
-    // })
     duration: {
       get: function get() {
         return this.$store.getters.duration;
@@ -2144,13 +2165,176 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 /* harmony default export */ __webpack_exports__["default"] = ({
   mounted: function mounted() {
-    console.log("Component mounted. for teachers");
+    var _this = this;
+
+    this.$store.watch(function (state, getters) {
+      return getters.date;
+    }, function (newValue, oldValue) {
+      // Do whatever makes sense now
+      if (_this.attrs.length >= 1) {
+        _this.attrs.pop();
+      }
+
+      _this.attrs.push({
+        key: "date",
+        highlight: "red",
+        dates: new Date(newValue)
+      });
+
+      _this.index++;
+      setTimeout(function () {
+        var calendar = _this.$refs.calendar;
+        var target = _this.attrs[0].dates;
+        calendar.showPageRange(target);
+      }, 0);
+    }, {
+      deep: true,
+      immediate: false
+    });
+  },
+  data: function data() {
+    return {
+      csrf: document.querySelector('meta[name="csrf-token"]').getAttribute("content"),
+      title: "",
+      module: "",
+      grade: "",
+      specialty: "",
+      year: "",
+      description: "",
+      file: "",
+      index: "",
+      attrs: [],
+      numberOfPlaces: "",
+      price: ""
+    };
   },
   methods: {
-    showAddSimpleSessions: function showAddSimpleSessions() {
-      this.$parent.showAddSimpleSessions();
+    showAddSimpleSessions: function showAddSimpleSessions(e) {
+      this.$parent.showAddSimpleSessions(e);
+    },
+    addFile: function addFile() {
+      this.file = this.$refs.file.files[0];
+    },
+    submitSimpleSessions: function submitSimpleSessions() {
+      var time = this.$store.getters.time.HH;
+      time += ":00:00";
+      var id = this.$store.getters.simpleSessionID + 1;
+      var simpleSessions = this.$store.getters.simpleSessions;
+      var date = this.$store.getters.date;
+      var day = date.getUTCDate() <= 9 ? "0" + date.getUTCDate() : date.getUTCDate();
+      var month = date.getUTCMonth() < 9 ? "0" + (date.getUTCMonth() + 1) : date.getUTCMonth() + 1;
+      var year = date.getFullYear();
+      date = year + "-" + month + "-" + day;
+      var data = {
+        title: this.title,
+        subject: this.module,
+        cycle: this.grade,
+        year: this.year,
+        specialty: this.specialty,
+        description: this.description,
+        id: id,
+        nb_places: this.numberOfPlaces,
+        price: this.price,
+        mark: null,
+        date: String(date),
+        // test DAte
+        time: time,
+        duration: this.$store.getters.duration,
+        state: "en attente",
+        teacher_id: this.$store.getters.teacherId,
+        type: "simple" // created_at: null,
+
+      };
+      simpleSessions.push(data);
+      this.$store.commit("initSimple", JSON.stringify(simpleSessions));
+      this.$store.commit("setSimpleSessionID", id);
+      var formData = new FormData();
+      Object.keys(data).map(function (e) {
+        formData.append(e, data[e]);
+      });
+
+      if (this.file) {
+        formData.append("file", this.file, this.file.name);
+        formData.append("fileName", this.file.name);
+      }
+
+      console.log(data);
+      axios.post(route("addSimpleSessions"), formData, {
+        headers: {
+          "Content-Type": "multipart/form-data"
+        }
+      }).then(function (response) {
+        console.log(response.data, "res");
+      })["catch"](function (err) {
+        console.log(err);
+      });
+    },
+    changeDate: function changeDate(payload) {
+      var _this2 = this;
+
+      this.attrs.pop(); // let attrs = [];
+
+      var date = {
+        key: "today",
+        dates: new Date(payload.date),
+        highlight: "red"
+      }; // attrs.push(date);
+
+      this.attrs.push(date); // this.$store.commit("setAttrs", attrs); // store the wanted date
+
+      this.index++;
+      this.$store.commit("setDate", date.dates);
+      setTimeout(function () {
+        var calendar = _this2.$refs.calendar;
+        var target = _this2.attrs[0].dates;
+        calendar.showPageRange(target);
+      }, 0);
+    }
+  },
+  computed: {
+    duration: {
+      get: function get() {
+        return this.$store.getters.duration;
+      },
+      set: function set(val) {
+        this.$store.commit("setDuration", val);
+      }
+    },
+    time: {
+      get: function get() {
+        return this.$store.getters.time;
+      },
+      set: function set(val) {
+        this.$store.commit("setTime", val);
+      }
     }
   }
 });
@@ -2736,10 +2920,10 @@ var _ = __webpack_require__(/*! lodash */ "./node_modules/lodash/lodash.js");
         }
       };
 
-      var wkStart = new Date(curr.setDate(curr.getDate() + diff())); // wkStart.setHours(0, 0, 0);
+      var wkStart = new Date(curr.setDate(curr.getUTCDate() + diff())); // wkStart.setHours(0, 0, 0);
 
       this.wkStart = wkStart;
-      var wkEnd = new Date(curr.setDate(wkStart.getDate() + 6)); // wkEnd.setHours(0, 0, 0);
+      var wkEnd = new Date(curr.setDate(wkStart.getUTCDate() + 6)); // wkEnd.setHours(23, 59, 0);
 
       this.wkEnd = wkEnd;
       this.currentWeek = wkStart.getDate();
@@ -2749,8 +2933,8 @@ var _ = __webpack_require__(/*! lodash */ "./node_modules/lodash/lodash.js");
       this.currentWeek += " - " + wkEnd.getDate();
       this.currentWeek += " " + this.weekDays[wkEnd.getDay()];
       this.currentWeek += " " + this.months[wkEnd.getMonth()];
-      this.currentWeek += " " + wkEnd.getFullYear();
-      this.showSimpleSessions(); // this.showFixedSessions();
+      this.currentWeek += " " + wkEnd.getFullYear(); // this.showSimpleSessions();
+      // this.showFixedSessions();
     },
     getNextWeek: function getNextWeek() {
       var curr = new Date(this.wkEnd);
@@ -2880,28 +3064,24 @@ var _ = __webpack_require__(/*! lodash */ "./node_modules/lodash/lodash.js");
       wkStart.setHours(0, 0, 0);
       wkEnd.setHours(23, 59, 59);
       this.simpleSessions.forEach(function (el) {
-        var date = new Date(el.date);
+        var date = new Date(el.date + "T" + el.time);
         var day = date.getUTCDate();
 
         if (date >= wkStart && date <= wkEnd) {
           var diffTime = el.time.split(":")[0] - 7;
           var diffDay;
-
-          if (day <= 6) {
-            diffDay = day;
-          } else {
-            diffDay = day - wkStart.getUTCDate() - 1;
-          }
-
+          diffDay = new Date(date - wkStart).getUTCDate();
+          diffDay--;
           _this2.sessions.data[diffDay][diffTime].subject = el.subject;
           _this2.sessions.data[diffDay][diffTime].type = el.type;
           _this2.sessions.data[diffDay][diffTime].backgroundColor = "#137BF4";
         }
       });
     },
-    showAddSimpleSessions: function showAddSimpleSessions() {
+    showAddSimpleSessions: function showAddSimpleSessions(e) {
       this.$store.commit("changeState", "AddSimpleSessionOpen");
       this.AddSimpleSessionOpen = this.$store.getters.AddSimpleSessionOpen;
+      this.closeAddSessions(e);
     },
     showAddFixedSessions: function showAddFixedSessions() {
       this.$store.commit("changeState", "AddFixedSessionOpen");
@@ -2986,15 +3166,29 @@ var _ = __webpack_require__(/*! lodash */ "./node_modules/lodash/lodash.js");
     this.modules = this.$store.getters.modules;
     var lastFixedSessionID = this.$store.getters.fixedSessions[this.$store.getters.fixedSessions.length - 1].id;
     this.$store.commit("setFixedSessionID", lastFixedSessionID);
+    var lastSimpleSessionID = this.$store.getters.simpleSessions[this.$store.getters.simpleSessions.length - 1].id;
+    this.$store.commit("setSimpleSessionID", lastSimpleSessionID);
     this.componentLoaded = true;
     this.$store.watch(function (state, getters) {
       return getters.fixedSessions;
     }, function (newValue, oldValue) {
       // Do whatever makes sense now
       // console.log("updated fixed");
-      _this4.fixedSessions = _this4.$store.getters.fixedSessions;
+      _this4.fixedSessions = newValue;
 
       _this4.showFixedSessions();
+    }, {
+      deep: true,
+      immediate: true
+    });
+    this.$store.watch(function (state, getters) {
+      return getters.simpleSessions;
+    }, function (newValue, oldValue) {
+      // Do whatever makes sense now
+      // console.log("updated fixed");
+      _this4.simpleSessions = newValue;
+
+      _this4.showSimpleSessions();
     }, {
       deep: true,
       immediate: true
@@ -7582,7 +7776,7 @@ exports = module.exports = __webpack_require__(/*! ../../../node_modules/css-loa
 
 
 // module
-exports.push([module.i, "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\r\n/* body {\r\n  position: relative;\r\n} */\n.container[data-v-2286ab64] {\r\n  position: absolute;\r\n  /* top: 10%; */\r\n  top: 10%;\r\n  left: 50%;\r\n  right: 50%;\r\n  transform: translateX(-50%);\r\n  width: 50%;\r\n  /* margin: 0 auto; */\r\n  background-color: rgba(243, 242, 235, 1);\r\n  display: flex;\r\n  flex-direction: column;\n}\n.form[data-v-2286ab64] {\r\n  flex-basis: 100%;\n}\r\n/* \r\n    .form__content{\r\n        flex-basis: 100%;\r\n        display: flex;\r\n        justify-content: space-between;\r\n        align-items: center;\r\n    }  */\nlabel[data-v-2286ab64] {\r\n  display: inline-block;\r\n  width: 20%;\r\n  margin-right: 2rem;\r\n  vertical-align: baseline;\r\n  margin-top: 2rem;\r\n  margin-left: 3rem;\n}\n.description[data-v-2286ab64] {\r\n  vertical-align: top;\n}\ninput[data-v-2286ab64],\r\ntextarea[data-v-2286ab64] {\r\n  width: 50%;\r\n  margin-top: 2rem;\r\n  padding: 0.7rem;\n}\n.close[data-v-2286ab64] {\r\n  background-color: rgba(243, 242, 235, 1);\r\n  color: black;\r\n  /* position: absolute;\r\n  right: 0;\r\n  top: -3%;\r\n  z-index: -1; */\r\n  padding: 5px;\r\n  font-size: 1.2rem;\r\n  border-top-left-radius: 50px;\r\n  border-top-right-radius: 50px;\n}\r\n", ""]);
+exports.push([module.i, "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\r\n/* body {\r\n  position: relative;\r\n} */\n.container[data-v-2286ab64] {\r\n  position: absolute;\r\n  /* top: 10%; */\r\n  top: 10%;\r\n  left: 50%;\r\n  right: 50%;\r\n  transform: translateX(-50%);\r\n  width: 50%;\r\n  /* margin: 0 auto; */\r\n  background-color: rgba(243, 242, 235, 1);\r\n  display: flex;\r\n  flex-direction: column;\n}\n.form[data-v-2286ab64] {\r\n  flex-basis: 100%;\n}\r\n/* \r\n    .form__content{\r\n        flex-basis: 100%;\r\n        display: flex;\r\n        justify-content: space-between;\r\n        align-items: center;\r\n    }  */\nlabel[data-v-2286ab64] {\r\n  display: inline-block;\r\n  width: 20%;\r\n  margin-right: 2rem;\r\n  vertical-align: baseline;\r\n  margin-top: 2rem;\r\n  margin-left: 3rem;\n}\n.description[data-v-2286ab64] {\r\n  vertical-align: top;\n}\ninput[data-v-2286ab64],\r\ntextarea[data-v-2286ab64] {\r\n  width: 50%;\r\n  margin-top: 2rem;\r\n  padding: 0.7rem;\n}\n.close[data-v-2286ab64] {\r\n  background-color: rgba(243, 242, 235, 1);\r\n  color: black;\r\n  /* position: absolute;\r\n  right: 0;\r\n  top: -3%;\r\n  z-index: -1; */\r\n  padding: 5px;\r\n  font-size: 1.2rem;\r\n  border-top-left-radius: 50px;\r\n  border-top-right-radius: 50px;\n}\r\n", ""]);
 
 // exports
 
@@ -39345,8 +39539,15 @@ var render = function() {
             ]),
             _vm._v(" "),
             _c("input", {
+              ref: "file",
               staticClass: "document",
-              attrs: { type: "file", name: "document", id: "document" }
+              attrs: { type: "file", name: "document", id: "document" },
+              on: {
+                change: function($event) {
+                  $event.preventDefault()
+                  return _vm.addFile()
+                }
+              }
             }),
             _vm._v(" "),
             _c("br")
@@ -39475,146 +39676,341 @@ var render = function() {
   return _c("div", { staticClass: "container" }, [
     _c(
       "div",
-      { staticClass: "close", on: { click: _vm.showAddSimpleSessions } },
+      {
+        staticClass: "close",
+        on: {
+          click: function($event) {
+            $event.preventDefault()
+            return _vm.showAddSimpleSessions($event)
+          }
+        }
+      },
       [_vm._v("X")]
     ),
     _vm._v(" "),
-    _vm._m(0)
-  ])
-}
-var staticRenderFns = [
-  function() {
-    var _vm = this
-    var _h = _vm.$createElement
-    var _c = _vm._self._c || _h
-    return _c(
+    _c(
       "form",
-      { staticClass: "form", attrs: { action: "", method: "post" } },
+      {
+        staticClass: "form",
+        attrs: { enctype: "multipart/form-data", value: _vm.csrf },
+        on: {
+          submit: function($event) {
+            $event.preventDefault()
+            return _vm.submitSimpleSessions($event)
+          }
+        }
+      },
       [
-        _c("fieldset", { staticClass: "form__content" }, [
-          _c("legend", { staticClass: "legend" }, [_vm._v("Add Session")]),
-          _vm._v(" "),
-          _c("label", { attrs: { for: "title" } }, [_vm._v("titre")]),
-          _vm._v(" "),
-          _c("input", {
-            staticClass: "titre",
-            attrs: { type: "text", name: "titre", id: "titre" }
-          }),
-          _vm._v(" "),
-          _c("br"),
-          _vm._v(" "),
-          _c("label", { attrs: { for: "module" } }, [_vm._v("module")]),
-          _vm._v(" "),
-          _c("input", {
-            staticClass: "module",
-            attrs: { type: "text", name: "module", id: "module" }
-          }),
-          _vm._v(" "),
-          _c("br"),
-          _vm._v(" "),
-          _c("label", { attrs: { for: "title" } }, [_vm._v("niveau")]),
-          _vm._v(" "),
-          _c("input", {
-            staticClass: "niveau",
-            attrs: { type: "text", name: "niveau", id: "niveau" }
-          }),
-          _vm._v(" "),
-          _c("br"),
-          _vm._v(" "),
-          _c("label", { attrs: { for: "title" } }, [_vm._v("specialite")]),
-          _vm._v(" "),
-          _c("input", {
-            staticClass: "specialite",
-            attrs: { type: "text", name: "specialite", id: "specialite" }
-          }),
-          _vm._v(" "),
-          _c("br"),
-          _vm._v(" "),
-          _c("label", { attrs: { for: "title" } }, [_vm._v("annee")]),
-          _vm._v(" "),
-          _c("input", {
-            staticClass: "annee",
-            attrs: { type: "text", name: "annee", id: "annee" }
-          }),
-          _vm._v(" "),
-          _c("br"),
-          _vm._v(" "),
-          _c("label", { staticClass: "description", attrs: { for: "title" } }, [
-            _vm._v("description")
-          ]),
-          _vm._v(" "),
-          _c("textarea", {
-            attrs: {
-              name: "description",
-              id: "description",
-              cols: "30",
-              rows: "10"
-            }
-          }),
-          _vm._v(" "),
-          _c("br"),
-          _vm._v(" "),
-          _c("br"),
-          _vm._v(" "),
-          _c("label", { attrs: { for: "document" } }, [
-            _vm._v("document attache")
-          ]),
-          _vm._v(" "),
-          _c("input", {
-            staticClass: "document",
-            attrs: { type: "file", name: "document", id: "document" }
-          }),
-          _vm._v(" "),
-          _c("br"),
-          _vm._v(" "),
-          _c("label", { attrs: { for: "title" } }, [_vm._v("date")]),
-          _vm._v(" "),
-          _c("input", {
-            staticClass: "date",
-            attrs: { type: "text", name: "date", id: "date" }
-          }),
-          _vm._v(" "),
-          _c("br"),
-          _vm._v(" "),
-          _c("label", { attrs: { for: "temps" } }, [_vm._v("temps")]),
-          _vm._v(" "),
-          _c("input", {
-            staticClass: "temps",
-            attrs: { type: "time", name: "temps", id: "temps" }
-          }),
-          _vm._v(" "),
-          _c("br"),
-          _vm._v(" "),
-          _c("br"),
-          _vm._v(" "),
-          _c("label", { attrs: { for: "nombre" } }, [
-            _vm._v("nombre de place")
-          ]),
-          _vm._v(" "),
-          _c("input", {
-            staticClass: "nombre",
-            attrs: { type: "text", name: "nombre", id: "nombre" }
-          }),
-          _vm._v(" "),
-          _c("br"),
-          _vm._v(" "),
-          _c("label", { attrs: { for: "prix" } }, [_vm._v("prix")]),
-          _vm._v(" "),
-          _c("input", {
-            staticClass: "prix",
-            attrs: { type: "text", name: "prix", id: "prix" }
-          }),
-          _vm._v(" "),
-          _c("br"),
-          _vm._v(" "),
-          _c("button", { attrs: { type: "submit" } }, [_vm._v("Add")]),
-          _vm._v(" "),
-          _c("button", { attrs: { type: "reset" } }, [_vm._v("Reset")])
-        ])
+        _c(
+          "fieldset",
+          { staticClass: "form__content" },
+          [
+            _c("legend", { staticClass: "legend" }, [_vm._v("Add Session")]),
+            _vm._v(" "),
+            _c("label", { attrs: { for: "title" } }, [_vm._v("titre")]),
+            _vm._v(" "),
+            _c("input", {
+              directives: [
+                {
+                  name: "model",
+                  rawName: "v-model",
+                  value: _vm.title,
+                  expression: "title"
+                }
+              ],
+              staticClass: "titre",
+              attrs: { type: "text", name: "titre", id: "titre" },
+              domProps: { value: _vm.title },
+              on: {
+                input: function($event) {
+                  if ($event.target.composing) {
+                    return
+                  }
+                  _vm.title = $event.target.value
+                }
+              }
+            }),
+            _vm._v(" "),
+            _c("br"),
+            _vm._v(" "),
+            _c("label", { attrs: { for: "module" } }, [_vm._v("module")]),
+            _vm._v(" "),
+            _c("input", {
+              directives: [
+                {
+                  name: "model",
+                  rawName: "v-model",
+                  value: _vm.module,
+                  expression: "module"
+                }
+              ],
+              staticClass: "module",
+              attrs: { type: "text", name: "module", id: "module" },
+              domProps: { value: _vm.module },
+              on: {
+                input: function($event) {
+                  if ($event.target.composing) {
+                    return
+                  }
+                  _vm.module = $event.target.value
+                }
+              }
+            }),
+            _vm._v(" "),
+            _c("br"),
+            _vm._v(" "),
+            _c("label", { attrs: { for: "title" } }, [_vm._v("niveau")]),
+            _vm._v(" "),
+            _c("input", {
+              directives: [
+                {
+                  name: "model",
+                  rawName: "v-model",
+                  value: _vm.grade,
+                  expression: "grade"
+                }
+              ],
+              staticClass: "niveau",
+              attrs: { type: "text", name: "niveau", id: "niveau" },
+              domProps: { value: _vm.grade },
+              on: {
+                input: function($event) {
+                  if ($event.target.composing) {
+                    return
+                  }
+                  _vm.grade = $event.target.value
+                }
+              }
+            }),
+            _vm._v(" "),
+            _c("br"),
+            _vm._v(" "),
+            _c("label", { attrs: { for: "title" } }, [_vm._v("specialite")]),
+            _vm._v(" "),
+            _c("input", {
+              directives: [
+                {
+                  name: "model",
+                  rawName: "v-model",
+                  value: _vm.specialty,
+                  expression: "specialty"
+                }
+              ],
+              staticClass: "specialite",
+              attrs: { type: "text", name: "specialite", id: "specialite" },
+              domProps: { value: _vm.specialty },
+              on: {
+                input: function($event) {
+                  if ($event.target.composing) {
+                    return
+                  }
+                  _vm.specialty = $event.target.value
+                }
+              }
+            }),
+            _vm._v(" "),
+            _c("br"),
+            _vm._v(" "),
+            _c("label", { attrs: { for: "title" } }, [_vm._v("annee")]),
+            _vm._v(" "),
+            _c("input", {
+              directives: [
+                {
+                  name: "model",
+                  rawName: "v-model",
+                  value: _vm.year,
+                  expression: "year"
+                }
+              ],
+              staticClass: "annee",
+              attrs: { type: "text", name: "annee", id: "annee" },
+              domProps: { value: _vm.year },
+              on: {
+                input: function($event) {
+                  if ($event.target.composing) {
+                    return
+                  }
+                  _vm.year = $event.target.value
+                }
+              }
+            }),
+            _vm._v(" "),
+            _c("br"),
+            _vm._v(" "),
+            _c(
+              "label",
+              { staticClass: "description", attrs: { for: "title" } },
+              [_vm._v("description")]
+            ),
+            _vm._v(" "),
+            _c("textarea", {
+              directives: [
+                {
+                  name: "model",
+                  rawName: "v-model",
+                  value: _vm.description,
+                  expression: "description"
+                }
+              ],
+              attrs: {
+                name: "description",
+                id: "description",
+                cols: "30",
+                rows: "10"
+              },
+              domProps: { value: _vm.description },
+              on: {
+                input: function($event) {
+                  if ($event.target.composing) {
+                    return
+                  }
+                  _vm.description = $event.target.value
+                }
+              }
+            }),
+            _vm._v(" "),
+            _c("br"),
+            _vm._v(" "),
+            _c("br"),
+            _vm._v(" "),
+            _c("label", { attrs: { for: "document" } }, [
+              _vm._v("document attache")
+            ]),
+            _vm._v(" "),
+            _c("input", {
+              ref: "file",
+              staticClass: "document",
+              attrs: { type: "file", name: "document", id: "document" },
+              on: {
+                change: function($event) {
+                  return _vm.addFile()
+                }
+              }
+            }),
+            _vm._v(" "),
+            _c("br"),
+            _vm._v(" "),
+            _c("label", { attrs: { for: "title" } }, [_vm._v("date")]),
+            _vm._v(" "),
+            _c("vc-calendar", {
+              key: _vm.index,
+              ref: "calendar",
+              attrs: {
+                attributes: _vm.attrs,
+                locale: {
+                  id: "fr",
+                  firstDayOfWeek: 7,
+                  masks: { weekdays: "WW" }
+                }
+              },
+              on: { dayclick: _vm.changeDate }
+            }),
+            _vm._v(" "),
+            _c("br"),
+            _vm._v(" "),
+            _c("label", { attrs: { for: "temps" } }, [_vm._v("temps")]),
+            _vm._v(" "),
+            _c("vue-timepicker", {
+              attrs: {
+                "minute-interval": 0,
+                "hour-range": [
+                  7,
+                  8,
+                  9,
+                  10,
+                  11,
+                  12,
+                  13,
+                  14,
+                  15,
+                  16,
+                  17,
+                  18,
+                  19,
+                  20,
+                  21,
+                  22
+                ],
+                "hide-disabled-hours": ""
+              },
+              model: {
+                value: _vm.time,
+                callback: function($$v) {
+                  _vm.time = $$v
+                },
+                expression: "time"
+              }
+            }),
+            _vm._v(" "),
+            _c("br"),
+            _vm._v(" "),
+            _c("br"),
+            _vm._v(" "),
+            _c("label", { attrs: { for: "nombre" } }, [
+              _vm._v("nombre de place")
+            ]),
+            _vm._v(" "),
+            _c("input", {
+              directives: [
+                {
+                  name: "model",
+                  rawName: "v-model",
+                  value: _vm.numberOfPlaces,
+                  expression: "numberOfPlaces"
+                }
+              ],
+              staticClass: "nombre",
+              attrs: { type: "text", name: "nombre", id: "nombre" },
+              domProps: { value: _vm.numberOfPlaces },
+              on: {
+                input: function($event) {
+                  if ($event.target.composing) {
+                    return
+                  }
+                  _vm.numberOfPlaces = $event.target.value
+                }
+              }
+            }),
+            _vm._v(" "),
+            _c("br"),
+            _vm._v(" "),
+            _c("label", { attrs: { for: "prix" } }, [_vm._v("prix")]),
+            _vm._v(" "),
+            _c("input", {
+              directives: [
+                {
+                  name: "model",
+                  rawName: "v-model",
+                  value: _vm.price,
+                  expression: "price"
+                }
+              ],
+              staticClass: "prix",
+              attrs: { type: "text", name: "prix", id: "prix" },
+              domProps: { value: _vm.price },
+              on: {
+                input: function($event) {
+                  if ($event.target.composing) {
+                    return
+                  }
+                  _vm.price = $event.target.value
+                }
+              }
+            }),
+            _vm._v(" "),
+            _c("br"),
+            _vm._v(" "),
+            _c("button", { attrs: { type: "submit" } }, [_vm._v("Add")]),
+            _vm._v(" "),
+            _c("button", { attrs: { type: "reset" } }, [_vm._v("Reset")])
+          ],
+          1
+        )
       ]
     )
-  }
-]
+  ])
+}
+var staticRenderFns = []
 render._withStripped = true
 
 

@@ -49,7 +49,14 @@
         <br />
 
         <label for="document">document attache</label>
-        <input type="file" name="document" id="document" class="document" />
+        <input
+          type="file"
+          name="document"
+          id="document"
+          ref="file"
+          @change.prevent="addFile()"
+          class="document"
+        />
         <br />
       </fieldset>
       <button type="submit">Add</button>
@@ -89,9 +96,11 @@ export default {
   data() {
     // let id = this.$store.getters.fixedSessionID + 1;
     return {
-      clicked: {
-        event: this.consoled
-      },
+      // clicked: {
+      //   event: this.consoled
+      // },
+      file: "",
+      formData: {},
       index: "",
       attrs: [],
       document: "",
@@ -105,6 +114,11 @@ export default {
     showAddFixedSessions() {
       this.$parent.showAddFixedSessions();
     },
+
+    addFile() {
+      this.file = this.$refs.file.files[0];
+    },
+
     submitFixedSessions() {
       let time = this.$store.getters.time.HH;
       time += ":00:00";
@@ -115,7 +129,7 @@ export default {
         ]
       );
 
-      let fixedTest = this.$store.getters.fixedSessions;
+      let fixedSessions = this.$store.getters.fixedSessions;
       let date = this.$store.getters.date;
 
       let day =
@@ -142,14 +156,26 @@ export default {
         updated_at: null
       };
 
-      console.log(data);
-
-      fixedTest.push(data);
-      this.$store.commit("initFixed", JSON.stringify(fixedTest));
+      fixedSessions.push(data);
+      this.$store.commit("initFixed", JSON.stringify(fixedSessions));
       this.$store.commit("setFixedSessionID", id);
 
+      let formData = new FormData();
+
+      Object.keys(data).map(e => {
+        formData.append(e, data[e]);
+      });
+
+      if (this.file) {
+        formData.append("file", this.file, this.file.name);
+
+        formData.append("fileName", this.file.name);
+      }
+
       axios
-        .post(route("addFixedSessions"), data)
+        .post(route("addFixedSessions"), formData, {
+          headers: { "Content-Type": "multipart/form-data" }
+        })
         .then(response => {
           console.log(response.data, "res");
         })
@@ -182,10 +208,6 @@ export default {
   },
 
   computed: {
-    // ...mapState({
-    //   duration: state => state.duration
-    //   // weatherData: state=>state.yearData
-    // })
     duration: {
       get() {
         return this.$store.getters.duration;

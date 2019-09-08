@@ -173,6 +173,10 @@ Route::post('teacher/fixed', 'TeacherController@addFixed')->name(
     'addFixedSessions'
 );
 
+Route::post('teacher/simple', 'TeacherController@addSimple')->name(
+    'addSimpleSessions'
+);
+
 // test upload
 Route::get('teacher/test', 'TeacherController@testIndex');
 // Route::post('teacher/fixed', 'TeacherController@addFixed')->name('upload');
