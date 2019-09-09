@@ -287,7 +287,7 @@ export default {
       componentLoaded: false,
 
       fixedSessions: null,
-      simpleSessions: JSON.parse(this.simple),
+      simpleSessions: null,
       modules: JSON.parse(this.module),
 
       filters: {
@@ -404,6 +404,12 @@ export default {
     },
     duringSelect(event, index, ind) {
       event.preventDefault();
+
+      if (
+        event.target.style.backgroundColor === "rgb(42, 210, 49)" ||
+        event.target.style.backgroundColor === "rgb(19, 123, 244)"
+      ) {
+      }
 
       if (this.clicked && this.targets[0] === index) {
         // "rgb(218, 223, 225)" grey
@@ -623,55 +629,59 @@ export default {
     },
 
     showFixedSessions() {
-      const wkStart = this.wkStart;
-      const wkEnd = this.wkEnd;
-      let info = this.last;
-      wkStart.setHours(0, 10, 0);
-      wkEnd.setHours(23, 55, 59);
-      this.fixedSessions.forEach(el => {
-        const date = new Date(el.date + "T" + el.time);
-        const day = date.getUTCDate();
+      if (this.fixedSessions.length !== 0) {
+        const wkStart = this.wkStart;
+        const wkEnd = this.wkEnd;
+        let info = this.last;
+        wkStart.setHours(0, 10, 0);
+        wkEnd.setHours(23, 55, 59);
+        this.fixedSessions.forEach(el => {
+          const date = new Date(el.date + "T" + el.time);
+          const day = date.getUTCDate();
 
-        if (date >= wkStart && date <= wkEnd) {
-          const diffTime = el.time.split(":")[0] - 7;
-          let diffDay;
-          const module = this.modules.find(function(element) {
-            return element.groupId === el.group_id;
-          });
+          if (date >= wkStart && date <= wkEnd) {
+            const diffTime = el.time.split(":")[0] - 7;
+            let diffDay;
+            const module = this.modules.find(function(element) {
+              return element.groupId === el.group_id;
+            });
 
-          diffDay = new Date(date - wkStart).getUTCDate();
+            diffDay = new Date(date - wkStart).getUTCDate();
 
-          diffDay--;
-          this.sessions.data[diffDay][diffTime].groupId = el.group_id;
-          this.sessions.data[diffDay][diffTime].type = el.type;
-          this.sessions.data[diffDay][diffTime].module = module.module;
-          this.sessions.data[diffDay][diffTime].backgroundColor = "#2AD231";
-        }
-      });
+            diffDay--;
+            this.sessions.data[diffDay][diffTime].groupId = el.group_id;
+            this.sessions.data[diffDay][diffTime].type = el.type;
+            this.sessions.data[diffDay][diffTime].module = module.module;
+            this.sessions.data[diffDay][diffTime].backgroundColor = "#2AD231";
+          }
+        });
+      }
     },
 
     showSimpleSessions() {
-      const wkStart = this.wkStart;
-      const wkEnd = this.wkEnd;
-      wkStart.setHours(0, 0, 0);
-      wkEnd.setHours(23, 59, 59);
+      if (this.simpleSessions.length !== 0) {
+        const wkStart = this.wkStart;
+        const wkEnd = this.wkEnd;
+        wkStart.setHours(0, 0, 0);
+        wkEnd.setHours(23, 59, 59);
 
-      this.simpleSessions.forEach(el => {
-        const date = new Date(el.date + "T" + el.time);
-        const day = date.getUTCDate();
+        this.simpleSessions.forEach(el => {
+          const date = new Date(el.date + "T" + el.time);
+          const day = date.getUTCDate();
 
-        if (date >= wkStart && date <= wkEnd) {
-          const diffTime = el.time.split(":")[0] - 7;
-          let diffDay;
+          if (date >= wkStart && date <= wkEnd) {
+            const diffTime = el.time.split(":")[0] - 7;
+            let diffDay;
 
-          diffDay = new Date(date - wkStart).getUTCDate();
-          diffDay--;
+            diffDay = new Date(date - wkStart).getUTCDate();
+            diffDay--;
 
-          this.sessions.data[diffDay][diffTime].subject = el.subject;
-          this.sessions.data[diffDay][diffTime].type = el.type;
-          this.sessions.data[diffDay][diffTime].backgroundColor = "#137BF4";
-        }
-      });
+            this.sessions.data[diffDay][diffTime].subject = el.subject;
+            this.sessions.data[diffDay][diffTime].type = el.type;
+            this.sessions.data[diffDay][diffTime].backgroundColor = "#137BF4";
+          }
+        });
+      }
     },
 
     showAddSimpleSessions(e) {
@@ -745,25 +755,32 @@ export default {
   mounted() {
     this.$store.commit("initTeacherID", this.id);
 
-    this.$store.commit("initFixed", this.fixed);
-    this.fixedSessions = this.$store.getters.fixedSessions;
+    if (this.fixed.length !== 0) {
+      this.$store.commit("initFixed", this.fixed);
+      this.fixedSessions = this.$store.getters.fixedSessions;
+      let lastFixedSessionID = this.$store.getters.fixedSessions[
+        this.$store.getters.fixedSessions.length - 1
+      ].id;
+      this.$store.commit("setFixedSessionID", lastFixedSessionID);
+    } else {
+      this.$store.commit("setFixedSessionID", 0);
+    }
 
-    this.$store.commit("initSimple", this.simple);
-    this.simpleSessions = this.$store.getters.simpleSessions;
+    if (this.simple.length !== 0) {
+      this.$store.commit("initSimple", this.simple);
+      this.simpleSessions = this.$store.getters.simpleSessions;
+
+      let lastSimpleSessionID = this.$store.getters.simpleSessions[
+        this.$store.getters.simpleSessions.length - 1
+      ].id;
+      this.$store.commit("setSimpleSessionID", lastSimpleSessionID);
+    } else {
+      this.$store.commit("setSimpleSessionID", 0);
+    }
+    this.componentLoaded = true;
 
     this.$store.commit("initModules", this.module);
     this.modules = this.$store.getters.modules;
-
-    let lastFixedSessionID = this.$store.getters.fixedSessions[
-      this.$store.getters.fixedSessions.length - 1
-    ].id;
-    this.$store.commit("setFixedSessionID", lastFixedSessionID);
-
-    let lastSimpleSessionID = this.$store.getters.simpleSessions[
-      this.$store.getters.simpleSessions.length - 1
-    ].id;
-    this.$store.commit("setSimpleSessionID", lastSimpleSessionID);
-    this.componentLoaded = true;
 
     this.$store.watch(
       (state, getters) => getters.fixedSessions,

@@ -32,8 +32,8 @@ export const store = new Vuex.Store({
         simpleSessionID: "",
 
         //sessions data
-        fixed: "",
-        simple: "",
+        fixed: [],
+        simple: [],
         modules: ""
     },
     mutations: {

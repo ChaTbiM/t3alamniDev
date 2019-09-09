@@ -32,9 +32,14 @@ class TeacherController extends Controller
         // }
 
         $fixedSessions = json_encode(auth::user()->fixedSessions);
+
         $simpleSessions = json_encode(auth::user()->simpleSessions);
+        // dd(auth::user()->toArray()['fixed_sessions']);
         $groups = auth::user()->groups;
         $modules = [];
+
+        $test = json_encode([]);
+
         $id = json_encode(Auth::id());
         foreach ($groups as $group) {
             array_push($modules, array(
@@ -49,7 +54,8 @@ class TeacherController extends Controller
             'id' => $id,
             'fixedSessions' => $fixedSessions,
             'simpleSessions' => $simpleSessions,
-            'modules' => $modules
+            'modules' => $modules,
+            'test' => $test
         ]);
 
         // }
