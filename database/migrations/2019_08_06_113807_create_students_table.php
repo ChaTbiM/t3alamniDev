@@ -19,6 +19,14 @@ class CreateStudentsTable extends Migration
             $table->string('email')->unique();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
+
+            $table->string('first_name')->unique();
+            $table->string('last_name')->unique();
+            $table->string('age');
+            $table->string('cycle');
+            $table->integer('year');
+            $table->string('specialty');
+
             $table->rememberToken();
             $table->timestamps();
         });

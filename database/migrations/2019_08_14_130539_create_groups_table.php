@@ -25,11 +25,19 @@ class CreateGroupsTable extends Migration
 
             $table->timestamps();
 
-            $table->unsignedBigInteger('teacher_id');
+            // teacher specialty
+            $table->unsignedBigInteger('teacher_id')->nullable();
             $table
                 ->foreign('teacher_id')
                 ->references('id')
                 ->on('teachers')
+                ->onDelete('cascade');
+            //student specialty
+            $table->unsignedBigInteger('student_id')->nullable();
+            $table
+                ->foreign('student_id')
+                ->references('id')
+                ->on('students')
                 ->onDelete('cascade');
         });
     }

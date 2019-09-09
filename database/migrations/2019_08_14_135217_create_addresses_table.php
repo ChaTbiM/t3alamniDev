@@ -24,20 +24,34 @@ class CreateAddressesTable extends Migration
             //references
             // teacher address
             $table->unsignedBigInteger('teacher_id')->nullable();
-            $table->foreign('teacher_id')
-                ->references('id')->on('teachers')
+            $table
+                ->foreign('teacher_id')
+                ->references('id')
+                ->on('teachers')
                 ->onDelete('cascade');
-            
+
+            //student address
+            $table->unsignedBigInteger('student_id')->nullable();
+            $table
+                ->foreign('student_id')
+                ->references('id')
+                ->on('students')
+                ->onDelete('cascade');
+
             // group address
             $table->unsignedBigInteger('group_id')->nullable();
-            $table->foreign('group_id')
-                ->references('id')->on('groups')
-                 ->onDelete('cascade');
-            
-            // simple session address            
+            $table
+                ->foreign('group_id')
+                ->references('id')
+                ->on('groups')
+                ->onDelete('cascade');
+
+            // simple session address
             $table->unsignedBigInteger('simple_session_id')->nullable();
-            $table->foreign('simple_session_id')
-                ->references('id')->on('simple_sessions')
+            $table
+                ->foreign('simple_session_id')
+                ->references('id')
+                ->on('simple_sessions')
                 ->onDelete('cascade');
         });
     }

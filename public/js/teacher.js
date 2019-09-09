@@ -2383,7 +2383,6 @@ __webpack_require__.r(__webpack_exports__);
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var timers__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! timers */ "./node_modules/timers-browserify/main.js");
 /* harmony import */ var timers__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(timers__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var vuex__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! vuex */ "./node_modules/vuex/dist/vuex.esm.js");
 function _toConsumableArray(arr) { return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _nonIterableSpread(); }
 
 function _nonIterableSpread() { throw new TypeError("Invalid attempt to spread non-iterable instance"); }
@@ -2507,7 +2506,7 @@ function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
 //
 
 
-var _ = __webpack_require__(/*! lodash */ "./node_modules/lodash/lodash.js");
+var _ = __webpack_require__(/*! lodash */ "./node_modules/lodash/lodash.js"); // import { mapState, mapGetters, mapActions } from "vuex";
 
 
 /* harmony default export */ __webpack_exports__["default"] = ({
@@ -2835,7 +2834,23 @@ var _ = __webpack_require__(/*! lodash */ "./node_modules/lodash/lodash.js");
     duringSelect: function duringSelect(event, index, ind) {
       event.preventDefault();
 
-      if (event.target.style.backgroundColor === "rgb(42, 210, 49)" || event.target.style.backgroundColor === "rgb(19, 123, 244)") {}
+      if (event.target.style.backgroundColor === "rgb(42, 210, 49)" || event.target.style.backgroundColor === "rgb(19, 123, 244)") {
+        var day = this.filterSessions[index][ind].date;
+        var time = this.filterSessions[index][ind].time;
+        var thisMoment = new Date();
+        var sessionTimeString = day + "T" + time + "Z";
+        var sessionTime = new Date(sessionTimeString);
+        sessionTime.setHours(time.split(":")[0], 0, 0);
+        console.log(this.filterSessions[index][ind]);
+
+        if (thisMoment < sessionTime) {
+          console.log("en Attente");
+        } else if (thisMoment > sessionTime) {
+          console.log("session terminer");
+        } else {
+          console.log("en cour");
+        }
+      }
 
       if (this.clicked && this.targets[0] === index) {
         // "rgb(218, 223, 225)" grey
@@ -3053,6 +3068,8 @@ var _ = __webpack_require__(/*! lodash */ "./node_modules/lodash/lodash.js");
             diffDay = new Date(date - wkStart).getUTCDate();
             diffDay--;
             _this.sessions.data[diffDay][diffTime].groupId = el.group_id;
+            _this.sessions.data[diffDay][diffTime].date = el.date;
+            _this.sessions.data[diffDay][diffTime].time = el.time;
             _this.sessions.data[diffDay][diffTime].type = el.type;
             _this.sessions.data[diffDay][diffTime].module = module.module;
             _this.sessions.data[diffDay][diffTime].backgroundColor = "#2AD231";
@@ -3080,6 +3097,8 @@ var _ = __webpack_require__(/*! lodash */ "./node_modules/lodash/lodash.js");
             _this2.sessions.data[diffDay][diffTime].subject = el.subject;
             _this2.sessions.data[diffDay][diffTime].type = el.type;
             _this2.sessions.data[diffDay][diffTime].backgroundColor = "#137BF4";
+            _this2.sessions.data[diffDay][diffTime].date = el.date;
+            _this2.sessions.data[diffDay][diffTime].time = el.time;
           }
         });
       }

@@ -114,7 +114,7 @@
 <script>
 import { setTimeout } from "timers";
 var _ = require("lodash");
-import { mapState, mapGetters, mapActions } from "vuex";
+// import { mapState, mapGetters, mapActions } from "vuex";
 
 export default {
   name: "schedule",
@@ -409,6 +409,21 @@ export default {
         event.target.style.backgroundColor === "rgb(42, 210, 49)" ||
         event.target.style.backgroundColor === "rgb(19, 123, 244)"
       ) {
+        let day = this.filterSessions[index][ind].date;
+        let time = this.filterSessions[index][ind].time;
+
+        let thisMoment = new Date();
+        let sessionTimeString = day + "T" + time + "Z";
+        let sessionTime = new Date(sessionTimeString);
+        sessionTime.setHours(time.split(":")[0], 0, 0);
+        console.log(this.filterSessions[index][ind]);
+        if (thisMoment < sessionTime) {
+          console.log("en Attente");
+        } else if (thisMoment > sessionTime) {
+          console.log("session terminer");
+        } else {
+          console.log("en cour");
+        }
       }
 
       if (this.clicked && this.targets[0] === index) {
@@ -650,6 +665,8 @@ export default {
 
             diffDay--;
             this.sessions.data[diffDay][diffTime].groupId = el.group_id;
+            this.sessions.data[diffDay][diffTime].date = el.date;
+            this.sessions.data[diffDay][diffTime].time = el.time;
             this.sessions.data[diffDay][diffTime].type = el.type;
             this.sessions.data[diffDay][diffTime].module = module.module;
             this.sessions.data[diffDay][diffTime].backgroundColor = "#2AD231";
@@ -679,6 +696,9 @@ export default {
             this.sessions.data[diffDay][diffTime].subject = el.subject;
             this.sessions.data[diffDay][diffTime].type = el.type;
             this.sessions.data[diffDay][diffTime].backgroundColor = "#137BF4";
+
+            this.sessions.data[diffDay][diffTime].date = el.date;
+            this.sessions.data[diffDay][diffTime].time = el.time;
           }
         });
       }
