@@ -8,10 +8,9 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\ValidationException;
 
-
 class LoginController extends Controller
 {
-     /*
+    /*
     |--------------------------------------------------------------------------
     | Login Controller
     |--------------------------------------------------------------------------
@@ -39,18 +38,15 @@ class LoginController extends Controller
     public function __construct()
     {
         $this->middleware('guest:student')->except('logout');
-        
     }
 
-    public function showLoginForm(){
-        
+    public function showLoginForm()
+    {
         return view('student.auth.login');
     }
-    
 
     public function login(Request $request)
     {
-        
         // $this->validate($request, [
         //     'email'   => 'required|email',
         //     'password' => 'required|min:6'
@@ -62,32 +58,37 @@ class LoginController extends Controller
         // }
         // return back()->withInput($request->only('email', 'remember'));
 
-        $this->validate(request(),[
+        $this->validate(request(), [
             'email' => 'required|email',
             'password' => 'required'
         ]);
 
         // attemp to log in
-            if(Auth::guard('student')->attempt([
-                'email' => request()->email,
-                'password' => request()->password
-            ],request()->remember) ) {
-                return redirect()->route('student');
-            }
+        if (
+            Auth::guard('student')->attempt(
+                [
+                    'email' => request()->email,
+                    'password' => request()->password
+                ],
+                request()->remember
+            )
+        ) {
+            return redirect()->route('student');
+        }
         // if success redirect
 
         // if failed redirect
         // return back();
-        return redirect()->back()->withInput(request()->only('email','remember'));
+        return redirect()
+            ->back()
+            ->withInput(request()->only('email', 'remember'));
     }
-   
 
-    public function logout(){
+    public function logout()
+    {
         Auth::guard('student')->logout();
         request()->flush();
-       
+
         return redirect()->route('student.login');
     }
-
-
 }

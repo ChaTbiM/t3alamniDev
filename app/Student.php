@@ -10,13 +10,11 @@ use App\Notifications\StudentVerifyEmail;
 
 use Spatie\Permission\Traits\HasRoles;
 
-
 class Student extends Authenticatable implements MustVerifyEmail
 {
     use Notifiable;
 
     use HasRoles;
-
 
     protected $guard = 'student';
     /**
@@ -24,18 +22,14 @@ class Student extends Authenticatable implements MustVerifyEmail
      *
      * @var array
      */
-    protected $fillable = [
-        'name', 'email', 'password',
-    ];
+    protected $guarded = [];
 
     /**
      * The attributes that should be hidden for arrays.
      *
      * @var array
      */
-    protected $hidden = [
-        'password', 'remember_token',
-    ];
+    protected $hidden = ['password', 'remember_token'];
 
     /**
      * The attributes that should be cast to native types.
@@ -43,7 +37,7 @@ class Student extends Authenticatable implements MustVerifyEmail
      * @var array
      */
     protected $casts = [
-        'email_verified_at' => 'datetime',
+        'email_verified_at' => 'datetime'
     ];
 
     //Passowrd Reset
@@ -52,26 +46,21 @@ class Student extends Authenticatable implements MustVerifyEmail
         $this->notify(new StudentResetPasswordNotification($token));
     }
 
-
     // Email Verification
     public function sendEmailVerificationNotification()
     {
-        $this->notify(new StudentVerifyEmail);
+        $this->notify(new StudentVerifyEmail());
     }
-
 
     public function hasVerifiedEmail()
     {
-       
-        return ! is_null($this->email_verified_at);
+        return !is_null($this->email_verified_at);
     }
 
     public function markEmailAsVerified()
     {
         return $this->forceFill([
-            'email_verified_at' => $this->freshTimestamp(),
+            'email_verified_at' => $this->freshTimestamp()
         ])->save();
     }
-
-
 }

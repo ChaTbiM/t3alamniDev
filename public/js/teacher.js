@@ -2511,7 +2511,25 @@ var _ = __webpack_require__(/*! lodash */ "./node_modules/lodash/lodash.js"); //
 
 /* harmony default export */ __webpack_exports__["default"] = ({
   name: "schedule",
-  props: ["id", "fixed", "simple", "module"],
+  // props: ["id", "fixed", "simple", "module"],
+  props: {
+    id: {
+      type: String
+    },
+    fixed: {
+      type: String,
+      "default": null,
+      required: false
+    },
+    simple: {
+      type: String,
+      "default": null,
+      required: false
+    },
+    module: {
+      type: String
+    }
+  },
   data: function data() {
     return {
       sessions: {
@@ -3047,7 +3065,8 @@ var _ = __webpack_require__(/*! lodash */ "./node_modules/lodash/lodash.js"); //
     showFixedSessions: function showFixedSessions() {
       var _this = this;
 
-      if (this.fixedSessions.length !== 0) {
+      // console.log("here00");
+      if (this.fixed.length !== 0) {
         var wkStart = this.wkStart;
         var wkEnd = this.wkEnd;
         var info = this.last;
@@ -3182,9 +3201,11 @@ var _ = __webpack_require__(/*! lodash */ "./node_modules/lodash/lodash.js"); //
   mounted: function mounted() {
     var _this4 = this;
 
-    this.$store.commit("initTeacherID", this.id);
+    if (this.id) {
+      this.$store.commit("initTeacherID", this.id);
+    }
 
-    if (this.fixed.length !== 0) {
+    if (this.fixed.length > 2) {
       this.$store.commit("initFixed", this.fixed);
       this.fixedSessions = this.$store.getters.fixedSessions;
       var lastFixedSessionID = this.$store.getters.fixedSessions[this.$store.getters.fixedSessions.length - 1].id;
@@ -3193,7 +3214,7 @@ var _ = __webpack_require__(/*! lodash */ "./node_modules/lodash/lodash.js"); //
       this.$store.commit("setFixedSessionID", 0);
     }
 
-    if (this.simple.length !== 0) {
+    if (this.simple.length > 2) {
       this.$store.commit("initSimple", this.simple);
       this.simpleSessions = this.$store.getters.simpleSessions;
       var lastSimpleSessionID = this.$store.getters.simpleSessions[this.$store.getters.simpleSessions.length - 1].id;

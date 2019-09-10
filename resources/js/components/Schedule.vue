@@ -118,7 +118,25 @@ var _ = require("lodash");
 
 export default {
   name: "schedule",
-  props: ["id", "fixed", "simple", "module"],
+  // props: ["id", "fixed", "simple", "module"],
+  props: {
+    id: {
+      type: String
+    },
+    fixed: {
+      type: String,
+      default: null,
+      required: false
+    },
+    simple: {
+      type: String,
+      default: null,
+      required: false
+    },
+    module: {
+      type: String
+    }
+  },
   data() {
     return {
       sessions: {
@@ -644,7 +662,8 @@ export default {
     },
 
     showFixedSessions() {
-      if (this.fixedSessions.length !== 0) {
+      // console.log("here00");
+      if (this.fixed.length !== 0) {
         const wkStart = this.wkStart;
         const wkEnd = this.wkEnd;
         let info = this.last;
@@ -773,9 +792,10 @@ export default {
   },
 
   mounted() {
-    this.$store.commit("initTeacherID", this.id);
-
-    if (this.fixed.length !== 0) {
+    if (this.id) {
+      this.$store.commit("initTeacherID", this.id);
+    }
+    if (this.fixed.length > 2) {
       this.$store.commit("initFixed", this.fixed);
       this.fixedSessions = this.$store.getters.fixedSessions;
       let lastFixedSessionID = this.$store.getters.fixedSessions[
@@ -786,7 +806,7 @@ export default {
       this.$store.commit("setFixedSessionID", 0);
     }
 
-    if (this.simple.length !== 0) {
+    if (this.simple.length > 2) {
       this.$store.commit("initSimple", this.simple);
       this.simpleSessions = this.$store.getters.simpleSessions;
 

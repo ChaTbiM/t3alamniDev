@@ -5,7 +5,6 @@ namespace App\Exceptions;
 use Exception;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
 
-
 class Handler extends ExceptionHandler
 {
     /**
@@ -22,10 +21,7 @@ class Handler extends ExceptionHandler
      *
      * @var array
      */
-    protected $dontFlash = [
-        'password',
-        'password_confirmation',
-    ];
+    protected $dontFlash = ['password', 'password_confirmation'];
 
     /**
      * Report or log an exception.
@@ -45,11 +41,13 @@ class Handler extends ExceptionHandler
      * @param  \Exception  $exception
      * @return \Illuminate\Http\Response
      */
-    public function render($request, Exception $exception )
-    {   
-        $guard = array_get($exception->guards(),0);
+    public function render($request, Exception $exception)
+    {
+        return parent::render($request, $exception);
 
-        switch ($guard){
+        $guard = array_get($exception->guards(), 0);
+
+        switch ($guard) {
             case 'admin':
                 return redirect()->route('admin.login');
                 break;
@@ -63,8 +61,5 @@ class Handler extends ExceptionHandler
                 return redirect()->route('login');
                 break;
         }
-       
-
-        return parent::render($request, $exception);
     }
 }

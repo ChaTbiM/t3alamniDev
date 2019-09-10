@@ -8,7 +8,6 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\ValidationException;
 
-
 class LoginController extends Controller
 {
     /*
@@ -39,18 +38,15 @@ class LoginController extends Controller
     public function __construct()
     {
         $this->middleware('guest:teacher')->except('logout');
-        
     }
 
-    public function showLoginForm(){
-        
+    public function showLoginForm()
+    {
         return view('teacher.auth.login');
     }
-    
 
     public function login(Request $request)
     {
-        
         // $this->validate($request, [
         //     'email'   => 'required|email',
         //     'password' => 'required|min:6'
@@ -62,31 +58,37 @@ class LoginController extends Controller
         // }
         // return back()->withInput($request->only('email', 'remember'));
 
-        $this->validate(request(),[
+        $this->validate(request(), [
             'email' => 'required|email',
             'password' => 'required'
         ]);
 
         // attemp to log in
-            if(Auth::guard('teacher')->attempt([
-                'email' => request()->email,
-                'password' => request()->password
-            ],request()->remember) ) {
-                return redirect()->route('teacher');
-            }
+        if (
+            Auth::guard('teacher')->attempt(
+                [
+                    'email' => request()->email,
+                    'password' => request()->password
+                ],
+                request()->remember
+            )
+        ) {
+            return redirect()->route('teacher');
+        }
         // if success redirect
 
         // if failed redirect
         // return back();
-        return redirect()->back()->withInput(request()->only('email','remember'));
+        return redirect()
+            ->back()
+            ->withInput(request()->only('email', 'remember'));
     }
-   
 
-    public function logout(){
+    public function logout()
+    {
         Auth::guard('teacher')->logout();
         request()->flush();
-       
+
         return redirect()->route('teacher.login');
     }
-
 }

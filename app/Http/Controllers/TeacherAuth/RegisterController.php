@@ -14,7 +14,6 @@ use Illuminate\Http\Request;
 use Spatie\Permission\Models\Role;
 use Spatie\Permission\Models\Permission;
 
-
 class RegisterController extends Controller
 {
     /*
@@ -58,7 +57,7 @@ class RegisterController extends Controller
         return Validator::make($data, [
             'user_name' => 'required',
             'email' => 'required',
-            'password' => 'required',
+            'password' => 'required'
         ]);
     }
 
@@ -73,24 +72,20 @@ class RegisterController extends Controller
         $teacher = Teacher::create([
             'user_name' => $data['user_name'],
             'email' => $data['email'],
-            'password' => Hash::make($data['password']),
+            'password' => Hash::make($data['password'])
         ]);
 
-        $role = Role::create(['guard_name' => 'teacher', 'name' => $data['role'] ]);
+        // $role = Role::create(['guard_name' => 'teacher', 'name' => $data['role'] ]);
 
-        $teacher->assignRole($role);
+        $teacher->assignRole($data['role']);
 
         return $teacher;
     }
-    
-    
-    public function showRegistrationForm()
-    {   
 
-        
+    public function showRegistrationForm()
+    {
         return view('teacher.auth.register');
     }
-
 
     protected function guard()
     {
@@ -99,11 +94,9 @@ class RegisterController extends Controller
 
     protected function register(Request $request)
     {
-        
-
         $this->validator($request->all())->validate();
-        
-        event(new Registered($user = $this->create($request->all())));
+
+        event(new Registered(($user = $this->create($request->all()))));
 
         // $role = Role::create(['guard_name' => 'teacher', 'name' => 'full-time']);
 
@@ -111,9 +104,7 @@ class RegisterController extends Controller
 
         $this->guard()->login($user);
 
-        return $this->registered($request, $user)
-                        ?: redirect($this->redirectPath());
-        
+        return $this->registered($request, $user) ?:
+            redirect($this->redirectPath());
     }
-
 }

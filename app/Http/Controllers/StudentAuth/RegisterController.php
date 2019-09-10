@@ -11,7 +11,6 @@ use Illuminate\Auth\Events\Registered;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 
-
 use Spatie\Permission\Models\Role;
 use Spatie\Permission\Models\Permission;
 
@@ -58,7 +57,7 @@ class RegisterController extends Controller
         return Validator::make($data, [
             'name' => 'required',
             'email' => 'required',
-            'password' => 'required',
+            'password' => 'required'
         ]);
     }
 
@@ -74,42 +73,43 @@ class RegisterController extends Controller
             'name' => $data['name'],
             'email' => $data['email'],
             'password' => Hash::make($data['password']),
+            'first_name' => 'student' . $data['name'],
+            'last_name' => 'studenti' . $data['name'],
+            'age' => 23,
+            'cycle' => 'lycee',
+            'year' => 3,
+            'specialty' => 'specialty--'
         ]);
 
-        $role = Role::create(['guard_name' => 'student', 'name' => $data['role'] ]);
+        // $role = Role::create([
+        //     'guard_name' => 'student',
+        //     'name' => $data['role']
+        // ]);
 
-        $student->assignRole($role);
+        $student->assignRole($data['role']);
 
         return $student;
     }
-    
-    
-        public function showRegistrationForm()
-        {
-            return view('student.auth.register');
-        }
 
+    public function showRegistrationForm()
+    {
+        return view('student.auth.register');
+    }
 
     protected function guard()
     {
         return Auth::guard('student');
     }
 
-
-   
-
     protected function register(Request $request)
     {
         $this->validator($request->all())->validate();
-        
-        event(new Registered($user = $this->create($request->all())));
-      
-        
-        $this->guard()->login($user);
-        
-        return $this->registered($request, $user)
-                        ?: redirect($this->redirectPath());
-        
-    }
 
+        event(new Registered(($user = $this->create($request->all()))));
+
+        $this->guard()->login($user);
+
+        return $this->registered($request, $user) ?:
+            redirect($this->redirectPath());
+    }
 }
