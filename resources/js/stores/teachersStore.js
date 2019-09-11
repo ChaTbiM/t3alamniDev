@@ -110,13 +110,29 @@ export const store = new Vuex.Store({
             if (fixedSessions.status === 200) {
                 context.commit("initFixed", fixedSessions.data.fixedSessions);
                 context.commit("initModules", fixedSessions.data.modules);
+                context.commit("initTeacherID", fixedSessions.data.id);
+
+                let data = JSON.parse(fixedSessions.data.fixedSessions);
+                if (data.length) {
+                    let lastFixedSessionID = data[data.length - 1].id;
+                    context.commit("setFixedSessionID", lastFixedSessionID);
+                } else {
+                    context.commit("setFixedSessionID", 0);
+                }
             }
             // return fixedSessions;
         },
         initSimple: async context => {
             let simpleSessions = await axios.get(route("getSimpleSessions"));
             if (simpleSessions.status === 200) {
-                console.log(simpleSessions);
+                context.commit("initSimple", simpleSessions.data);
+                let data = JSON.parse(simpleSessions.data);
+                if (data.length) {
+                    let lastSimpleSessionID = data[data.length - 1].id;
+                    context.commit("setSimpleSessionID", lastSimpleSessionID);
+                } else {
+                    context.commit("setSimpleSessionID", 0);
+                }
             }
             // return fixedSessions;
         }

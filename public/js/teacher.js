@@ -2494,24 +2494,24 @@ var _ = __webpack_require__(/*! lodash */ "./node_modules/lodash/lodash.js");
 /* harmony default export */ __webpack_exports__["default"] = ({
   name: "schedule",
   // props: ["id", "fixed", "simple", "module"],
-  props: {
-    id: {
-      type: String
-    },
-    fixed: {
-      type: String,
-      "default": null,
-      required: false
-    },
-    simple: {
-      type: String,
-      "default": null,
-      required: false
-    },
-    module: {
-      type: String
-    }
-  },
+  // props: {
+  //   id: {
+  //     type: String
+  //   },
+  //   fixed: {
+  //     type: String,
+  //     default: null,
+  //     required: false
+  //   },
+  //   simple: {
+  //     type: String,
+  //     default: null,
+  //     required: false
+  //   },
+  //   module: {
+  //     type: String
+  //   }
+  // },
   data: function data() {
     return {
       sessions: {
@@ -3178,50 +3178,14 @@ var _ = __webpack_require__(/*! lodash */ "./node_modules/lodash/lodash.js");
     }
   },
   created: function created() {
+    var _this4 = this;
+
     this.getCurrentWeek();
     this.$store.dispatch("initFixed");
     this.$store.dispatch("initSimple");
-    console.log("created");
-  },
-  mounted: function mounted() {
-    var _this4 = this;
-
-    console.log("mounted"); // this.$store.commit("initModules", this.module);
-    // this.modules = this.$store.getters.modules;
-
-    if (this.id) {
-      this.$store.commit("initTeacherID", this.id);
-    } //this.fixed.length > 2
-
-
-    if (true) {
-      // this.$store.commit("initFixed", this.fixed);
-      this.fixedSessions = this.$store.getters.fixedSessions; // let lastFixedSessionID = this.$store.getters.fixedSessions[
-      //   this.$store.getters.fixedSessions.length - 1
-      // ].id;
-      // this.$store.commit("setFixedSessionID", lastFixedSessionID);
-
-      console.log("done");
-    } else {}
-
-    if (this.simple.length > 2) {
-      this.$store.commit("initSimple", this.simple);
-      this.simpleSessions = this.$store.getters.simpleSessions;
-      var lastSimpleSessionID = this.$store.getters.simpleSessions[this.$store.getters.simpleSessions.length - 1].id;
-      this.$store.commit("setSimpleSessionID", lastSimpleSessionID);
-    } else {
-      this.$store.commit("setSimpleSessionID", 0);
-    } // if (false) {
-    // }
-
-
-    this.componentLoaded = true;
     this.$store.watch(function (state, getters) {
       return getters.fixedSessions;
     }, function (newValue, oldValue) {
-      // Do whatever makes sense now
-      // console.log("updated fixed");
-      // this.modules = this.$store.getters.modules;
       _this4.fixedSessions = newValue;
 
       _this4.showFixedSessions();
@@ -3232,13 +3196,16 @@ var _ = __webpack_require__(/*! lodash */ "./node_modules/lodash/lodash.js");
     this.$store.watch(function (state, getters) {
       return getters.simpleSessions;
     }, function (newValue, oldValue) {
-      // Do whatever makes sense now
-      // console.log("updated fixed");
-      _this4.simpleSessions = newValue; // this.showSimpleSessions();
+      _this4.simpleSessions = newValue;
+
+      _this4.showSimpleSessions();
     }, {
       deep: true,
       immediate: true
     });
+  },
+  mounted: function mounted() {
+    this.componentLoaded = true;
   },
   update: function update() {},
   computed: {
@@ -3291,25 +3258,11 @@ var _ = __webpack_require__(/*! lodash */ "./node_modules/lodash/lodash.js");
 
       return this.sessions.data;
     },
-    // fixedSessions: {
-    //   get() {
-    //     return this.$store.getters.fixedSessions;
-    //   }
-    // },
     modules: {
       get: function get() {
         return this.$store.getters.modules;
       }
-    } // watch: {
-    //   fixedSessions: {
-    //     handler: function(oldVal, newVel) {
-    //       // this.fixedSessions = this.$store.getters.fixedSessions;
-    //       this.showFixedSessions();
-    //     },
-    //     deep: true
-    //   }
-    // }
-
+    }
   }
 });
 
@@ -60447,7 +60400,7 @@ var store = new vuex__WEBPACK_IMPORTED_MODULE_2__["default"].Store({
       var _initFixed = _asyncToGenerator(
       /*#__PURE__*/
       _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee(context) {
-        var fixedSessions;
+        var fixedSessions, data, lastFixedSessionID;
         return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function _callee$(_context) {
           while (1) {
             switch (_context.prev = _context.next) {
@@ -60461,6 +60414,15 @@ var store = new vuex__WEBPACK_IMPORTED_MODULE_2__["default"].Store({
                 if (fixedSessions.status === 200) {
                   context.commit("initFixed", fixedSessions.data.fixedSessions);
                   context.commit("initModules", fixedSessions.data.modules);
+                  context.commit("initTeacherID", fixedSessions.data.id);
+                  data = JSON.parse(fixedSessions.data.fixedSessions);
+
+                  if (data.length) {
+                    lastFixedSessionID = data[data.length - 1].id;
+                    context.commit("setFixedSessionID", lastFixedSessionID);
+                  } else {
+                    context.commit("setFixedSessionID", 0);
+                  }
                 } // return fixedSessions;
 
 
@@ -60482,7 +60444,7 @@ var store = new vuex__WEBPACK_IMPORTED_MODULE_2__["default"].Store({
       var _initSimple = _asyncToGenerator(
       /*#__PURE__*/
       _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee2(context) {
-        var simpleSessions;
+        var simpleSessions, data, lastSimpleSessionID;
         return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function _callee2$(_context2) {
           while (1) {
             switch (_context2.prev = _context2.next) {
@@ -60494,7 +60456,15 @@ var store = new vuex__WEBPACK_IMPORTED_MODULE_2__["default"].Store({
                 simpleSessions = _context2.sent;
 
                 if (simpleSessions.status === 200) {
-                  console.log(simpleSessions);
+                  context.commit("initSimple", simpleSessions.data);
+                  data = JSON.parse(simpleSessions.data);
+
+                  if (data.length) {
+                    lastSimpleSessionID = data[data.length - 1].id;
+                    context.commit("setSimpleSessionID", lastSimpleSessionID);
+                  } else {
+                    context.commit("setSimpleSessionID", 0);
+                  }
                 } // return fixedSessions;
 
 

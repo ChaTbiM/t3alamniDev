@@ -45,7 +45,7 @@
 {{-- <Example></Example>
      --}}
      <div id="teacher">
-<schedule-component fixed="{{$fixedSessions }}" simple="{{ $simpleSessions }}" module="{{$modules}}" id="{{$id}}" ></schedule-component>
+<schedule-component></schedule-component>
 
          {{-- <router-view id={{$id}} ></router-view> --}}
      </div>

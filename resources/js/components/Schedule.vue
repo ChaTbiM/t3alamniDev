@@ -119,24 +119,24 @@ import { mapState, mapGetters, mapActions } from "vuex";
 export default {
   name: "schedule",
   // props: ["id", "fixed", "simple", "module"],
-  props: {
-    id: {
-      type: String
-    },
-    fixed: {
-      type: String,
-      default: null,
-      required: false
-    },
-    simple: {
-      type: String,
-      default: null,
-      required: false
-    },
-    module: {
-      type: String
-    }
-  },
+  // props: {
+  //   id: {
+  //     type: String
+  //   },
+  //   fixed: {
+  //     type: String,
+  //     default: null,
+  //     required: false
+  //   },
+  //   simple: {
+  //     type: String,
+  //     default: null,
+  //     required: false
+  //   },
+  //   module: {
+  //     type: String
+  //   }
+  // },
   data() {
     return {
       sessions: {
@@ -792,52 +792,9 @@ export default {
     this.$store.dispatch("initFixed");
     this.$store.dispatch("initSimple");
 
-    console.log("created");
-  },
-
-  mounted() {
-    console.log("mounted");
-    // this.$store.commit("initModules", this.module);
-    // this.modules = this.$store.getters.modules;
-
-    if (this.id) {
-      this.$store.commit("initTeacherID", this.id);
-    }
-    //this.fixed.length > 2
-    if (true) {
-      // this.$store.commit("initFixed", this.fixed);
-      this.fixedSessions = this.$store.getters.fixedSessions;
-      // let lastFixedSessionID = this.$store.getters.fixedSessions[
-      //   this.$store.getters.fixedSessions.length - 1
-      // ].id;
-      // this.$store.commit("setFixedSessionID", lastFixedSessionID);
-      console.log("done");
-    } else {
-      this.$store.commit("setFixedSessionID", 0);
-    }
-
-    if (this.simple.length > 2) {
-      this.$store.commit("initSimple", this.simple);
-      this.simpleSessions = this.$store.getters.simpleSessions;
-
-      let lastSimpleSessionID = this.$store.getters.simpleSessions[
-        this.$store.getters.simpleSessions.length - 1
-      ].id;
-      this.$store.commit("setSimpleSessionID", lastSimpleSessionID);
-    } else {
-      this.$store.commit("setSimpleSessionID", 0);
-    }
-    // if (false) {
-
-    // }
-    this.componentLoaded = true;
-
     this.$store.watch(
       (state, getters) => getters.fixedSessions,
       (newValue, oldValue) => {
-        // Do whatever makes sense now
-        // console.log("updated fixed");
-        // this.modules = this.$store.getters.modules;
         this.fixedSessions = newValue;
 
         this.showFixedSessions();
@@ -848,14 +805,16 @@ export default {
     this.$store.watch(
       (state, getters) => getters.simpleSessions,
       (newValue, oldValue) => {
-        // Do whatever makes sense now
-        // console.log("updated fixed");
         this.simpleSessions = newValue;
 
-        // this.showSimpleSessions();
+        this.showSimpleSessions();
       },
       { deep: true, immediate: true }
     );
+  },
+
+  mounted() {
+    this.componentLoaded = true;
   },
   update() {},
   computed: {
@@ -906,27 +865,13 @@ export default {
 
       return this.sessions.data;
     },
-    // fixedSessions: {
-    //   get() {
-    //     return this.$store.getters.fixedSessions;
-    //   }
-    // },
+
     modules: {
       get() {
         return this.$store.getters.modules;
       }
     }
   }
-
-  // watch: {
-  //   fixedSessions: {
-  //     handler: function(oldVal, newVel) {
-  //       // this.fixedSessions = this.$store.getters.fixedSessions;
-  //       this.showFixedSessions();
-  //     },
-  //     deep: true
-  //   }
-  // }
 };
 </script>
 
