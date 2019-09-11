@@ -23,6 +23,11 @@ Route::get('/admin', 'AdminController@index')->name('admin');
 Route::get('/student', 'StudentController@index')->name('student');
 Route::get('/teacher', 'TeacherController@index')->name('teacher');
 
+// Route::get('/teacher/{any}', 'TeacherController@index')->where(
+//     'any',
+//     '^(?!storage).*$'
+// );
+
 // Admin  ---------------------------------------------------------------------------------------------
 
 Route::get('login/admin', 'AdminAuth\LoginController@showLoginForm')->name(
@@ -169,10 +174,16 @@ Route::get(
     'TeacherAuth\VerificationController@resend'
 )->name('teacher.verification.resend');
 
+Route::get('teacher/fixed', 'TeacherController@getFixed')->name(
+    'getFixedSessions'
+);
 Route::post('teacher/fixed', 'TeacherController@addFixed')->name(
     'addFixedSessions'
 );
 
+Route::get('teacher/simple', 'TeacherController@getSimple')->name(
+    'getSimpleSessions'
+);
 Route::post('teacher/simple', 'TeacherController@addSimple')->name(
     'addSimpleSessions'
 );

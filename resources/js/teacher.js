@@ -9,6 +9,28 @@ import VCalendar from "v-calendar";
 
 window.Vue = require("vue");
 
+import VueRouter from "vue-router";
+
+Vue.use(VueRouter);
+
+const Foo = { template: "<div>foo</div>" };
+const Bar = { template: "<div>bar</div>" };
+
+const routes = [
+    {
+        path: "/teacher/foo",
+        component: require("./components/Schedule.vue"),
+        props: true
+    },
+    { path: "/teacher/bar", component: Bar }
+];
+
+const router = new VueRouter({
+    routes: routes, // short for `routes: routes`
+    base: "/",
+    history: true,
+    mode: "history"
+});
 /**
  * The following block of code may be used to automatically register your
  * Vue components. It will recursively scan this directory for the Vue
@@ -20,7 +42,7 @@ window.Vue = require("vue");
 // const files = require.context('./', true, /\.vue$/i);
 // files.keys().map(key => Vue.component(key.split('/').pop().split('.')[0], files(key).default));
 
-Vue.component("example", require("./components/Example.vue").default);
+// Vue.component("example", require("./components/Example.vue").default);
 Vue.component(
     "add-simple-session",
     require("./components/AddSimpleSession.vue").default
@@ -57,7 +79,9 @@ Vue.use(VCalendar, {
     // ...other defaults
 });
 
-const teacher = new Vue({
+// import Example from "./Components/Example.vue";
+const app = new Vue({
     el: "#teacher",
+    router,
     store
 });

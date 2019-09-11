@@ -3,6 +3,19 @@ import Vuex from "vuex";
 
 Vue.use(Vuex);
 
+window.axios = require("axios");
+
+window.axios.defaults.headers.common["X-Requested-With"] = "XMLHttpRequest";
+let token = document.head.querySelector('meta[name="csrf-token"]');
+
+if (token) {
+    window.axios.defaults.headers.common["X-CSRF-TOKEN"] = token.content;
+} else {
+    console.error(
+        "CSRF token not found: https://laravel.com/docs/csrf#csrf-x-csrf-token"
+    );
+}
+
 export const store = new Vuex.Store({
     state: {
         test: "this is test state",
@@ -32,9 +45,9 @@ export const store = new Vuex.Store({
         simpleSessionID: "",
 
         //sessions data
-        fixed: [],
+        fixed: null,
         simple: [],
-        modules: ""
+        modules: null
     },
     mutations: {
         //showing sessions
@@ -89,6 +102,23 @@ export const store = new Vuex.Store({
 
         setSimpleSessionID(state, id) {
             state.simpleSessionID = id;
+        }
+    },
+    actions: {
+        initFixed: async context => {
+            let fixedSessions = await axios.get(route("getFixedSessions"));
+            if (fixedSessions.status === 200) {
+                context.commit("initFixed", fixedSessions.data.fixedSessions);
+                context.commit("initModules", fixedSessions.data.modules);
+            }
+            // return fixedSessions;
+        },
+        initSimple: async context => {
+            let simpleSessions = await axios.get(route("getSimpleSessions"));
+            if (simpleSessions.status === 200) {
+                console.log(simpleSessions);
+            }
+            // return fixedSessions;
         }
     },
     getters: {

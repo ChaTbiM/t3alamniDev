@@ -114,7 +114,7 @@
 <script>
 import { setTimeout } from "timers";
 var _ = require("lodash");
-// import { mapState, mapGetters, mapActions } from "vuex";
+import { mapState, mapGetters, mapActions } from "vuex";
 
 export default {
   name: "schedule",
@@ -306,7 +306,7 @@ export default {
 
       fixedSessions: null,
       simpleSessions: null,
-      modules: JSON.parse(this.module),
+      // modules: null,
 
       filters: {
         sessionsType: [],
@@ -663,7 +663,7 @@ export default {
 
     showFixedSessions() {
       // console.log("here00");
-      if (this.fixed.length !== 0) {
+      if (this.fixedSessions && this.modules) {
         const wkStart = this.wkStart;
         const wkEnd = this.wkEnd;
         let info = this.last;
@@ -789,19 +789,29 @@ export default {
 
   created() {
     this.getCurrentWeek();
+    this.$store.dispatch("initFixed");
+    this.$store.dispatch("initSimple");
+
+    console.log("created");
   },
 
   mounted() {
+    console.log("mounted");
+    // this.$store.commit("initModules", this.module);
+    // this.modules = this.$store.getters.modules;
+
     if (this.id) {
       this.$store.commit("initTeacherID", this.id);
     }
-    if (this.fixed.length > 2) {
-      this.$store.commit("initFixed", this.fixed);
+    //this.fixed.length > 2
+    if (true) {
+      // this.$store.commit("initFixed", this.fixed);
       this.fixedSessions = this.$store.getters.fixedSessions;
-      let lastFixedSessionID = this.$store.getters.fixedSessions[
-        this.$store.getters.fixedSessions.length - 1
-      ].id;
-      this.$store.commit("setFixedSessionID", lastFixedSessionID);
+      // let lastFixedSessionID = this.$store.getters.fixedSessions[
+      //   this.$store.getters.fixedSessions.length - 1
+      // ].id;
+      // this.$store.commit("setFixedSessionID", lastFixedSessionID);
+      console.log("done");
     } else {
       this.$store.commit("setFixedSessionID", 0);
     }
@@ -817,16 +827,17 @@ export default {
     } else {
       this.$store.commit("setSimpleSessionID", 0);
     }
-    this.componentLoaded = true;
+    // if (false) {
 
-    this.$store.commit("initModules", this.module);
-    this.modules = this.$store.getters.modules;
+    // }
+    this.componentLoaded = true;
 
     this.$store.watch(
       (state, getters) => getters.fixedSessions,
       (newValue, oldValue) => {
         // Do whatever makes sense now
         // console.log("updated fixed");
+        // this.modules = this.$store.getters.modules;
         this.fixedSessions = newValue;
 
         this.showFixedSessions();
@@ -841,7 +852,7 @@ export default {
         // console.log("updated fixed");
         this.simpleSessions = newValue;
 
-        this.showSimpleSessions();
+        // this.showSimpleSessions();
       },
       { deep: true, immediate: true }
     );
@@ -851,7 +862,7 @@ export default {
     filterSessions: function() {
       const data = [];
 
-      if (this.componentLoaded) {
+      if (this.componentLoaded && this.fixedSessions) {
         let fixedType = this.filters.sessionsType.find(el => el === "fixed");
         let simpleType = this.filters.sessionsType.find(el => el === "simple");
 
@@ -894,10 +905,17 @@ export default {
       }
 
       return this.sessions.data;
+    },
+    // fixedSessions: {
+    //   get() {
+    //     return this.$store.getters.fixedSessions;
+    //   }
+    // },
+    modules: {
+      get() {
+        return this.$store.getters.modules;
+      }
     }
-    // fixeSessionsStore: function() {
-    //   return this.$store.getters.fixedSessions;
-    // }
   }
 
   // watch: {

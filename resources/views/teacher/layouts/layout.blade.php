@@ -14,6 +14,7 @@
  
      <!-- Scripts -->
      <script src="{{ asset('js/teacher.js') }}" defer></script>
+
  
 
  
@@ -69,9 +70,8 @@
 
    
 
-    <div id="teacher">
         @yield('content')
-    </div>
+        
 
     <footer class="footer">
         <a class="footer__link" href="#">twitter</a>

@@ -37,8 +37,6 @@ class TeacherController extends Controller
         $groups = auth::user()->groups;
         $modules = [];
 
-        $test = json_encode([]);
-
         $id = json_encode(auth::user()->id);
 
         foreach ($groups as $group) {
@@ -49,13 +47,11 @@ class TeacherController extends Controller
         }
 
         $modules = json_encode($modules);
-
         return view('teacher.teacher', [
             'id' => $id,
             'fixedSessions' => $fixedSessions,
             'simpleSessions' => $simpleSessions,
-            'modules' => $modules,
-            'test' => $test
+            'modules' => $modules
         ]);
 
         // }
@@ -138,6 +134,45 @@ class TeacherController extends Controller
         } else {
             return 'success withou file';
         }
+    }
+
+    public function getFixed(Request $request)
+    {
+        $fixedSessions = json_encode(auth::user()->fixedSessions);
+        // dd(auth::user()->toArray()['fixed_sessions']);
+        $groups = auth::user()->groups;
+        $modules = [];
+
+        $test = json_encode([]);
+
+        foreach ($groups as $group) {
+            array_push($modules, array(
+                "module" => $group->module->name,
+                "groupId" => $group->id
+            ));
+        }
+
+        $id = json_encode(auth::user()->id);
+
+        $modules = json_encode($modules);
+
+        $data = [
+            'fixedSessions' => $fixedSessions,
+            'modules' => $modules,
+            'id' => $id
+        ];
+        return response()->json($data, 200);
+    }
+
+    public function getSimple(Request $request)
+    {
+        $simpleSessions = json_encode(auth::user()->simpleSessions);
+
+        return response()->json($simpleSessions, 200);
+    }
+
+    public function getID(Request $request)
+    {
     }
 
     //test upload
