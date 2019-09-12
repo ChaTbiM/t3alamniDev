@@ -135,6 +135,9 @@ export const store = new Vuex.Store({
                 }
             }
             // return fixedSessions;
+        },
+        currentMonthStudents: async (context, month) => {
+            console.log("init student of current month");
         }
     },
     getters: {

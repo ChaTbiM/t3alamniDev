@@ -20,6 +20,7 @@ class CreateGroupsTable extends Migration
             $table->integer('nb_places');
             $table->string('cycle');
             $table->string('specialty');
+            $table->string('name_of_group');
             $table->integer('year');
             // $table->integer('id_module'); reference to module
 

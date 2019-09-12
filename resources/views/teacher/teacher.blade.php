@@ -38,16 +38,18 @@
 
 @extends('teacher.layouts.layout')
 @routes
+
 @section('content')
 
 
 {{-- <schedule-component fixed="{{$fixedSessions }}" simple="{{ $simpleSessions }}" module="{{$modules}}" id="{{$id}}" ></schedule-component> --}}
 {{-- <Example></Example>
      --}}
-     <div id="teacher">
-<schedule-component></schedule-component>
 
-         {{-- <router-view id={{$id}} ></router-view> --}}
+     <div id="teacher">
+{{-- <schedule-component></schedule-component> --}}
+
+         <router-view ></router-view>
      </div>
 
 @endsection

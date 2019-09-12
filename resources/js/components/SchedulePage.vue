@@ -1,109 +1,42 @@
 <template>
   <div class="container">
-    <div ref="schedule" class="schedule">
-      <div class="schedule__header">
-        <div class="prevWeek" @click="getPreviousWeek">
-          <img src="arrow-left-solid.svg" alt="previous week" class="previous" />
-        </div>
-        <div class="nextWeek" @click="getNextWeek">
-          <img src="arrow-right-solid.svg" alt="next week" class="next" />
-        </div>
-        <h2 class="schedule__header__date">{{ currentWeek }}</h2>
-      </div>
+    <filter-sessions
+      v-if="this.url === '/teacher'"
+      class="left"
+      :filters="filters"
+      :modules="modules"
+    ></filter-sessions>
 
-      <div class="days">
-        <div class="day" v-for="(day, index) in days" v-bind:key="index">{{ day }}</div>
-      </div>
-      <hr class="line" />
-
-      <div class="calender">
-        <div class="column">
-          <div class="hour" v-for="(cell,   index) in sessions.time" v-bind:key="index">{{ cell }}</div>
-        </div>
-
-        <div class="column" v-for="(day, index) in days" v-bind:key="index">
-          <div
-            class="cell block"
-            @mousedown="startSelect($event, index, ind)"
-            @mouseenter="duringSelect($event, index, ind)"
-            @mouseup="endOfSelect($event, index, ind)"
-            v-for="(cell, ind) in filterSessions[index]"
-            v-bind:key="ind"
-            :style="{backgroundColor:cell.backgroundColor}"
-            :ref="`cell${index}-${ind}`"
-          >
-            <span v-if="cell.type === 'fixed'">groupe {{ cell.groupId }} {{ cell.module }}</span>
-            <span v-if="cell.type == 'simple'">
-              {{
-              cell.subject
-              }}
-            </span>
-          </div>
-        </div>
-
-        <div id="model" class="model" v-show="addSessionsOpen">
-          <div class="model__close" @click="closeAddSessions">X</div>
-          <div class="model__info">
-            <span class="model__day">
-              <span>{{ this.selected.date }}</span>
-              <span>{{this.days[this.selected.dayIndex]}}</span>
-            </span>
-            <span class="model__hours">{{this.selected.hours.min}} -> {{this.selected.hours.max}}</span>
-          </div>
-          <div class="model__add__fix btn" @click="showChooseGroup">add fix session</div>
-          <div class="model__add__simple btn" @click="showAddSimpleSessions">add simple session</div>
-        </div>
-      </div>
-    </div>
-
-    <add-simple-session v-show="AddSimpleSessionOpen"></add-simple-session>
-    <add-group v-show="addGroupOpen"></add-group>
-    <add-fixed-session v-show="AddFixedSessionOpen"></add-fixed-session>
+    <schedule :filters="filters"></schedule>
   </div>
+
+  <!-- below -->
+  <!-- <div v-if="this.$route.path ==='/teacher/groups'">
+        below
+        <div class="schedule__header">
+          <div class="prevWeek" @click="getPreviousMonth">
+            get prev month  !
+            <img src="arrow-left-solid.svg" alt="previous week" class="previous" />
+          </div>
+          <div class="nextWeek" @click="getNextMonth">
+            get next month
+            <img src="arrow-right-solid.svg" alt="next week" class="next" />
+          </div>
+          <h2
+            class="schedule__header__date"
+          >{{ this.months[currentMonth.getUTCMonth()] }} {{currentMonth.getFullYear()}}</h2>
+        </div>
+  </div>-->
 </template>
 
 <script>
+import { setTimeout } from "timers";
+var _ = require("lodash");
+import { mapState, mapGetters, mapActions } from "vuex";
 export default {
-  name: "ScheduleComponent",
-  props: ["filters"],
+  name: "SchedulePage",
   data() {
     return {
-      wkStart: "",
-      wkEnd: "",
-      currentWeek: "",
-      weekDays: [
-        "Sunday",
-        "Monday",
-        "Tuesday",
-        "Wednesday",
-        "Thursday",
-        "Friday",
-        "Saturday"
-      ],
-      days: [
-        "samedi",
-        "dimanche",
-        "lundi",
-        "mardi",
-        "mercredi",
-        "jeudi",
-        "vendredi"
-      ],
-      months: [
-        "janvier",
-        "fevrier",
-        "mars",
-        "avril",
-        "mai",
-        "juin",
-        "juillet",
-        "auot",
-        "septembre",
-        "octobre",
-        "novembre",
-        "decembre"
-      ],
-      ///
       sessions: {
         time: [
           "07:00",
@@ -252,17 +185,35 @@ export default {
           ]
         ]
       },
-      fixedSessions: null,
-      simpleSessions: null,
-      ///
+      days: [
+        "samedi",
+        "dimanche",
+        "lundi",
+        "mardi",
+        "mercredi",
+        "jeudi",
+        "vendredi"
+      ],
       addSessionsOpen: this.$store.getters.addSessionsOpen,
       AddSimpleSessionOpen: this.$store.getters.AddSimpleSessionOpen,
       AddFixedSessionOpen: this.$store.getters.AddFixedSessionOpen,
       addGroupOpen: this.$store.getters.addGroupOpen,
       addGroup: "",
-      //
-      componentLoaded: null,
-      ///
+
+      componentLoaded: false,
+
+      fixedSessions: null,
+      simpleSessions: null,
+      // modules: null,
+
+      filters: {
+        sessionsType: [],
+        checkedGroups: []
+      },
+
+      // filledIn:[],
+
+      //selecting blocks
       clicked: false,
       targets: [],
       low: "",
@@ -273,107 +224,49 @@ export default {
         hours: {},
         dayIndex: "",
         date: ""
-      }
+      },
+      //
+
+      currentDay: "",
+      currentMonth: null,
+
+      wkStart: "",
+      wkEnd: "",
+      currentWeek: "",
+      weekDays: [
+        "Sunday",
+        "Monday",
+        "Tuesday",
+        "Wednesday",
+        "Thursday",
+        "Friday",
+        "Saturday"
+      ],
+      months: [
+        "janvier",
+        "fevrier",
+        "mars",
+        "avril",
+        "mai",
+        "juin",
+        "juillet",
+        "auot",
+        "septembre",
+        "octobre",
+        "novembre",
+        "decembre"
+      ]
     };
   },
   methods: {
-    getCurrentWeek() {
-      let newWeek;
-      let curr = new Date(); // get current date
-      this.currentDay = curr;
+    // "rgb(218, 223, 225)" grey
+    // light blue "#ADD8E6"
+    // rgb(42, 210, 49) , rgb(19, 123, 244) .. green and blue
+    getGroupInfo(e) {
+      this.filters.checkedGroups.forEach(e => this.filters.checkedGroups.pop());
 
-      let diff = function() {
-        if (curr.getDay() === 0) {
-          return -1;
-        } else if (curr.getDay() === 6) {
-          return 0;
-        } else {
-          return -(curr.getDay() + 1);
-        }
-      };
-
-      let wkStart = new Date(curr.setDate(curr.getUTCDate() + diff()));
-      // wkStart.setHours(0, 0, 0);
-      this.wkStart = wkStart;
-
-      let wkEnd = new Date(curr.setDate(wkStart.getUTCDate() + 6));
-      // wkEnd.setHours(23, 59, 0);
-      this.wkEnd = wkEnd;
-
-      this.currentWeek = wkStart.getDate();
-      this.currentWeek += " " + this.weekDays[wkStart.getDay()];
-      this.currentWeek += " " + this.months[wkStart.getMonth()];
-      this.currentWeek += " " + wkStart.getFullYear();
-
-      this.currentWeek += " - " + wkEnd.getDate();
-      this.currentWeek += " " + this.weekDays[wkEnd.getDay()];
-      this.currentWeek += " " + this.months[wkEnd.getMonth()];
-      this.currentWeek += " " + wkEnd.getFullYear();
-
-      // this.showSimpleSessions();
-      // this.showFixedSessions();
+      this.filters.checkedGroups.push(e.target.value);
     },
-    getNextWeek() {
-      let curr = new Date(this.wkEnd);
-
-      let wkStart = new Date(curr.setDate(curr.getDate() + 1));
-      // wkStart.setHours(0, 0, 0);
-      this.wkStart = wkStart;
-
-      let wkEnd = new Date(curr.setDate(wkStart.getDate() + 6));
-      // wkEnd.setHours(0, 0, 0);
-      this.wkEnd = wkEnd;
-
-      this.currentWeek = wkStart.getDate();
-      this.currentWeek += " " + this.weekDays[wkStart.getDay()];
-      this.currentWeek += " " + this.months[wkStart.getMonth()];
-      this.currentWeek += " " + wkStart.getFullYear();
-
-      this.currentWeek += " - " + wkEnd.getDate();
-      this.currentWeek += " " + this.weekDays[wkEnd.getDay()];
-      this.currentWeek += " " + this.months[wkEnd.getMonth()];
-      this.currentWeek += " " + wkEnd.getFullYear();
-
-      this.clearSessions();
-      this.clearSelections();
-      if (this.addSessionsOpen) {
-        this.$store.commit("changeState", "addSessionsOpen");
-        this.addSessionsOpen = this.$store.getters.addSessionsOpen;
-      }
-      this.showSimpleSessions();
-      this.showFixedSessions();
-    },
-    getPreviousWeek() {
-      let curr = new Date(this.wkStart);
-
-      let wkEnd = new Date(curr.setDate(curr.getDate() - 1));
-      // wkEnd.setHours(0, 0, 0);
-      this.wkEnd = wkEnd;
-
-      let wkStart = new Date(curr.setDate(wkEnd.getDate() - 6));
-      // wkStart.setHours(0, 0, 0);
-      this.wkStart = wkStart;
-
-      this.currentWeek = wkStart.getDate();
-      this.currentWeek += " " + this.weekDays[wkStart.getDay()];
-      this.currentWeek += " " + this.months[wkStart.getMonth()];
-      this.currentWeek += " " + wkStart.getFullYear();
-
-      this.currentWeek += " - " + wkEnd.getDate();
-      this.currentWeek += " " + this.weekDays[wkEnd.getDay()];
-      this.currentWeek += " " + this.months[wkEnd.getMonth()];
-      this.currentWeek += " " + wkEnd.getFullYear();
-
-      this.clearSessions();
-      this.clearSelections();
-      if (this.addSessionsOpen) {
-        this.$store.commit("changeState", "addSessionsOpen");
-        this.addSessionsOpen = this.$store.getters.addSessionsOpen;
-      }
-      this.showSimpleSessions();
-      this.showFixedSessions();
-    },
-    ///
     startSelect(event, index, ind) {
       event.preventDefault();
 
@@ -531,50 +424,121 @@ export default {
       this.showAddSessions(event);
     },
 
-    clearSelections() {
-      let len = this.targets.length;
-      let low = this.low;
-      let high = this.high;
+    getCurrentMonth() {
+      let currentMonth = new Date();
+      this.currentMonth = currentMonth;
+    },
 
-      for (let i = 1; i < len; i++) {
-        let selector;
-        if (len === 2) {
-          selector = `cell${this.targets[0]}-${this.targets[1]}`;
+    getPreviousMonth() {
+      let currentMonth = new Date(this.currentMonth);
+      currentMonth.setMonth(currentMonth.getUTCMonth() - 1);
+
+      this.currentMonth = currentMonth;
+    },
+    getNextMonth() {
+      let currentMonth = new Date(this.currentMonth);
+      currentMonth.setMonth(currentMonth.getUTCMonth() + 1);
+
+      this.currentMonth = currentMonth;
+    },
+
+    getCurrentWeek() {
+      let newWeek;
+      let curr = new Date(); // get current date
+      this.currentDay = curr;
+
+      let diff = function() {
+        if (curr.getDay() === 0) {
+          return -1;
+        } else if (curr.getDay() === 6) {
+          return 0;
         } else {
-          selector = `cell${this.targets[0]}-${this.targets[i]}`;
+          return -(curr.getDay() + 1);
         }
+      };
 
-        if (
-          this.$refs[selector][0].style.backgroundColor === "rgb(173, 216, 230)"
-        ) {
-          this.$refs[selector][0].style.backgroundColor = "rgb(218, 223, 225)";
-        }
+      let wkStart = new Date(curr.setDate(curr.getUTCDate() + diff()));
+      // wkStart.setHours(0, 0, 0);
+      this.wkStart = wkStart;
+
+      let wkEnd = new Date(curr.setDate(wkStart.getUTCDate() + 6));
+      // wkEnd.setHours(23, 59, 0);
+      this.wkEnd = wkEnd;
+
+      this.currentWeek = wkStart.getDate();
+      this.currentWeek += " " + this.weekDays[wkStart.getDay()];
+      this.currentWeek += " " + this.months[wkStart.getMonth()];
+      this.currentWeek += " " + wkStart.getFullYear();
+
+      this.currentWeek += " - " + wkEnd.getDate();
+      this.currentWeek += " " + this.weekDays[wkEnd.getDay()];
+      this.currentWeek += " " + this.months[wkEnd.getMonth()];
+      this.currentWeek += " " + wkEnd.getFullYear();
+
+      // this.showSimpleSessions();
+      // this.showFixedSessions();
+    },
+    getNextWeek() {
+      let curr = new Date(this.wkEnd);
+
+      let wkStart = new Date(curr.setDate(curr.getDate() + 1));
+      // wkStart.setHours(0, 0, 0);
+      this.wkStart = wkStart;
+
+      let wkEnd = new Date(curr.setDate(wkStart.getDate() + 6));
+      // wkEnd.setHours(0, 0, 0);
+      this.wkEnd = wkEnd;
+
+      this.currentWeek = wkStart.getDate();
+      this.currentWeek += " " + this.weekDays[wkStart.getDay()];
+      this.currentWeek += " " + this.months[wkStart.getMonth()];
+      this.currentWeek += " " + wkStart.getFullYear();
+
+      this.currentWeek += " - " + wkEnd.getDate();
+      this.currentWeek += " " + this.weekDays[wkEnd.getDay()];
+      this.currentWeek += " " + this.months[wkEnd.getMonth()];
+      this.currentWeek += " " + wkEnd.getFullYear();
+
+      this.clearSessions();
+      this.clearSelections();
+      if (this.addSessionsOpen) {
+        this.$store.commit("changeState", "addSessionsOpen");
+        this.addSessionsOpen = this.$store.getters.addSessionsOpen;
       }
+      this.showSimpleSessions();
+      this.showFixedSessions();
+    },
+    getPreviousWeek() {
+      let curr = new Date(this.wkStart);
+
+      let wkEnd = new Date(curr.setDate(curr.getDate() - 1));
+      // wkEnd.setHours(0, 0, 0);
+      this.wkEnd = wkEnd;
+
+      let wkStart = new Date(curr.setDate(wkEnd.getDate() - 6));
+      // wkStart.setHours(0, 0, 0);
+      this.wkStart = wkStart;
+
+      this.currentWeek = wkStart.getDate();
+      this.currentWeek += " " + this.weekDays[wkStart.getDay()];
+      this.currentWeek += " " + this.months[wkStart.getMonth()];
+      this.currentWeek += " " + wkStart.getFullYear();
+
+      this.currentWeek += " - " + wkEnd.getDate();
+      this.currentWeek += " " + this.weekDays[wkEnd.getDay()];
+      this.currentWeek += " " + this.months[wkEnd.getMonth()];
+      this.currentWeek += " " + wkEnd.getFullYear();
+
+      this.clearSessions();
+      this.clearSelections();
+      if (this.addSessionsOpen) {
+        this.$store.commit("changeState", "addSessionsOpen");
+        this.addSessionsOpen = this.$store.getters.addSessionsOpen;
+      }
+      this.showSimpleSessions();
+      this.showFixedSessions();
     },
 
-    //sessions
-    clearSessions() {
-      this.sessions.data.forEach((el, index) => {
-        this.$set(this.sessions.data, index, [
-          { backgroundColor: "rgb(218, 223, 225)" },
-          { backgroundColor: "rgb(218, 223, 225)" },
-          { backgroundColor: "rgb(218, 223, 225)" },
-          { backgroundColor: "rgb(218, 223, 225)" },
-          { backgroundColor: "rgb(218, 223, 225)" },
-          { backgroundColor: "rgb(218, 223, 225)" },
-          { backgroundColor: "rgb(218, 223, 225)" },
-          { backgroundColor: "rgb(218, 223, 225)" },
-          { backgroundColor: "rgb(218, 223, 225)" },
-          { backgroundColor: "rgb(218, 223, 225)" },
-          { backgroundColor: "rgb(218, 223, 225)" },
-          { backgroundColor: "rgb(218, 223, 225)" },
-          { backgroundColor: "rgb(218, 223, 225)" },
-          { backgroundColor: "rgb(218, 223, 225)" },
-          { backgroundColor: "rgb(218, 223, 225)" },
-          { backgroundColor: "rgb(218, 223, 225)" }
-        ]);
-      });
-    },
     showAddSessions: function(e) {
       e.preventDefault();
       let top;
@@ -610,30 +574,13 @@ export default {
         this.addSessionsOpen = this.$store.getters.addSessionsOpen;
       }
     },
+
     closeAddSessions: function(e) {
       e.preventDefault();
       if (this.addSessionsOpen) {
         this.$store.commit("changeState", "addSessionsOpen");
         this.addSessionsOpen = this.$store.getters.addSessionsOpen;
       }
-    },
-    showAddSimpleSessions(e) {
-      this.$store.commit("changeState", "AddSimpleSessionOpen");
-      this.AddSimpleSessionOpen = this.$store.getters.AddSimpleSessionOpen;
-
-      this.closeAddSessions(e);
-    },
-
-    showAddFixedSessions() {
-      this.$store.commit("changeState", "AddFixedSessionOpen");
-      this.AddFixedSessionOpen = this.$store.getters.AddFixedSessionOpen;
-    },
-
-    showChooseGroup(e) {
-      this.closeAddSessions(e);
-
-      this.$store.commit("changeState", "addGroupOpen");
-      this.addGroupOpen = this.$store.getters.addGroupOpen;
     },
 
     showFixedSessions() {
@@ -696,15 +643,117 @@ export default {
           }
         });
       }
+    },
+
+    showAddSimpleSessions(e) {
+      this.$store.commit("changeState", "AddSimpleSessionOpen");
+      this.AddSimpleSessionOpen = this.$store.getters.AddSimpleSessionOpen;
+
+      this.closeAddSessions(e);
+    },
+
+    showAddFixedSessions() {
+      this.$store.commit("changeState", "AddFixedSessionOpen");
+      this.AddFixedSessionOpen = this.$store.getters.AddFixedSessionOpen;
+    },
+
+    showChooseGroup(e) {
+      this.closeAddSessions(e);
+
+      this.$store.commit("changeState", "addGroupOpen");
+      this.addGroupOpen = this.$store.getters.addGroupOpen;
+    },
+
+    clearSessions() {
+      this.sessions.data.forEach((el, index) => {
+        this.$set(this.sessions.data, index, [
+          { backgroundColor: "rgb(218, 223, 225)" },
+          { backgroundColor: "rgb(218, 223, 225)" },
+          { backgroundColor: "rgb(218, 223, 225)" },
+          { backgroundColor: "rgb(218, 223, 225)" },
+          { backgroundColor: "rgb(218, 223, 225)" },
+          { backgroundColor: "rgb(218, 223, 225)" },
+          { backgroundColor: "rgb(218, 223, 225)" },
+          { backgroundColor: "rgb(218, 223, 225)" },
+          { backgroundColor: "rgb(218, 223, 225)" },
+          { backgroundColor: "rgb(218, 223, 225)" },
+          { backgroundColor: "rgb(218, 223, 225)" },
+          { backgroundColor: "rgb(218, 223, 225)" },
+          { backgroundColor: "rgb(218, 223, 225)" },
+          { backgroundColor: "rgb(218, 223, 225)" },
+          { backgroundColor: "rgb(218, 223, 225)" },
+          { backgroundColor: "rgb(218, 223, 225)" }
+        ]);
+      });
+    },
+
+    clearSelections() {
+      let len = this.targets.length;
+      let low = this.low;
+      let high = this.high;
+
+      for (let i = 1; i < len; i++) {
+        let selector;
+        if (len === 2) {
+          selector = `cell${this.targets[0]}-${this.targets[1]}`;
+        } else {
+          selector = `cell${this.targets[0]}-${this.targets[i]}`;
+        }
+
+        if (
+          this.$refs[selector][0].style.backgroundColor === "rgb(173, 216, 230)"
+        ) {
+          this.$refs[selector][0].style.backgroundColor = "rgb(218, 223, 225)";
+        }
+      }
     }
   },
+
+  created() {
+    this.url = this.$route.path;
+    console.log(this.url);
+    // this.$store.dispatch("initFixed");
+    // this.$store.dispatch("initSimple");
+
+    // this.$store.watch(
+    //   (state, getters) => getters.fixedSessions,
+    //   (newValue, oldValue) => {
+    //     this.fixedSessions = newValue;
+
+    //     this.showFixedSessions();
+    //   },
+    //   { deep: true, immediate: true }
+    // );
+
+    // this.$store.watch(
+    //   (state, getters) => getters.simpleSessions,
+    //   (newValue, oldValue) => {
+    //     this.simpleSessions = newValue;
+
+    //     this.showSimpleSessions();
+    //   },
+    //   { deep: true, immediate: true }
+    // );
+
+    // this.getCurrentWeek();
+
+    if (this.url === "/teacher/groups") {
+      this.getCurrentMonth();
+      this.$store.dispatch("currentMonthStudents");
+    }
+  },
+
+  mounted() {
+    this.componentLoaded = true;
+  },
+  update() {},
   computed: {
     filterSessions: function() {
       const data = [];
       console.log("trigered outside");
+
       if (this.componentLoaded && this.fixedSessions) {
         console.log("trigered inside");
-
         let fixedType = this.filters.sessionsType.find(el => el === "fixed");
         let simpleType = this.filters.sessionsType.find(el => el === "simple");
 
@@ -754,43 +803,27 @@ export default {
         return this.$store.getters.modules;
       }
     }
-  },
-
-  //life cycle hooks
-  created() {
-    this.$store.dispatch("initFixed");
-    this.$store.dispatch("initSimple");
-
-    this.$store.watch(
-      (state, getters) => getters.fixedSessions,
-      (newValue, oldValue) => {
-        this.fixedSessions = newValue;
-
-        this.showFixedSessions();
-      },
-      { deep: true, immediate: true }
-    );
-
-    this.$store.watch(
-      (state, getters) => getters.simpleSessions,
-      (newValue, oldValue) => {
-        this.simpleSessions = newValue;
-
-        this.showSimpleSessions();
-      },
-      { deep: true, immediate: true }
-    );
-
-    this.getCurrentWeek();
-  },
-  mounted() {
-    console.log("Schedule Component Mounted");
-    this.componentLoaded = true;
   }
 };
 </script>
 
-<style  scoped>
+<style scoped>
+.container {
+  display: flex;
+
+  font-family: Roboto, "Helvetica Neue", "sans-serif";
+}
+
+.left {
+  flex-basis: 19%;
+  background-color: #edeff0;
+  height: 500px;
+  overflow-y: scroll;
+  align-self: flex-end;
+
+  margin-right: 1rem;
+}
+
 .schedule {
   /* flex-basis:72%;
     height: 400px;
@@ -930,4 +963,11 @@ export default {
 .btn {
   padding: 1rem;
 }
+
+label {
+  display: block;
+}
 </style>
+
+
+

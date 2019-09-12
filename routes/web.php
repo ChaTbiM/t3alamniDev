@@ -22,11 +22,14 @@ Route::get('/home', 'HomeController@index')->name('home');
 Route::get('/admin', 'AdminController@index')->name('admin');
 Route::get('/student', 'StudentController@index')->name('student');
 Route::get('/teacher', 'TeacherController@index')->name('teacher');
+// Route::get('/teacher/schedule', 'TeacherController@index')->name('teacher');
+Route::get('/teacher/groups', 'TeacherController@index')->name(
+    'teacher.groups'
+);
 
-// Route::get('/teacher/{any}', 'TeacherController@index')->where(
-//     'any',
-//     '^(?!storage).*$'
-// );
+// Route::get('/teacher/{any}', function () {
+//     return view('teacher.teacher');
+// })->where('any', '^(?!storage).*$');
 
 // Admin  ---------------------------------------------------------------------------------------------
 

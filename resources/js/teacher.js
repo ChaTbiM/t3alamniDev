@@ -18,11 +18,13 @@ const Bar = { template: "<div>bar</div>" };
 
 const routes = [
     {
-        path: "/teacher/foo",
-        component: require("./components/Schedule.vue"),
-        props: true
+        path: "/teacher",
+        component: require("./components/SchedulePage.vue").default
     },
-    { path: "/teacher/bar", component: Bar }
+    {
+        path: "/teacher/groups",
+        component: require("./components/GroupsPage.vue").default
+    }
 ];
 
 const router = new VueRouter({
@@ -44,6 +46,16 @@ const router = new VueRouter({
 
 // Vue.component("example", require("./components/Example.vue").default);
 Vue.component(
+    "schedule-page",
+    require("./components/SchedulePage.vue").default
+);
+
+Vue.component("schedule", require("./components/Schedule.vue").default);
+Vue.component(
+    "filter-sessions",
+    require("./components/filterSessions.vue").default
+);
+Vue.component(
     "add-simple-session",
     require("./components/AddSimpleSession.vue").default
 );
@@ -51,16 +63,16 @@ Vue.component(
     "add-fixed-session",
     require("./components/AddFixedSession.vue").default
 );
-Vue.component(
-    "schedule-component",
-    require("./components/Schedule.vue").default
-);
 
 Vue.component("add-group", require("./components/AddGroup.vue").default);
-Vue.component("vue-timepicker", require("vue2-timepicker").default);
+Vue.component(
+    "vue-timepicker",
+    require("vue2-timepicker/dist/VueTimepicker.common.js").default
+);
+import "vue2-timepicker/dist/VueTimepicker.css";
 
 import { store } from "./stores/teachersStore";
-import "vue2-timepicker/dist/VueTimepicker.css";
+// import "vue2-timepicker/dist/VueTimepicker.css";
 
 /**
  * Next, we will create a fresh Vue application instance and attach it to
@@ -68,11 +80,11 @@ import "vue2-timepicker/dist/VueTimepicker.css";
  * or customize the JavaScript scaffolding to fit your unique needs.
  */
 
-Vue.mixin({
-    methods: {
-        route: route
-    }
-});
+// Vue.mixin({
+//     methods: {
+//         route: route
+//     }
+// });
 
 Vue.use(VCalendar, {
     componentPrefix: "vc" // Use <vc-calendar /> instead of <v-calendar />
@@ -83,5 +95,6 @@ Vue.use(VCalendar, {
 const app = new Vue({
     el: "#teacher",
     router,
-    store
+    store,
+    route //ziggy
 });

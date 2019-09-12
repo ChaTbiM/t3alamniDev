@@ -22,41 +22,7 @@ class TeacherController extends Controller
 
     public function index()
     {
-        // if(Auth::guard('teacher')->check()){
-        //    dd(Auth::user()->hasRole('full-time'));
-
-        // if (auth::user()->fixedSessions) {
-        //     dd(sizeof(auth::user()->fixedSessions));
-        // } else {
-        //     dd('he dont have');
-        // }
-
-        $fixedSessions = json_encode(auth::user()->fixedSessions);
-        $simpleSessions = json_encode(auth::user()->simpleSessions);
-        // dd(auth::user()->toArray()['fixed_sessions']);
-        $groups = auth::user()->groups;
-        $modules = [];
-
-        $id = json_encode(auth::user()->id);
-
-        foreach ($groups as $group) {
-            array_push($modules, array(
-                "module" => $group->module->name,
-                "groupId" => $group->id
-            ));
-        }
-
-        $modules = json_encode($modules);
-        return view('teacher.teacher', [
-            'id' => $id,
-            'fixedSessions' => $fixedSessions,
-            'simpleSessions' => $simpleSessions,
-            'modules' => $modules
-        ]);
-
-        // }
-
-        // return redirect()->route('teacher.login');
+        return view('teacher.teacher');
     }
 
     public function addFixed(Request $request)
@@ -142,9 +108,7 @@ class TeacherController extends Controller
         // dd(auth::user()->toArray()['fixed_sessions']);
         $groups = auth::user()->groups;
         $modules = [];
-
-        $test = json_encode([]);
-
+        dd($groups);
         foreach ($groups as $group) {
             array_push($modules, array(
                 "module" => $group->module->name,
@@ -172,6 +136,10 @@ class TeacherController extends Controller
     }
 
     public function getID(Request $request)
+    {
+    }
+
+    public function getStudents(Request $request)
     {
     }
 
