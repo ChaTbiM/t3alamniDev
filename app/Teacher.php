@@ -8,10 +8,7 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use App\Notifications\TeacherResetPasswordNotification;
 use App\Notifications\TeacherVerifyEmail;
 
-
-
 use Spatie\Permission\Traits\HasRoles;
-
 
 class Teacher extends Authenticatable implements MustVerifyEmail
 {
@@ -25,18 +22,14 @@ class Teacher extends Authenticatable implements MustVerifyEmail
      *
      * @var array
      */
-    protected $fillable = [
-        'user_name', 'email', 'password',
-    ];
+    protected $fillable = ['user_name', 'email', 'password'];
 
     /**
      * The attributes that should be hidden for arrays.
      *
      * @var array
      */
-    protected $hidden = [
-        'password', 'remember_token',
-    ];
+    protected $hidden = ['password', 'remember_token'];
 
     /**
      * The attributes that should be cast to native types.
@@ -44,35 +37,40 @@ class Teacher extends Authenticatable implements MustVerifyEmail
      * @var array
      */
     protected $casts = [
-        'email_verified_at' => 'datetime',
+        'email_verified_at' => 'datetime'
     ];
 
-
-    // Relations 
+    // Relations
     // relations of personal information
-    public function cv () {
+    public function cv()
+    {
         return $this->hasOne(Cv::class);
     }
 
-    public function address () {
+    public function address()
+    {
         return $this->hasOne(Address::class);
     }
 
-    public function diplomas (){
+    public function diplomas()
+    {
         return $this->hasMany(Diploma::class);
     }
 
     // relations of main functionalities
 
-    public function groups (){
+    public function groups()
+    {
         return $this->hasMany(Group::class);
     }
 
-    public function simpleSessions(){
+    public function simpleSessions()
+    {
         return $this->hasMany(SimpleSession::class);
     }
 
-    public function fixedSessions(){
+    public function fixedSessions()
+    {
         return $this->hasMany(fixedSession::class);
     }
 
@@ -82,26 +80,21 @@ class Teacher extends Authenticatable implements MustVerifyEmail
         $this->notify(new TeacherResetPasswordNotification($token));
     }
 
-
-
-
     //Email Verification
     public function sendEmailVerificationNotification()
     {
-        $this->notify(new TeacherVerifyEmail);
+        $this->notify(new TeacherVerifyEmail());
     }
-
 
     public function hasVerifiedEmail()
     {
-        return ! is_null($this->email_verified_at);
+        return !is_null($this->email_verified_at);
     }
 
     public function markEmailAsVerified()
     {
         return $this->forceFill([
-            'email_verified_at' => $this->freshTimestamp(),
+            'email_verified_at' => $this->freshTimestamp()
         ])->save();
     }
-
 }

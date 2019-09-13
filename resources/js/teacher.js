@@ -4,7 +4,7 @@
  * building robust, powerful web applications using Vue and Laravel.
  */
 
-require("./bootstrap");
+// require("./bootstrap");
 import VCalendar from "v-calendar";
 
 window.Vue = require("vue");
@@ -12,9 +12,6 @@ window.Vue = require("vue");
 import VueRouter from "vue-router";
 
 Vue.use(VueRouter);
-
-const Foo = { template: "<div>foo</div>" };
-const Bar = { template: "<div>bar</div>" };
 
 const routes = [
     {
@@ -56,6 +53,11 @@ Vue.component(
     require("./components/filterSessions.vue").default
 );
 Vue.component(
+    "groups-students",
+    require("./components/GroupsStudents.vue").default
+);
+
+Vue.component(
     "add-simple-session",
     require("./components/AddSimpleSession.vue").default
 );
@@ -92,7 +94,7 @@ Vue.use(VCalendar, {
 });
 
 // import Example from "./Components/Example.vue";
-const app = new Vue({
+const teacher = new Vue({
     el: "#teacher",
     router,
     store,

@@ -45,10 +45,10 @@ class TeacherController extends Controller
         $file = $request->file('file');
         // $ext = $file->getClientOriginalExtension();
         // $type = $file->getType($ext);
-        $path = $request->file('file')->store('/public');
 
         $id = (int) $request->id;
-        if ($path) {
+        if ($request->has('file')) {
+            $path = $request->file('file')->store('/public');
             return Document::create([
                 // 'type' => 'fixed',
                 //worked
@@ -106,13 +106,13 @@ class TeacherController extends Controller
     {
         $fixedSessions = json_encode(auth::user()->fixedSessions);
         // dd(auth::user()->toArray()['fixed_sessions']);
-        $groups = auth::user()->groups;
+        $groups = Auth::user()->groups;
         $modules = [];
-        dd($groups);
         foreach ($groups as $group) {
             array_push($modules, array(
                 "module" => $group->module->name,
-                "groupId" => $group->id
+                "groupId" => $group->id,
+                "groupName" => $group->name_of_group
             ));
         }
 

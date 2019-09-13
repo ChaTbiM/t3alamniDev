@@ -9,24 +9,6 @@
 
     <schedule :filters="filters"></schedule>
   </div>
-
-  <!-- below -->
-  <!-- <div v-if="this.$route.path ==='/teacher/groups'">
-        below
-        <div class="schedule__header">
-          <div class="prevWeek" @click="getPreviousMonth">
-            get prev month  !
-            <img src="arrow-left-solid.svg" alt="previous week" class="previous" />
-          </div>
-          <div class="nextWeek" @click="getNextMonth">
-            get next month
-            <img src="arrow-right-solid.svg" alt="next week" class="next" />
-          </div>
-          <h2
-            class="schedule__header__date"
-          >{{ this.months[currentMonth.getUTCMonth()] }} {{currentMonth.getFullYear()}}</h2>
-        </div>
-  </div>-->
 </template>
 
 <script>

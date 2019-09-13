@@ -191,6 +191,10 @@ Route::post('teacher/simple', 'TeacherController@addSimple')->name(
     'addSimpleSessions'
 );
 
+Route::get('teacher/groups/joined', 'GroupsController@getStudents')->name(
+    'getGroupsStudents'
+);
+
 // test upload
-Route::get('teacher/test', 'TeacherController@testIndex');
+// Route::get('teacher/test', 'TeacherController@testIndex');
 // Route::post('teacher/fixed', 'TeacherController@addFixed')->name('upload');

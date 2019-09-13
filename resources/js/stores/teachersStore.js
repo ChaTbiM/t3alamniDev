@@ -47,10 +47,20 @@ export const store = new Vuex.Store({
         //sessions data
         fixed: null,
         simple: [],
-        modules: null
+        modules: null,
+
+        // Students
+        currentMonthStudents: null,
+        groupID: null
     },
     mutations: {
         //showing sessions
+        initCurrentMonthStudents(state, data) {
+            state.currentMonthStudents = data;
+        },
+        changeGroupID(state, data) {
+            state.groupID = data;
+        },
         changeState(state, target) {
             state[target] = !state[target];
         },
@@ -136,8 +146,13 @@ export const store = new Vuex.Store({
             }
             // return fixedSessions;
         },
-        currentMonthStudents: async (context, month) => {
-            console.log("init student of current month");
+        currentMonthStudents: async context => {
+            let data = await axios.get(route("getGroupsStudents"));
+
+            if (data.status === 200) {
+                console.log(data);
+                // context.commit("initCurrentMonthStudents", data.data);
+            }
         }
     },
     getters: {
@@ -165,6 +180,9 @@ export const store = new Vuex.Store({
         //sessions data
         fixedSessions: state => state.fixed,
         simpleSessions: state => state.simple,
-        modules: state => state.modules
+        modules: state => state.modules,
+        //students
+        currentMonthStudents: state => state.currentMonthStudents,
+        groupID: state => state.groupID
     }
 });

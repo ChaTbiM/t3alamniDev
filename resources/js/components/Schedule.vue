@@ -445,14 +445,15 @@ export default {
         let sessionTimeString = day + "T" + time + "Z";
         let sessionTime = new Date(sessionTimeString);
         sessionTime.setHours(time.split(":")[0], 0, 0);
-        console.log(this.filterSessions[index][ind]);
-        if (thisMoment < sessionTime) {
-          console.log("en Attente");
-        } else if (thisMoment > sessionTime) {
-          console.log("session terminer");
-        } else {
-          console.log("en cour");
-        }
+        // Session State modal
+        // console.log(this.filterSessions[index][ind]);
+        // if (thisMoment < sessionTime) {
+        //   console.log("en Attente");
+        // } else if (thisMoment > sessionTime) {
+        //   console.log("session terminer");
+        // } else {
+        //   console.log("en cour");
+        // }
       }
 
       if (this.clicked && this.targets[0] === index) {
@@ -701,10 +702,7 @@ export default {
   computed: {
     filterSessions: function() {
       const data = [];
-      console.log("trigered outside");
       if (this.componentLoaded && this.fixedSessions) {
-        console.log("trigered inside");
-
         let fixedType = this.filters.sessionsType.find(el => el === "fixed");
         let simpleType = this.filters.sessionsType.find(el => el === "simple");
 
@@ -784,7 +782,6 @@ export default {
     this.getCurrentWeek();
   },
   mounted() {
-    console.log("Schedule Component Mounted");
     this.componentLoaded = true;
   }
 };
