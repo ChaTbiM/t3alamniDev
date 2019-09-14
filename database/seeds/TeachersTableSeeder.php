@@ -21,6 +21,7 @@ class TeachersTableSeeder extends Seeder
             'user_name' => 'teacher',
             'email' => 'teacherfull@teacher.com',
             'password' => Hash::make('teacher12'),
+            'email_verified_at' => Carbon::now(),
             'age' => 28
         ]);
 
@@ -28,6 +29,8 @@ class TeachersTableSeeder extends Seeder
             'user_name' => 'teacher',
             'email' => 'teacherpart@teacher.com',
             'password' => Hash::make('teacher12'),
+            'email_verified_at' => Carbon::now(),
+
             'age' => 19
         ]);
 
