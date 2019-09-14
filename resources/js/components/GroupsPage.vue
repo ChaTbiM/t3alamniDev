@@ -91,7 +91,7 @@ export default {
   /* align-self: flex-end; */
   margin-right: 1rem;
   position: sticky;
-  top: 200px;
+  top: 10px;
 }
 /* 
 .schedule__header {
