@@ -81,7 +81,7 @@
 /******/
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 1);
+/******/ 	return __webpack_require__(__webpack_require__.s = 0);
 /******/ })
 /************************************************************************/
 /******/ ({
@@ -2494,7 +2494,8 @@ __webpack_require__.r(__webpack_exports__);
   data: function data() {
     return {
       months: ["janvier", "fevrier", "mars", "avril", "mai", "juin", "juillet", "auot", "septembre", "octobre", "novembre", "decembre"],
-      currentMonth: null
+      currentMonth: null // groupStudents: null
+
     };
   },
   methods: {
@@ -2516,8 +2517,28 @@ __webpack_require__.r(__webpack_exports__);
   computed: {
     selectedGroup: {
       get: function get() {
-        console.log(this.$store.getters.groupID, "laaast");
         return this.$store.getters.groupID;
+      }
+    },
+    groupStudents: {
+      get: function get() {
+        return this.$store.getters.groupStudents;
+      }
+    },
+    allStudents: function allStudents() {
+      var _this = this;
+
+      if (this.groupStudents && !this.selectedGroup) {
+        return this.groupStudents[0].filter(function (el) {
+          return el.date.split("-")[0] == _this.currentMonth.getFullYear() && el.date.split("-")[1] == _this.currentMonth.getMonth() + 1;
+        });
+      } else if (this.groupStudents && this.selectedGroup) {
+        var group = this.groupStudents.filter(function (el) {
+          return el[0].group_id == _this.selectedGroup;
+        });
+        return group[0] ? group[0].filter(function (element) {
+          return element.date.split("-")[0] == _this.currentMonth.getFullYear() && element.date.split("-")[1] == _this.currentMonth.getMonth() + 1;
+        }) : null;
       }
     } // modules: {
     //   get() {
@@ -2528,7 +2549,14 @@ __webpack_require__.r(__webpack_exports__);
   },
   // life Cycle Hooks
   created: function created() {
-    this.getCurrentMonth();
+    this.getCurrentMonth(); // this.$store.watch(
+    //   (state, getters) => getters.groupStudents,
+    //   (newValue, oldValue) => {
+    //     this.fixedSessions = newValue;
+    //     this.groupStudents=this.$store.getters.groupStudents;
+    //   },
+    //   { deep: true, immediate: true }
+    // );
   },
   mounted: function mounted() {
     var year = this.currentMonth.getFullYear();
@@ -2537,7 +2565,7 @@ __webpack_require__.r(__webpack_exports__);
       year: year,
       month: month
     };
-    this.$store.dispatch("currentMonthStudents");
+    this.$store.dispatch("SET_GROUP_STUDENTS");
   }
 });
 
@@ -24380,7 +24408,31 @@ var render = function() {
       ])
     ]),
     _vm._v(" "),
-    _vm._m(0)
+    _c("div", { staticClass: "students__list" }, [
+      _c("table", [
+        _vm._m(0),
+        _vm._v(" "),
+        _c(
+          "tbody",
+          _vm._l(_vm.allStudents, function(student, index) {
+            return _c("tr", { key: index }, [
+              _c("td", [
+                _vm._v(_vm._s(student.first_name + " " + student.last_name))
+              ]),
+              _vm._v(" "),
+              _c("td", [_vm._v(_vm._s(" " + student.nb_absences))]),
+              _vm._v(" "),
+              _c("td", [_vm._v(_vm._s(student.is_paid ? "true" : "false"))]),
+              _vm._v(" "),
+              _c("td", [_vm._v("contacter")]),
+              _vm._v(" "),
+              _c("td", [_vm._v(_vm._s(student.student_id))])
+            ])
+          }),
+          0
+        )
+      ])
+    ])
   ])
 }
 var staticRenderFns = [
@@ -24388,35 +24440,17 @@ var staticRenderFns = [
     var _vm = this
     var _h = _vm.$createElement
     var _c = _vm._self._c || _h
-    return _c("div", { staticClass: "students__list" }, [
-      _c("table", [
-        _c("thead", [
-          _c("tr", [
-            _c("td", [_vm._v("edit...")]),
-            _vm._v(" "),
-            _c("td", [_vm._v("nombre d 'absence")]),
-            _vm._v(" "),
-            _c("td", [_vm._v("paiment")]),
-            _vm._v(" "),
-            _c("td", [_vm._v("contacter")]),
-            _vm._v(" "),
-            _c("td")
-          ])
-        ]),
+    return _c("thead", [
+      _c("tr", [
+        _c("td", [_vm._v("edit...")]),
         _vm._v(" "),
-        _c("tbody", [
-          _c("tr", [
-            _c("td", [_vm._v("Name")]),
-            _vm._v(" "),
-            _c("td", [_vm._v("0")]),
-            _vm._v(" "),
-            _c("td", [_vm._v("true")]),
-            _vm._v(" "),
-            _c("td", [_vm._v("contacter")]),
-            _vm._v(" "),
-            _c("td", [_vm._v("delete")])
-          ])
-        ])
+        _c("td", [_vm._v("nombre d 'absence")]),
+        _vm._v(" "),
+        _c("td", [_vm._v("paiment")]),
+        _vm._v(" "),
+        _c("td", [_vm._v("contacter")]),
+        _vm._v(" "),
+        _c("td", [_vm._v("studentID")])
       ])
     ])
   }
@@ -44359,13 +44393,13 @@ var store = new vuex__WEBPACK_IMPORTED_MODULE_2__["default"].Store({
     simple: [],
     modules: null,
     // Students
-    currentMonthStudents: null,
+    groupStudents: null,
     groupID: null
   },
   mutations: {
     //showing sessions
-    initCurrentMonthStudents: function initCurrentMonthStudents(state, data) {
-      state.currentMonthStudents = data;
+    changeGroupStudents: function changeGroupStudents(state, data) {
+      state.groupStudents = data;
     },
     changeGroupID: function changeGroupID(state, data) {
       state.groupID = data;
@@ -44501,8 +44535,8 @@ var store = new vuex__WEBPACK_IMPORTED_MODULE_2__["default"].Store({
 
       return initSimple;
     }(),
-    currentMonthStudents: function () {
-      var _currentMonthStudents = _asyncToGenerator(
+    SET_GROUP_STUDENTS: function () {
+      var _SET_GROUP_STUDENTS = _asyncToGenerator(
       /*#__PURE__*/
       _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee3(context) {
         var data;
@@ -44517,7 +44551,7 @@ var store = new vuex__WEBPACK_IMPORTED_MODULE_2__["default"].Store({
                 data = _context3.sent;
 
                 if (data.status === 200) {
-                  console.log(data); // context.commit("initCurrentMonthStudents", data.data);
+                  context.commit("changeGroupStudents", data.data);
                 }
 
               case 4:
@@ -44528,11 +44562,11 @@ var store = new vuex__WEBPACK_IMPORTED_MODULE_2__["default"].Store({
         }, _callee3);
       }));
 
-      function currentMonthStudents(_x3) {
-        return _currentMonthStudents.apply(this, arguments);
+      function SET_GROUP_STUDENTS(_x3) {
+        return _SET_GROUP_STUDENTS.apply(this, arguments);
       }
 
-      return currentMonthStudents;
+      return SET_GROUP_STUDENTS;
     }()
   },
   getters: {
@@ -44594,8 +44628,8 @@ var store = new vuex__WEBPACK_IMPORTED_MODULE_2__["default"].Store({
       return state.modules;
     },
     //students
-    currentMonthStudents: function currentMonthStudents(state) {
-      return state.currentMonthStudents;
+    groupStudents: function groupStudents(state) {
+      return state.groupStudents;
     },
     groupID: function groupID(state) {
       return state.groupID;
@@ -44693,14 +44727,38 @@ var teacher = new Vue({
 
 /***/ }),
 
-/***/ 1:
-/*!***************************************!*\
-  !*** multi ./resources/js/teacher.js ***!
-  \***************************************/
+/***/ "./resources/sass/app.scss":
+/*!*********************************!*\
+  !*** ./resources/sass/app.scss ***!
+  \*********************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+// removed by extract-text-webpack-plugin
+
+/***/ }),
+
+/***/ "./resources/sass/teacher.scss":
+/*!*************************************!*\
+  !*** ./resources/sass/teacher.scss ***!
+  \*************************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+// removed by extract-text-webpack-plugin
+
+/***/ }),
+
+/***/ 0:
+/*!***********************************************************************************************!*\
+  !*** multi ./resources/js/teacher.js ./resources/sass/app.scss ./resources/sass/teacher.scss ***!
+  \***********************************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-module.exports = __webpack_require__(/*! C:\Users\Mustapha\Desktop\authentication\t3alamniDev\resources\js\teacher.js */"./resources/js/teacher.js");
+__webpack_require__(/*! C:\Users\Mustapha\Desktop\authentication\t3alamniDev\resources\js\teacher.js */"./resources/js/teacher.js");
+__webpack_require__(/*! C:\Users\Mustapha\Desktop\authentication\t3alamniDev\resources\sass\app.scss */"./resources/sass/app.scss");
+module.exports = __webpack_require__(/*! C:\Users\Mustapha\Desktop\authentication\t3alamniDev\resources\sass\teacher.scss */"./resources/sass/teacher.scss");
 
 
 /***/ })

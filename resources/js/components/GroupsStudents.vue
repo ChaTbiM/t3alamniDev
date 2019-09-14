@@ -19,16 +19,16 @@
             <td>nombre d 'absence</td>
             <td>paiment</td>
             <td>contacter</td>
-            <td></td>
+            <td>studentID</td>
           </tr>
         </thead>
         <tbody>
-          <tr>
-            <td>Name</td>
-            <td>0</td>
-            <td>true</td>
+          <tr v-for="(student,index) in allStudents" v-bind:key="index">
+            <td>{{student.first_name + ' ' + student.last_name}}</td>
+            <td>{{ ' '+student.nb_absences}}</td>
+            <td>{{student.is_paid ? 'true': 'false' }}</td>
             <td>contacter</td>
-            <td>delete</td>
+            <td>{{student.student_id}}</td>
           </tr>
         </tbody>
       </table>
@@ -56,6 +56,8 @@ export default {
         "decembre"
       ],
       currentMonth: null
+
+      // groupStudents: null
     };
   },
   methods: {
@@ -80,8 +82,35 @@ export default {
   computed: {
     selectedGroup: {
       get() {
-        console.log(this.$store.getters.groupID, "laaast");
         return this.$store.getters.groupID;
+      }
+    },
+    groupStudents: {
+      get() {
+        return this.$store.getters.groupStudents;
+      }
+    },
+    allStudents: function() {
+      if (this.groupStudents && !this.selectedGroup) {
+        return this.groupStudents[0].filter(el => {
+          return (
+            el.date.split("-")[0] == this.currentMonth.getFullYear() &&
+            el.date.split("-")[1] == this.currentMonth.getMonth() + 1
+          );
+        });
+      } else if (this.groupStudents && this.selectedGroup) {
+        let group = this.groupStudents.filter(el => {
+          return el[0].group_id == this.selectedGroup;
+        });
+
+        return group[0]
+          ? group[0].filter(element => {
+              return (
+                element.date.split("-")[0] == this.currentMonth.getFullYear() &&
+                element.date.split("-")[1] == this.currentMonth.getMonth() + 1
+              );
+            })
+          : null;
       }
     }
     // modules: {
@@ -93,6 +122,16 @@ export default {
   // life Cycle Hooks
   created() {
     this.getCurrentMonth();
+
+    // this.$store.watch(
+    //   (state, getters) => getters.groupStudents,
+    //   (newValue, oldValue) => {
+    //     this.fixedSessions = newValue;
+
+    //     this.groupStudents=this.$store.getters.groupStudents;
+    //   },
+    //   { deep: true, immediate: true }
+    // );
   },
   mounted() {
     let year = this.currentMonth.getFullYear();
@@ -101,7 +140,7 @@ export default {
       year,
       month
     };
-    this.$store.dispatch("currentMonthStudents");
+    this.$store.dispatch("SET_GROUP_STUDENTS");
   }
 };
 </script>

@@ -50,13 +50,13 @@ export const store = new Vuex.Store({
         modules: null,
 
         // Students
-        currentMonthStudents: null,
+        groupStudents: null,
         groupID: null
     },
     mutations: {
         //showing sessions
-        initCurrentMonthStudents(state, data) {
-            state.currentMonthStudents = data;
+        changeGroupStudents(state, data) {
+            state.groupStudents = data;
         },
         changeGroupID(state, data) {
             state.groupID = data;
@@ -146,12 +146,11 @@ export const store = new Vuex.Store({
             }
             // return fixedSessions;
         },
-        currentMonthStudents: async context => {
+        SET_GROUP_STUDENTS: async context => {
             let data = await axios.get(route("getGroupsStudents"));
 
             if (data.status === 200) {
-                console.log(data);
-                // context.commit("initCurrentMonthStudents", data.data);
+                context.commit("changeGroupStudents", data.data);
             }
         }
     },
@@ -182,7 +181,7 @@ export const store = new Vuex.Store({
         simpleSessions: state => state.simple,
         modules: state => state.modules,
         //students
-        currentMonthStudents: state => state.currentMonthStudents,
+        groupStudents: state => state.groupStudents,
         groupID: state => state.groupID
     }
 });
