@@ -12,15 +12,15 @@ class JoinGroupsTableSeeder extends Seeder
      */
     public function run()
     {
-        // DB::insert(
-        //     'insert into join_groups (nb_absences,time,date,is_paid,is_validated,group_id,student_id) values (?,?,?, ?,?,?,?)',
-        //     [0, true, false, 1, 1]
-        // );
+        DB::insert(
+            'insert into join_groups (nb_absences,time,date,is_paid,is_validated,group_id,student_id) values (?,?,?, ?,?,?,?)',
+            [0, true, false, 1, 1]
+        );
 
-        // DB::insert(
-        //     'insert into join_groups (nb_absences,time,date,is_paid,is_validated,group_id,student_id) values (?,?,?, ?,?,?,?)',
-        //     [0, "07:00:00", "2019-09-02", true, false, 1, 2]
-        // );
+        DB::insert(
+            'insert into join_groups (nb_absences,time,date,is_paid,is_validated,group_id,student_id) values (?,?,?, ?,?,?,?)',
+            [0, "07:00:00", "2019-09-02", true, false, 1, 2]
+        );
 
         DB::insert(
             'insert into join_groups (nb_absences,time,date,is_paid,is_validated,group_id,student_id) values (?,?,?, ?,?,?,?)',

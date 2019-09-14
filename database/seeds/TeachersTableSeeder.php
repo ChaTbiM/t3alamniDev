@@ -1,0 +1,35 @@
+<?php
+
+use Illuminate\Database\Seeder;
+use App\Teacher;
+use Carbon\Carbon;
+
+use Spatie\Permission\Models\Role;
+use Spatie\Permission\Models\Permission;
+class TeachersTableSeeder extends Seeder
+{
+    /**
+     * Run the database seeds.
+     *
+     * @return void
+     */
+    public function run()
+    {
+        Teacher::create([
+            'user_name' => 'teacher',
+            'email' => 'teacherfull@teacher.com',
+            'password' => Hash::make('teacher12'),
+            'age' => 28
+        ]);
+
+        Teacher::create([
+            'user_name' => 'teacher',
+            'email' => 'teacherpart@teacher.com',
+            'password' => Hash::make('teacher12'),
+            'age' => 19
+        ]);
+
+        Teacher::find(1)->assignRole('full-time');
+        Teacher::find(2)->assignRole('part-time');
+    }
+}

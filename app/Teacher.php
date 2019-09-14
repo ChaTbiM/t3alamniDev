@@ -22,7 +22,7 @@ class Teacher extends Authenticatable implements MustVerifyEmail
      *
      * @var array
      */
-    protected $fillable = ['user_name', 'email', 'password'];
+    protected $gaurded = [];
 
     /**
      * The attributes that should be hidden for arrays.

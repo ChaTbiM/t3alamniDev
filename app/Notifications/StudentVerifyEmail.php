@@ -11,7 +11,7 @@ use Illuminate\Notifications\Messages\MailMessage;
 
 class StudentVerifyEmail extends Notification
 {
-   /**
+    /**
      * The callback that should be used to build the mail message.
      *
      * @var \Closure|null
@@ -40,14 +40,28 @@ class StudentVerifyEmail extends Notification
         $verificationUrl = $this->verificationUrl($notifiable);
 
         if (static::$toMailCallback) {
-            return call_user_func(static::$toMailCallback, $notifiable, $verificationUrl);
+            return call_user_func(
+                static::$toMailCallback,
+                $notifiable,
+                $verificationUrl
+            );
         }
-
-        return (new MailMessage)
+        return (new MailMessage())
             ->subject(Lang::getFromJson('Verify Email Address'))
-            ->line(Lang::getFromJson('... for students ...Please click the button below to verify your email address.'))
-            ->action(Lang::getFromJson('Verify Email Address'), $verificationUrl)
-            ->line(Lang::getFromJson('If you did not create an account, no further action is required.'));
+            ->line(
+                Lang::getFromJson(
+                    '... for students ...Please click the button below to verify your email address.'
+                )
+            )
+            ->action(
+                Lang::getFromJson('Verify Email Address'),
+                $verificationUrl
+            )
+            ->line(
+                Lang::getFromJson(
+                    'If you did not create an account, no further action is required.'
+                )
+            );
     }
 
     /**
@@ -60,7 +74,9 @@ class StudentVerifyEmail extends Notification
     {
         return URL::temporarySignedRoute(
             'student.verification.verify',
-            Carbon::now()->addMinutes(Config::get('student.auth.verification.expire', 60)),
+            Carbon::now()->addMinutes(
+                Config::get('student.auth.verification.expire', 60)
+            ),
             ['id' => $notifiable->getKey()]
         );
     }

@@ -39,7 +39,6 @@ class Student extends Authenticatable implements MustVerifyEmail
     protected $casts = [
         'email_verified_at' => 'datetime'
     ];
-
     //Passowrd Reset
     public function sendPasswordResetNotification($token)
     {
