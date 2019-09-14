@@ -17,7 +17,7 @@ class DatabaseSeeder extends Seeder
             GroupsTableSeeder::class,
             ModulesTableSeeder::class,
             StudentsTableSeeder::class,
-            JoinGroupTableSeeder::class
+            JoinGroupsTableSeeder::class
         ]);
     }
 }

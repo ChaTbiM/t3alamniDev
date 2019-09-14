@@ -3,6 +3,7 @@
 use Illuminate\Database\Seeder;
 use App\Teacher;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Hash;
 
 use Spatie\Permission\Models\Role;
 use Spatie\Permission\Models\Permission;
@@ -15,6 +16,7 @@ class TeachersTableSeeder extends Seeder
      */
     public function run()
     {
+        // DB::insert('insert into teachers (user_name, email,passowrd,age) values (?, ?,?,?)', ['teacher', 'teacherfull@teacher.com' , Hash::make])
         Teacher::create([
             'user_name' => 'teacher',
             'email' => 'teacherfull@teacher.com',
