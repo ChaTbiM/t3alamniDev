@@ -2580,10 +2580,59 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 /* harmony default export */ __webpack_exports__["default"] = ({
   name: "GroupStudents",
   data: function data() {
     return {
+      editAble: true,
+      abcenseIndex: [],
+      index: 0,
+      tt: 0,
       months: ["janvier", "fevrier", "mars", "avril", "mai", "juin", "juillet", "auot", "septembre", "octobre", "novembre", "decembre"],
       currentMonth: null,
       currentMonthAll: null,
@@ -2606,6 +2655,64 @@ __webpack_require__.r(__webpack_exports__);
       var currentMonth = new Date(this[storeAt]);
       currentMonth.setMonth(currentMonth.getUTCMonth() + 1);
       this[storeAt] = currentMonth;
+    },
+    changeEdit: function changeEdit() {
+      if (this.editAble) {
+        this.editAble = null;
+      } else {
+        this.editAble = true;
+      }
+    },
+    editNumberOfAbsences: function editNumberOfAbsences(e, index) {
+      e.preventDefault();
+
+      if (this.editAble) {
+        this.$refs["number-".concat(index)][0].removeAttribute("readonly");
+        this.abcenseIndex.push(index);
+      }
+    },
+    updateNumberOfAbsences: function updateNumberOfAbsences(e, index) {
+      var _this = this;
+
+      e.preventDefault(); // console.log(this.$refs[`number-${index}`][0].value);
+
+      this.allStudents[index].nb_absences = this.$refs["number-".concat(index)][0].value;
+      this.abcenseIndex.forEach(function (el) {
+        _this.$refs["number-".concat(el)][0].setAttribute("readonly", "readonly");
+      });
+      this.editAble = null;
+    },
+    updatePaidState: function updatePaidState(e, index) {
+      var newVal = Number(this.$refs["paid-".concat(index)][0].value);
+      this.$set(this.allStudents[index], "is_paid", newVal);
+      this.editAble = false;
+    },
+    deleteUser: function deleteUser(event, index, condition) {
+      if (condition === "all") {
+        if (this.selectedGroup === null) {
+          this.$delete(this.groupStudents[0], index);
+        } else {
+          this.$delete(this.groupStudents[this.selectedGroup - 1], index);
+        }
+
+        this.editAble = null;
+      } else {
+        if (this.selectedGroup === null) {
+          for (var i = 0; i < this.groupStudents[0].length; i++) {
+            if (this.groupStudents[0][i].student_id === condition) {
+              this.$delete(this.groupStudents[0], i);
+              break;
+            }
+          }
+        } else {
+          for (var _i = 0; _i < this.groupStudents[this.selectedGroup - 1].length; _i++) {
+            if (this.groupStudents[this.selectedGroup - 1][_i].student_id === condition) {
+              this.$delete(this.groupStudents[this.selectedGroup - 1], _i);
+              break;
+            }
+          }
+        }
+      }
     }
   },
   computed: {
@@ -2620,51 +2727,63 @@ __webpack_require__.r(__webpack_exports__);
       }
     },
     allStudents: function allStudents() {
-      var _this = this;
-
-      if (this.groupStudents && !this.selectedGroup) {
-        return this.groupStudents[0].filter(function (el) {
-          return el.date.split("-")[0] == _this.currentMonthAll.getFullYear() && el.date.split("-")[1] == _this.currentMonthAll.getMonth() + 1;
-        });
-      } else if (this.groupStudents && this.selectedGroup) {
-        var group = this.groupStudents.filter(function (el) {
-          return el[0].group_id == _this.selectedGroup;
-        });
-        return group[0] ? group[0].filter(function (element) {
-          return element.date.split("-")[0] == _this.currentMonthAll.getFullYear() && element.date.split("-")[1] == _this.currentMonthAll.getMonth() + 1;
-        }) : null;
-      }
-    },
-    nonPaid: function nonPaid() {
       var _this2 = this;
 
       if (this.groupStudents && !this.selectedGroup) {
         return this.groupStudents[0].filter(function (el) {
-          return el.date.split("-")[0] == _this2.currentMonthNonPaid.getFullYear() && el.date.split("-")[1] == _this2.currentMonthNonPaid.getMonth() + 1 && !el.is_paid;
+          return el.date.split("-")[0] == _this2.currentMonthAll.getFullYear() && el.date.split("-")[1] == _this2.currentMonthAll.getMonth() + 1;
         });
-      } else if (this.groupStudents && this.selectedGroup) {
+      } else if (this.selectedGroup && this.groupStudents[this.selectedGroup - 1]) {
         var group = this.groupStudents.filter(function (el) {
-          return el[0].group_id == _this2.selectedGroup;
+          if (el.length !== 0) {
+            return el[0].group_id == _this2.selectedGroup;
+          }
         });
         return group[0] ? group[0].filter(function (element) {
-          return element.date.split("-")[0] == _this2.currentMonthNonPaid.getFullYear() && element.date.split("-")[1] == _this2.currentMonthNonPaid.getMonth() + 1 && !element.is_paid;
+          return element.date.split("-")[0] == _this2.currentMonthAll.getFullYear() && element.date.split("-")[1] == _this2.currentMonthAll.getMonth() + 1;
         }) : null;
+      } else {
+        return null;
       }
     },
-    Absentees: function Absentees() {
+    nonPaid: function nonPaid() {
       var _this3 = this;
 
       if (this.groupStudents && !this.selectedGroup) {
         return this.groupStudents[0].filter(function (el) {
-          return el.date.split("-")[0] == _this3.currentMonthAbsentees.getFullYear() && el.date.split("-")[1] == _this3.currentMonthAbsentees.getMonth() + 1 && !el.is_paid;
+          return el.date.split("-")[0] == _this3.currentMonthNonPaid.getFullYear() && el.date.split("-")[1] == _this3.currentMonthNonPaid.getMonth() + 1 && !el.is_paid;
         });
-      } else if (this.groupStudents && this.selectedGroup) {
+      } else if (this.selectedGroup && this.groupStudents[this.selectedGroup - 1]) {
         var group = this.groupStudents.filter(function (el) {
-          return el[0].group_id == _this3.selectedGroup;
+          if (el.length !== 0) {
+            return el[0].group_id == _this3.selectedGroup;
+          }
         });
         return group[0] ? group[0].filter(function (element) {
-          return element.date.split("-")[0] == _this3.currentMonthAbsentees.getFullYear() && element.date.split("-")[1] == _this3.currentMonthAbsentees.getMonth() + 1 && !element.is_paid;
+          return element.date.split("-")[0] == _this3.currentMonthNonPaid.getFullYear() && element.date.split("-")[1] == _this3.currentMonthNonPaid.getMonth() + 1 && !element.is_paid;
         }) : null;
+      } else {
+        return null;
+      }
+    },
+    Absentees: function Absentees() {
+      var _this4 = this;
+
+      if (this.groupStudents && !this.selectedGroup) {
+        return this.groupStudents[0].filter(function (el) {
+          return el.date.split("-")[0] == _this4.currentMonthAbsentees.getFullYear() && el.date.split("-")[1] == _this4.currentMonthAbsentees.getMonth() + 1 && !el.is_paid;
+        });
+      } else if (this.selectedGroup && this.groupStudents[this.selectedGroup - 1]) {
+        var group = this.groupStudents.filter(function (el) {
+          if (el.length !== 0) {
+            return el[0].group_id == _this4.selectedGroup;
+          }
+        });
+        return group[0] ? group[0].filter(function (element) {
+          return element.date.split("-")[0] == _this4.currentMonthAbsentees.getFullYear() && element.date.split("-")[1] == _this4.currentMonthAbsentees.getMonth() + 1 && !element.is_paid;
+        }) : null;
+      } else {
+        return null;
       }
     }
   },
@@ -4503,7 +4622,7 @@ exports = module.exports = __webpack_require__(/*! ../../../node_modules/css-loa
 
 
 // module
-exports.push([module.i, "\n.container[data-v-081ab4b7] {\r\n  display: flex;\r\n  flex-direction: column;\r\n  justify-content: center;\n}\n.schedule__header[data-v-081ab4b7] {\r\n  display: flex;\r\n  justify-content: flex-start;\r\n  align-items: center;\r\n  align-content: center;\r\n  margin-bottom: 0.5rem;\n}\n.previous[data-v-081ab4b7],\r\n.next[data-v-081ab4b7] {\r\n  width: 15px;\r\n  padding: 0.5rem;\r\n  text-align: center;\r\n\r\n  border-top: solid 1px grey;\r\n  border-bottom: solid 1px grey;\r\n\r\n  border-right: solid 1px grey;\n}\n.previous[data-v-081ab4b7] {\r\n  border-left: solid 1px grey;\n}\n.schedule__header__date[data-v-081ab4b7] {\r\n  margin-left: 1.4rem;\r\n  color: red;\r\n  font-size: 16px;\r\n  color: rgb(56, 64, 71);\r\n  font-weight: 500;\n}\n.students__list[data-v-081ab4b7],\r\n.nonPaid[data-v-081ab4b7],\r\n.absentees[data-v-081ab4b7] {\r\n  margin-top: 2rem;\n}\n.title[data-v-081ab4b7] {\r\n  /* width: 68%; */\r\n  width: 100%;\r\n  margin: 0 auto;\n}\n.header[data-v-081ab4b7],\r\n.line[data-v-081ab4b7] {\r\n  display: inline-block;\n}\n.header[data-v-081ab4b7] {\r\n  width: 10%;\n}\n.line[data-v-081ab4b7] {\r\n  font-size: 15px;\r\n  width: 54%;\r\n  vertical-align: middle;\n}\r\n\r\n/* Styling Tables */\n.table[data-v-081ab4b7] {\r\n  text-align: center;\r\n  background-color: #dadfe1;\r\n  width: 65%;\n}\n.tr[data-v-081ab4b7] {\r\n  text-align: center;\r\n  border: solid 2px #bbbcbd;\n}\n.tfoot[data-v-081ab4b7] {\r\n  width: 100%;\n}\n.last_tr[data-v-081ab4b7] {\r\n  width: 100%;\r\n  text-align: right;\n}\n.addStudent[data-v-081ab4b7] {\r\n  padding: 1rem;\n}\n.td[data-v-081ab4b7] {\r\n  padding: 0.5rem;\r\n  /* padding-right: 3rem; */\r\n  border-right: solid 2px #bbbcbd;\n}\r\n", ""]);
+exports.push([module.i, "\n.fa-check[data-v-081ab4b7] {\r\n  color: green;\n}\n.fa-times[data-v-081ab4b7] {\r\n  color: red;\n}\n.fa-times-circle[data-v-081ab4b7] {\r\n  color: red;\r\n  font-size: 1.1rem;\n}\n.container[data-v-081ab4b7] {\r\n  display: flex;\r\n  flex-direction: column;\r\n  justify-content: center;\n}\n.schedule__header[data-v-081ab4b7] {\r\n  display: flex;\r\n  justify-content: flex-start;\r\n  align-items: center;\r\n  align-content: center;\r\n  margin-bottom: 0.5rem;\n}\n.previous[data-v-081ab4b7],\r\n.next[data-v-081ab4b7] {\r\n  width: 15px;\r\n  padding: 0.5rem;\r\n  text-align: center;\r\n\r\n  border-top: solid 1px grey;\r\n  border-bottom: solid 1px grey;\r\n\r\n  border-right: solid 1px grey;\n}\n.previous[data-v-081ab4b7] {\r\n  border-left: solid 1px grey;\n}\n.schedule__header__date[data-v-081ab4b7] {\r\n  margin-left: 1.4rem;\r\n  color: red;\r\n  font-size: 16px;\r\n  color: rgb(56, 64, 71);\r\n  font-weight: 500;\n}\n.students__list[data-v-081ab4b7],\r\n.nonPaid[data-v-081ab4b7],\r\n.absentees[data-v-081ab4b7] {\r\n  margin-top: 2rem;\n}\n.title[data-v-081ab4b7] {\r\n  /* width: 68%; */\r\n  width: 100%;\r\n  margin: 0 auto;\n}\n.header[data-v-081ab4b7],\r\n.line[data-v-081ab4b7] {\r\n  display: inline-block;\n}\n.header[data-v-081ab4b7] {\r\n  width: 10%;\n}\n.line[data-v-081ab4b7] {\r\n  font-size: 15px;\r\n  width: 54%;\r\n  vertical-align: middle;\n}\r\n\r\n/* Styling Tables */\n.table[data-v-081ab4b7] {\r\n  text-align: center;\r\n  background-color: #dadfe1;\r\n  width: 65%;\n}\n.tr[data-v-081ab4b7] {\r\n  text-align: center;\r\n  border: solid 2px #bbbcbd;\n}\n.tfoot[data-v-081ab4b7] {\r\n  width: 100%;\n}\n.last_tr[data-v-081ab4b7] {\r\n  width: 100%;\r\n  text-align: right;\n}\n.addStudent[data-v-081ab4b7] {\r\n  padding: 1rem;\n}\n.tdd[data-v-081ab4b7] {\r\n  padding: 0.5rem;\r\n\r\n  /* padding-right: 3rem; */\r\n  border-right: solid 2px #bbbcbd;\n}\n.td[data-v-081ab4b7] {\r\n  border-right: solid 2px #bbbcbd;\r\n  text-align: left;\n}\n.notEditAble[data-v-081ab4b7] {\r\n  background-color: transparent;\r\n  border: none;\r\n  width: 100%;\r\n  padding: 0.5rem;\r\n\r\n  text-align: center;\n}\n.editAble[data-v-081ab4b7] {\r\n  background-color: white;\r\n  border: none;\r\n  width: 100px;\r\n  height: 100%;\r\n  margin-right: 1rem;\r\n  margin-left: 2rem;\r\n  padding: 0.5rem;\r\n  text-align: center;\r\n  display: inline-block;\n}\n.changeBtn[data-v-081ab4b7] {\r\n  display: inline-block;\r\n  border: solid 1px #bbbcbd;\r\n  padding: 0.5rem;\r\n  background-color: white;\n}\r\n", ""]);
 
 // exports
 
@@ -24539,42 +24658,172 @@ var render = function() {
         ])
       ]),
       _vm._v(" "),
-      _c("table", { staticClass: "table" }, [
-        _vm._m(1),
+      _c("table", { staticClass: "table", attrs: { tt: _vm.tt } }, [
+        _c("thead", { staticClass: "thead" }, [
+          _c("tr", { staticClass: "tr" }, [
+            _c(
+              "td",
+              {
+                staticClass: "tdd",
+                on: {
+                  click: function($event) {
+                    $event.preventDefault()
+                    return _vm.changeEdit($event)
+                  }
+                }
+              },
+              [_c("a", { attrs: { href: "" } }, [_vm._v("modifier ...")])]
+            ),
+            _vm._v(" "),
+            _c("td", { staticClass: "tdd" }, [_vm._v("nombre d 'absence")]),
+            _vm._v(" "),
+            _c("td", { staticClass: "tdd" }, [_vm._v("paiment")]),
+            _vm._v(" "),
+            _c("td", { staticClass: "tdd" }, [_vm._v("contacter")]),
+            _vm._v(" "),
+            _c("td", { staticClass: "tdd" }, [_vm._v("delete")])
+          ])
+        ]),
         _vm._v(" "),
         _c(
           "tbody",
           { staticClass: "tbody" },
           _vm._l(_vm.allStudents, function(student, index) {
-            return _c("tr", { key: index, staticClass: "tr" }, [
-              _c("td", { staticClass: "td" }, [
-                _vm._v(_vm._s(student.first_name + " " + student.last_name))
-              ]),
-              _vm._v(" "),
-              _c("td", { staticClass: "td" }, [
-                _vm._v(_vm._s(" " + student.nb_absences))
-              ]),
-              _vm._v(" "),
-              _c("td", { staticClass: "td" }, [
-                _vm._v(_vm._s(student.is_paid ? "true" : "false"))
-              ]),
-              _vm._v(" "),
-              _c("td", { staticClass: "td" }, [_vm._v("contacter")]),
-              _vm._v(" "),
-              _c("td", { staticClass: "td" }, [
-                _vm._v(_vm._s(student.student_id))
-              ])
-            ])
+            return _c(
+              "tr",
+              { key: index, staticClass: "tr", attrs: { "re-render": index } },
+              [
+                _c("td", { staticClass: "tdd" }, [
+                  _vm._v(_vm._s(student.first_name + " " + student.last_name))
+                ]),
+                _vm._v(" "),
+                _c("td", { staticClass: "td" }, [
+                  _c("input", {
+                    ref: "number-" + index,
+                    refInFor: true,
+                    class: {
+                      editAble: _vm.editAble,
+                      notEditAble: !_vm.editAble
+                    },
+                    attrs: { type: "number", readonly: "" },
+                    domProps: { value: student.nb_absences },
+                    on: {
+                      click: function($event) {
+                        $event.preventDefault()
+                        return _vm.editNumberOfAbsences($event, index)
+                      }
+                    }
+                  }),
+                  _vm._v(" "),
+                  _vm.editAble
+                    ? _c(
+                        "div",
+                        {
+                          staticClass: "changeBtn",
+                          on: {
+                            click: function($event) {
+                              $event.preventDefault()
+                              return _vm.updateNumberOfAbsences($event, index)
+                            }
+                          }
+                        },
+                        [_vm._v("ok")]
+                      )
+                    : _vm._e()
+                ]),
+                _vm._v(" "),
+                _vm.editAble
+                  ? _c("td", { staticClass: "tdd" }, [
+                      _c(
+                        "select",
+                        {
+                          ref: "paid-" + index,
+                          refInFor: true,
+                          attrs: { name: "paid", id: "paid" },
+                          domProps: { value: student.is_paid }
+                        },
+                        [
+                          _c("option", { attrs: { value: "1" } }, [
+                            _vm._v("payé")
+                          ]),
+                          _vm._v(" "),
+                          _c("option", { attrs: { value: "0" } }, [
+                            _vm._v("non-payé")
+                          ])
+                        ]
+                      ),
+                      _vm._v(" "),
+                      _c(
+                        "div",
+                        {
+                          staticClass: "changeBtn",
+                          on: {
+                            click: function($event) {
+                              $event.preventDefault()
+                              return _vm.updatePaidState($event, index)
+                            }
+                          }
+                        },
+                        [_vm._v("ok")]
+                      )
+                    ])
+                  : _vm._e(),
+                _vm._v(" "),
+                !_vm.editAble
+                  ? _c(
+                      "td",
+                      {
+                        ref: "icon-" + index,
+                        refInFor: true,
+                        staticClass: "tdd"
+                      },
+                      [
+                        _c("div", [
+                          _c("i", {
+                            class: [
+                              student.is_paid ? "fas fa-check" : "fas fa-times"
+                            ]
+                          })
+                        ])
+                      ]
+                    )
+                  : _vm._e(),
+                _vm._v(" "),
+                _c("td", { staticClass: "tdd" }, [_vm._v("contacter")]),
+                _vm._v(" "),
+                _c("td", { staticClass: "tdd" }, [
+                  !_vm.editAble
+                    ? _c("div", [
+                        _c("i", { staticClass: "fas fa-times-circle" })
+                      ])
+                    : _c("div", [
+                        _c(
+                          "a",
+                          {
+                            attrs: { href: "#" },
+                            on: {
+                              click: function($event) {
+                                $event.preventDefault()
+                                return _vm.deleteUser($event, index, "all")
+                              }
+                            }
+                          },
+                          [_c("i", { staticClass: "fas fa-times-circle" })]
+                        )
+                      ])
+                ])
+              ]
+            )
           }),
           0
         ),
         _vm._v(" "),
-        _vm._m(2)
+        _vm._m(1)
       ])
     ]),
     _vm._v(" "),
     _c("div", { staticClass: "nonPaid" }, [
-      _vm._m(3),
+      _vm._m(2),
       _vm._v(" "),
       _c("div", { staticClass: "schedule__header" }, [
         _c(
@@ -24623,20 +24872,34 @@ var render = function() {
       ]),
       _vm._v(" "),
       _c("table", { staticClass: "table" }, [
-        _vm._m(4),
+        _vm._m(3),
         _vm._v(" "),
         _c(
           "tbody",
           { staticClass: "tbody" },
           _vm._l(_vm.nonPaid, function(student, index) {
             return _c("tr", { key: "non-paid-" + index, staticClass: "tr" }, [
-              _c("td", { staticClass: "td" }, [
+              _c("td", { staticClass: "tdd" }, [
                 _vm._v(_vm._s(student.first_name + " " + student.last_name))
               ]),
               _vm._v(" "),
-              _c("td", { staticClass: "td" }, [_vm._v("notifier")]),
+              _c("td", { staticClass: "tdd" }, [_vm._v("notifier")]),
               _vm._v(" "),
-              _c("td", { staticClass: "td" }, [_vm._v("delete")])
+              _c("td", { staticClass: "tdd" }, [
+                _c(
+                  "a",
+                  {
+                    attrs: { href: "#" },
+                    on: {
+                      click: function($event) {
+                        $event.preventDefault()
+                        return _vm.deleteUser($event, index, student.student_id)
+                      }
+                    }
+                  },
+                  [_c("i", { staticClass: "fas fa-times-circle" })]
+                )
+              ])
             ])
           }),
           0
@@ -24645,7 +24908,7 @@ var render = function() {
     ]),
     _vm._v(" "),
     _c("div", { staticClass: "absentees" }, [
-      _vm._m(5),
+      _vm._m(4),
       _vm._v(" "),
       _c("div", { staticClass: "schedule__header" }, [
         _c(
@@ -24694,7 +24957,7 @@ var render = function() {
       ]),
       _vm._v(" "),
       _c("table", { staticClass: "table" }, [
-        _vm._m(6),
+        _vm._m(5),
         _vm._v(" "),
         _c(
           "tbody",
@@ -24733,24 +24996,6 @@ var staticRenderFns = [
     var _vm = this
     var _h = _vm.$createElement
     var _c = _vm._self._c || _h
-    return _c("thead", { staticClass: "thead" }, [
-      _c("tr", { staticClass: "tr" }, [
-        _c("td", { staticClass: "td" }, [_vm._v("edit...")]),
-        _vm._v(" "),
-        _c("td", { staticClass: "td" }, [_vm._v("nombre d 'absence")]),
-        _vm._v(" "),
-        _c("td", { staticClass: "td" }, [_vm._v("paiment")]),
-        _vm._v(" "),
-        _c("td", { staticClass: "td" }, [_vm._v("contacter")]),
-        _vm._v(" "),
-        _c("td", { staticClass: "td" }, [_vm._v("studentID")])
-      ])
-    ])
-  },
-  function() {
-    var _vm = this
-    var _h = _vm.$createElement
-    var _c = _vm._self._c || _h
     return _c("tfoot", { staticClass: "tfoot" }, [
       _c("tr", { staticClass: "tr last_tr" }, [
         _c(
@@ -24779,11 +25024,11 @@ var staticRenderFns = [
     var _c = _vm._self._c || _h
     return _c("thead", { staticClass: "thead" }, [
       _c("tr", { staticClass: "tr" }, [
-        _c("td", { staticClass: "td" }, [_vm._v("edit...")]),
+        _c("td", { staticClass: "tdd" }),
         _vm._v(" "),
-        _c("td", { staticClass: "td" }, [_vm._v("notifier")]),
+        _c("td", { staticClass: "tdd" }, [_vm._v("notifier")]),
         _vm._v(" "),
-        _c("td", { staticClass: "td" })
+        _c("td", { staticClass: "tdd" }, [_vm._v("delete")])
       ])
     ])
   },
@@ -24803,7 +25048,7 @@ var staticRenderFns = [
     var _c = _vm._self._c || _h
     return _c("thead", { staticClass: "thead" }, [
       _c("tr", { staticClass: "tr" }, [
-        _c("td", { staticClass: "td" }, [_vm._v("edit...")]),
+        _c("td", { staticClass: "td" }),
         _vm._v(" "),
         _c("td", { staticClass: "td" }, [_vm._v("nombre d 'absence")]),
         _vm._v(" "),

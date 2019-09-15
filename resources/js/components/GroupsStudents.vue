@@ -27,23 +27,64 @@
           class="schedule__header__date"
         >{{ this.months[currentMonthAll.getUTCMonth()] }} {{currentMonthAll.getFullYear()}}</h2>
       </div>
-      <table class="table">
+      <table class="table" :tt="tt">
         <thead class="thead">
           <tr class="tr">
-            <td class="td">edit...</td>
-            <td class="td">nombre d 'absence</td>
-            <td class="td">paiment</td>
-            <td class="td">contacter</td>
-            <td class="td">studentID</td>
+            <td @click.prevent="changeEdit" class="tdd">
+              <a href>modifier ...</a>
+            </td>
+            <td class="tdd">nombre d 'absence</td>
+            <td class="tdd">paiment</td>
+            <td class="tdd">contacter</td>
+            <td class="tdd">delete</td>
           </tr>
         </thead>
         <tbody class="tbody">
-          <tr class="tr" v-for="(student,index) in allStudents" v-bind:key="index">
-            <td class="td">{{student.first_name + ' ' + student.last_name}}</td>
-            <td class="td">{{ ' '+student.nb_absences}}</td>
-            <td class="td">{{student.is_paid ? 'true': 'false' }}</td>
-            <td class="td">contacter</td>
-            <td class="td">{{student.student_id}}</td>
+          <tr
+            class="tr"
+            v-for="(student,index) in allStudents"
+            v-bind:key="index"
+            :re-render="index"
+          >
+            <td class="tdd">{{student.first_name + ' ' + student.last_name}}</td>
+            <td class="td">
+              <input
+                @click.prevent="editNumberOfAbsences($event,index)"
+                :ref="`number-${index}`"
+                type="number"
+                :class="{editAble: editAble , notEditAble:!editAble}"
+                :value="student.nb_absences"
+                readonly
+              />
+              <div
+                class="changeBtn"
+                v-if="editAble"
+                @click.prevent="updateNumberOfAbsences($event,index)"
+              >ok</div>
+            </td>
+            <td v-if="editAble" class="tdd">
+              <select :ref="`paid-${index}`" name="paid" id="paid" :value="student.is_paid">
+                <option value="1">payé</option>
+                <option value="0">non-payé</option>
+              </select>
+              <div class="changeBtn" @click.prevent="updatePaidState($event,index)">ok</div>
+            </td>
+            <td v-if="!editAble" :ref="`icon-${index}`" class="tdd">
+              <div>
+                <i :class="[student.is_paid ? 'fas fa-check' : 'fas fa-times']"></i>
+              </div>
+            </td>
+            <td class="tdd">contacter</td>
+            <td class="tdd">
+              <div v-if="!editAble">
+                <i class="fas fa-times-circle"></i>
+              </div>
+              <div v-else>
+                <a @click.prevent="deleteUser($event,index,'all')" href="#">
+                  <i class="fas fa-times-circle"></i>
+                </a>
+              </div>
+            </td>
           </tr>
         </tbody>
         <tfoot class="tfoot">
@@ -76,16 +117,20 @@
       <table class="table">
         <thead class="thead">
           <tr class="tr">
-            <td class="td">edit...</td>
-            <td class="td">notifier</td>
-            <td class="td"></td>
+            <td class="tdd"></td>
+            <td class="tdd">notifier</td>
+            <td class="tdd">delete</td>
           </tr>
         </thead>
         <tbody class="tbody">
           <tr class="tr" v-for="(student,index) in nonPaid" v-bind:key="`non-paid-${index}`">
-            <td class="td">{{student.first_name + ' ' + student.last_name}}</td>
-            <td class="td">notifier</td>
-            <td class="td">delete</td>
+            <td class="tdd">{{student.first_name + ' ' + student.last_name}}</td>
+            <td class="tdd">notifier</td>
+            <td class="tdd">
+              <a @click.prevent="deleteUser($event,index,student.student_id)" href="#">
+                <i class="fas fa-times-circle"></i>
+              </a>
+            </td>
           </tr>
         </tbody>
       </table>
@@ -110,7 +155,7 @@
       <table class="table">
         <thead class="thead">
           <tr class="tr">
-            <td class="td">edit...</td>
+            <td class="td"></td>
             <td class="td">nombre d 'absence</td>
             <td class="td">notifier</td>
           </tr>
@@ -132,6 +177,10 @@ export default {
   name: "GroupStudents",
   data() {
     return {
+      editAble: true,
+      abcenseIndex: [],
+      index: 0,
+      tt: 0,
       months: [
         "janvier",
         "fevrier",
@@ -171,6 +220,71 @@ export default {
       currentMonth.setMonth(currentMonth.getUTCMonth() + 1);
 
       this[storeAt] = currentMonth;
+    },
+    changeEdit() {
+      if (this.editAble) {
+        this.editAble = null;
+      } else {
+        this.editAble = true;
+      }
+    },
+
+    editNumberOfAbsences(e, index) {
+      e.preventDefault();
+      if (this.editAble) {
+        this.$refs[`number-${index}`][0].removeAttribute("readonly");
+        this.abcenseIndex.push(index);
+      }
+    },
+    updateNumberOfAbsences(e, index) {
+      e.preventDefault();
+      // console.log(this.$refs[`number-${index}`][0].value);
+      this.allStudents[index].nb_absences = this.$refs[
+        `number-${index}`
+      ][0].value;
+      this.abcenseIndex.forEach(el => {
+        this.$refs[`number-${el}`][0].setAttribute("readonly", "readonly");
+      });
+      this.editAble = null;
+    },
+
+    updatePaidState(e, index) {
+      let newVal = Number(this.$refs[`paid-${index}`][0].value);
+      this.$set(this.allStudents[index], "is_paid", newVal);
+      this.editAble = false;
+    },
+    deleteUser(event, index, condition) {
+      if (condition === "all") {
+        if (this.selectedGroup === null) {
+          this.$delete(this.groupStudents[0], index);
+        } else {
+          this.$delete(this.groupStudents[this.selectedGroup - 1], index);
+        }
+        this.editAble = null;
+      } else {
+        if (this.selectedGroup === null) {
+          for (let i = 0; i < this.groupStudents[0].length; i++) {
+            if (this.groupStudents[0][i].student_id === condition) {
+              this.$delete(this.groupStudents[0], i);
+              break;
+            }
+          }
+        } else {
+          for (
+            let i = 0;
+            i < this.groupStudents[this.selectedGroup - 1].length;
+            i++
+          ) {
+            if (
+              this.groupStudents[this.selectedGroup - 1][i].student_id ===
+              condition
+            ) {
+              this.$delete(this.groupStudents[this.selectedGroup - 1], i);
+              break;
+            }
+          }
+        }
+      }
     }
   },
   computed: {
@@ -192,9 +306,14 @@ export default {
             el.date.split("-")[1] == this.currentMonthAll.getMonth() + 1
           );
         });
-      } else if (this.groupStudents && this.selectedGroup) {
+      } else if (
+        this.selectedGroup &&
+        this.groupStudents[this.selectedGroup - 1]
+      ) {
         let group = this.groupStudents.filter(el => {
-          return el[0].group_id == this.selectedGroup;
+          if (el.length !== 0) {
+            return el[0].group_id == this.selectedGroup;
+          }
         });
 
         return group[0]
@@ -207,6 +326,8 @@ export default {
               );
             })
           : null;
+      } else {
+        return null;
       }
     },
     nonPaid: function() {
@@ -218,9 +339,14 @@ export default {
             !el.is_paid
           );
         });
-      } else if (this.groupStudents && this.selectedGroup) {
+      } else if (
+        this.selectedGroup &&
+        this.groupStudents[this.selectedGroup - 1]
+      ) {
         let group = this.groupStudents.filter(el => {
-          return el[0].group_id == this.selectedGroup;
+          if (el.length !== 0) {
+            return el[0].group_id == this.selectedGroup;
+          }
         });
 
         return group[0]
@@ -234,6 +360,8 @@ export default {
               );
             })
           : null;
+      } else {
+        return null;
       }
     },
     Absentees: function() {
@@ -246,9 +374,14 @@ export default {
             !el.is_paid
           );
         });
-      } else if (this.groupStudents && this.selectedGroup) {
+      } else if (
+        this.selectedGroup &&
+        this.groupStudents[this.selectedGroup - 1]
+      ) {
         let group = this.groupStudents.filter(el => {
-          return el[0].group_id == this.selectedGroup;
+          if (el.length !== 0) {
+            return el[0].group_id == this.selectedGroup;
+          }
         });
 
         return group[0]
@@ -262,6 +395,8 @@ export default {
               );
             })
           : null;
+      } else {
+        return null;
       }
     }
   },
@@ -278,6 +413,17 @@ export default {
 </script>
 
 <style  scoped>
+.fa-check {
+  color: green;
+}
+.fa-times {
+  color: red;
+}
+.fa-times-circle {
+  color: red;
+  font-size: 1.1rem;
+}
+
 .container {
   display: flex;
   flex-direction: column;
@@ -366,9 +512,43 @@ export default {
   padding: 1rem;
 }
 
-.td {
+.tdd {
   padding: 0.5rem;
+
   /* padding-right: 3rem; */
   border-right: solid 2px #bbbcbd;
+}
+
+.td {
+  border-right: solid 2px #bbbcbd;
+  text-align: left;
+}
+
+.notEditAble {
+  background-color: transparent;
+  border: none;
+  width: 100%;
+  padding: 0.5rem;
+
+  text-align: center;
+}
+
+.editAble {
+  background-color: white;
+  border: none;
+  width: 100px;
+  height: 100%;
+  margin-right: 1rem;
+  margin-left: 2rem;
+  padding: 0.5rem;
+  text-align: center;
+  display: inline-block;
+}
+
+.changeBtn {
+  display: inline-block;
+  border: solid 1px #bbbcbd;
+  padding: 0.5rem;
+  background-color: white;
 }
 </style>

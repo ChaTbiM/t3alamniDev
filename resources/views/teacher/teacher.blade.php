@@ -54,8 +54,5 @@
 
 @endsection
 
+<script src="https://kit.fontawesome.com/c6074d3ce5.js"></script>
 
-<script>
-
- 
-</script>

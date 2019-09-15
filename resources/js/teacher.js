@@ -5,6 +5,7 @@
  */
 
 // require("./bootstrap");
+
 import VCalendar from "v-calendar";
 
 window.Vue = require("vue");
@@ -42,6 +43,7 @@ const router = new VueRouter({
 // files.keys().map(key => Vue.component(key.split('/').pop().split('.')[0], files(key).default));
 
 // Vue.component("example", require("./components/Example.vue").default);
+
 Vue.component(
     "schedule-page",
     require("./components/SchedulePage.vue").default
