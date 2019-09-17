@@ -2666,6 +2666,64 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 /* harmony default export */ __webpack_exports__["default"] = ({
   name: "GroupStudents",
   data: function data() {
@@ -2777,7 +2835,7 @@ __webpack_require__.r(__webpack_exports__);
     searchStudent: function searchStudent(e) {
       // let name = this.$refs["search-input"].value;
       var name = e.target.value;
-      var selectedGroup = this.selectedGroup || 1;
+      var selectedGroup = this.selectedGroup || this.modules[0].groupId;
       var vm = this;
       axios.get(route("searchStudents"), {
         params: {
@@ -2835,6 +2893,32 @@ __webpack_require__.r(__webpack_exports__);
           this.groupStudents.push([addTo(this.modules[0].groupId)]);
         }
       }
+    },
+    createStudent: function createStudent(e) {
+      var date = new Date();
+      var formData = new FormData(this.$refs["createStudent"]); // const month = `${date.getFullYear()}-0${date.getUTCMonth + 1}-${
+      //   date.getDate
+      // }`;
+
+      var year = date.getFullYear();
+      var month = date.getMonth() < 9 ? "0" + String(date.getMonth() + 1) : date.getMonth() + 1;
+      var day = date.getDate();
+      var hours = "".concat(date.getHours(), ":00:00");
+      date = year + "-" + month + "-" + day;
+      var is_paid = 0;
+      var is_validated = 0;
+      var nb_absences = 0;
+      var group_id = this.selectedGroup || this.modules[0].groupId;
+      formData.append("time", hours);
+      formData.append("date", date);
+      formData.append("group_id", group_id); // formData.append("is_paid", is_paid);
+      // formData.append("is_validated", is_validated);
+      // formData.append("nb_absences", nb_absences);
+
+      console.log(formData);
+      axios.post(route("createStudent"), formData).then(function (res) {
+        return console.log(res);
+      });
     }
   },
   computed: {
@@ -25216,6 +25300,63 @@ var render = function() {
               0
             )
           ])
+        ]),
+        _vm._v(" "),
+        _c("div", { staticClass: "create" }, [
+          _c(
+            "form",
+            {
+              ref: "createStudent",
+              attrs: { id: "createStudent", action: "#" },
+              on: {
+                submit: function($event) {
+                  $event.preventDefault()
+                  return _vm.createStudent($event)
+                }
+              }
+            },
+            [
+              _vm._m(7),
+              _vm._v(" "),
+              _vm._m(8),
+              _vm._v(" "),
+              _vm._m(9),
+              _vm._v(" "),
+              _vm._m(10),
+              _vm._v(" "),
+              _vm._m(11),
+              _vm._v(" "),
+              _vm._m(12),
+              _vm._v(" "),
+              _vm._m(13),
+              _vm._v(" "),
+              _vm._m(14),
+              _vm._v(" "),
+              _vm._m(15),
+              _vm._v(" "),
+              _c("label", { attrs: { for: "group_id" } }, [
+                _vm._v("\n          Groupe\n          "),
+                _c(
+                  "select",
+                  { attrs: { name: "group_id", id: "group_id" } },
+                  _vm._l(_vm.modules, function(module, index) {
+                    return _c(
+                      "option",
+                      { key: index, domProps: { value: module.groupId } },
+                      [_vm._v(_vm._s(module.groupName))]
+                    )
+                  }),
+                  0
+                )
+              ]),
+              _vm._v(" "),
+              _c("button", { attrs: { type: "submit" } }, [
+                _vm._v("create student")
+              ]),
+              _vm._v(" "),
+              _c("button", { attrs: { type: "reset" } }, [_vm._v("reset")])
+            ]
+          )
         ])
       ]
     )
@@ -25308,6 +25449,103 @@ var staticRenderFns = [
         _vm._v(" "),
         _c("td", { staticClass: "tdd" }, [_vm._v("Ajouter")])
       ])
+    ])
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("label", { attrs: { for: "user_name" } }, [
+      _vm._v("\n          user_name\n          "),
+      _c("input", {
+        attrs: { type: "text", name: "user_name", id: "user_name" }
+      })
+    ])
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("label", { attrs: { for: "password" } }, [
+      _vm._v("\n          mot de pass:\n          "),
+      _c("input", {
+        attrs: { type: "password", name: "password", id: "password" }
+      })
+    ])
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("label", { attrs: { for: "email" } }, [
+      _vm._v("\n          Email:\n          "),
+      _c("input", { attrs: { type: "email", name: "email", id: "email" } })
+    ])
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("label", { attrs: { for: "first_name" } }, [
+      _vm._v("\n          Nom:\n          "),
+      _c("input", {
+        attrs: { type: "text", name: "first_name", id: "first_name" }
+      })
+    ])
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("label", { attrs: { for: "last_name" } }, [
+      _vm._v("\n          Prenom:\n          "),
+      _c("input", {
+        attrs: { id: "last_name", name: "last_name", type: "text" }
+      })
+    ])
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("label", { attrs: { for: "age" } }, [
+      _vm._v("\n          Age:\n          "),
+      _c("input", { attrs: { type: "text", id: "age", name: "age" } })
+    ])
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("label", { attrs: { for: "cycle" } }, [
+      _vm._v("\n          Niveau\n          "),
+      _c("select", { attrs: { name: "cycle", id: "cycle" } }, [
+        _c("option", { attrs: { value: "cem" } }, [_vm._v("cem")]),
+        _vm._v(" "),
+        _c("option", { attrs: { value: "lycee" } }, [_vm._v("lycee")]),
+        _vm._v(" "),
+        _c("option", { attrs: { value: "university" } }, [_vm._v("university")])
+      ])
+    ])
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("label", { attrs: { for: "year" } }, [
+      _vm._v("\n          Annee:\n          "),
+      _c("input", { attrs: { type: "text", name: "year", id: "year" } })
+    ])
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("label", { attrs: { for: "specialty" } }, [
+      _vm._v("\n          Specialite:\n          "),
+      _c("input", {
+        attrs: { type: "text", name: "specialty", id: "specialty" }
+      })
     ])
   }
 ]

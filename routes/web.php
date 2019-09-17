@@ -199,6 +199,10 @@ Route::get('teacher/groups/search', 'TeacherController@search')->name(
     'searchStudents'
 );
 
+Route::post('teacher/students/create', 'TeacherController@createStudent')->name(
+    'createStudent'
+);
+
 // test upload
 // Route::get('teacher/test', 'TeacherController@testIndex');
 // Route::post('teacher/fixed', 'TeacherController@addFixed')->name('upload');

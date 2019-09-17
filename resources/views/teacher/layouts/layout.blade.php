@@ -27,6 +27,10 @@
     <nav class="nav">
         <div class="nav__top">
             <ul class="nav__top__left">
+                <form action="{{ route('teacher.logout') }}" method="post">
+                    <button type="submit">logout</button>
+                    @csrf
+                </form>
                 <li class="nav__list__item"><a href="#" class="nav__list__item__link top__link logo">Logo</a></li>
                 <li class="nav__list__item"><a href="#" class="nav__list__item__link top__link first__li">All demand session</a></li>
                 <li class="nav__list__item"><a href="#" class="nav__list__item__link top__link">Packs session</a></li>

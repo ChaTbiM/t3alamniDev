@@ -209,6 +209,64 @@
           </tbody>
         </table>
       </div>
+
+      <div class="create">
+        <form ref="createStudent" id="createStudent" @submit.prevent="createStudent" action="#">
+          <label for="user_name">
+            user_name
+            <input type="text" name="user_name" id="user_name" />
+          </label>
+          <label for="password">
+            mot de pass:
+            <input type="password" name="password" id="password" />
+          </label>
+          <label for="email">
+            Email:
+            <input type="email" name="email" id="email" />
+          </label>
+          <label for="first_name">
+            Nom:
+            <input type="text" name="first_name" id="first_name" />
+          </label>
+          <label for="last_name">
+            Prenom:
+            <input id="last_name" name="last_name" type="text" />
+          </label>
+          <label for="age">
+            Age:
+            <input type="text" id="age" name="age" />
+          </label>
+          <label for="cycle">
+            Niveau
+            <select name="cycle" id="cycle">
+              <option value="cem">cem</option>
+              <option value="lycee">lycee</option>
+              <option value="university">university</option>
+            </select>
+          </label>
+          <label for="year">
+            Annee:
+            <input type="text" name="year" id="year" />
+          </label>
+          <label for="specialty">
+            Specialite:
+            <input type="text" name="specialty" id="specialty" />
+          </label>
+          <label for="group_id">
+            Groupe
+            <select name="group_id" id="group_id">
+              <option
+                v-for="(module,index) in modules"
+                v-bind:key="index"
+                :value="module.groupId"
+              >{{module.groupName}}</option>
+            </select>
+          </label>
+
+          <button type="submit">create student</button>
+          <button type="reset">reset</button>
+        </form>
+      </div>
     </div>
   </div>
 </template>
@@ -339,7 +397,7 @@ export default {
     searchStudent: function(e) {
       // let name = this.$refs["search-input"].value;
       let name = e.target.value;
-      let selectedGroup = this.selectedGroup || 1;
+      let selectedGroup = this.selectedGroup || this.modules[0].groupId;
       const vm = this;
       axios
         .get(route("searchStudents"), {
@@ -399,6 +457,42 @@ export default {
           this.groupStudents.push([addTo(this.modules[0].groupId)]);
         }
       }
+    },
+
+    createStudent(e) {
+      let date = new Date();
+
+      const formData = new FormData(this.$refs["createStudent"]);
+
+      // const month = `${date.getFullYear()}-0${date.getUTCMonth + 1}-${
+      //   date.getDate
+      // }`;
+      const year = date.getFullYear();
+      const month =
+        date.getMonth() < 9
+          ? "0" + String(date.getMonth() + 1)
+          : date.getMonth() + 1;
+      const day = date.getDate();
+
+      const hours = `${date.getHours()}:00:00`;
+      date = year + "-" + month + "-" + day;
+
+      const is_paid = 0;
+      const is_validated = 0;
+      const nb_absences = 0;
+      const group_id = this.selectedGroup || this.modules[0].groupId;
+
+      formData.append("time", hours);
+      formData.append("date", date);
+      formData.append("group_id", group_id);
+      // formData.append("is_paid", is_paid);
+      // formData.append("is_validated", is_validated);
+      // formData.append("nb_absences", nb_absences);
+
+      console.log(formData);
+      axios
+        .post(route("createStudent"), formData)
+        .then(res => console.log(res));
     }
   },
   computed: {

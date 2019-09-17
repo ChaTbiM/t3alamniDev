@@ -12,6 +12,8 @@ use App\FixedSession;
 use App\SimpleSession;
 use App\joinGroup;
 
+use Illuminate\Support\Facades\Hash;
+
 use Illuminate\Support\Facades\DB;
 
 use Spatie\Permission\Models\Role;
@@ -187,14 +189,32 @@ class TeacherController extends Controller
         }
     }
 
-    //test upload
-    // public function testIndex(Request $request)
-    // {
-    //     return view('teacher.test');
-    // }
+    public function createStudent(Request $request)
+    {
+        if ($request->ajax()) {
+            $student = Student::create([
+                'name' => $request['user_name'],
+                'email' => $request['email'],
+                'password' => Hash::make($request['password']),
+                'first_name' => $request['first_name'],
+                'last_name' => $request['last_name'],
+                'age' => $request['age'],
+                'cycle' => $request['cycle'],
+                'year' => (int) $request['year'],
+                'specialty' => $request['specialty']
+            ]);
 
-    // public function testUpload(Request $request)
-    // {
-    //     dd($request->file('filew'));
-    // }
+            joinGroup::create([
+                'nb_absences' => 0,
+                'is_paid' => 0,
+                'is_validated' => 0,
+                'time' => $request->time,
+                'date' => $request->date,
+                'group_id' => (int) $request->group_id,
+                'student_id' => $student->id
+            ]);
+
+            return response()->json('worked', 200);
+        }
+    }
 }
