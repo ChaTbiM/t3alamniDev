@@ -195,6 +195,10 @@ Route::get('teacher/groups/joined', 'GroupsController@getStudents')->name(
     'getGroupsStudents'
 );
 
+Route::get('teacher/groups/search', 'TeacherController@search')->name(
+    'searchStudents'
+);
+
 // test upload
 // Route::get('teacher/test', 'TeacherController@testIndex');
 // Route::post('teacher/fixed', 'TeacherController@addFixed')->name('upload');

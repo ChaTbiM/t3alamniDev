@@ -80,7 +80,7 @@
                 <i class="fas fa-times-circle"></i>
               </div>
               <div v-else>
-                <a @click.prevent="deleteUser($event,index,'all')" href="#">
+                <a @click.prevent="deleteUser($event,index,student.student_id)" href="#">
                   <i class="fas fa-times-circle"></i>
                 </a>
               </div>
@@ -89,7 +89,9 @@
         </tbody>
         <tfoot class="tfoot">
           <tr class="tr last_tr">
-            <th colspan="5" rowspan="2" class="addStudent">Add Student</th>
+            <th colspan="5" rowspan="2" class="addStudent">
+              <i class="fas fa-plus"></i>
+            </th>
           </tr>
         </tfoot>
       </table>
@@ -169,6 +171,45 @@
         </tbody>
       </table>
     </div>
+
+    <div class="modal" v-show="chooseStudentOpen">
+      <div class="close">X</div>
+      <div class="content">
+        <form action="#">
+          <label for="search">search</label>
+          <input
+            @keyup.prevent="searchStudent"
+            ref="search-input"
+            type="text"
+            id="search"
+            v-model="search"
+          />
+        </form>
+        <table>
+          <thead>
+            <tr class="tr">
+              <td class="tdd">Nom:</td>
+              <td class="tdd">Prénom:</td>
+              <td class="tdd">Ajouter</td>
+            </tr>
+          </thead>
+          <tbody id="tbody" ref="search-tbody">
+            <tr
+              class="tr"
+              v-show="searchedStudents"
+              v-bind:key="i"
+              v-for="(student,i) in searchedStudents"
+            >
+              <td class="tdd">{{student.first_name}}</td>
+              <td class="tdd">{{student.last_name}}</td>
+              <td @click.prevent="addStudent($event,i)" class="add tdd">
+                <i class="fas fa-plus"></i>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -198,9 +239,14 @@ export default {
       currentMonth: null,
       currentMonthAll: null,
       currentMonthNonPaid: null,
-      currentMonthAbsentees: null
+      currentMonthAbsentees: null,
 
-      // groupStudents: null
+      search: null,
+      chooseStudentOpen: true,
+
+      searchedStudents: null
+      // groupStudents: null,
+      // groups: []
     };
   },
   methods: {
@@ -253,41 +299,114 @@ export default {
       this.$set(this.allStudents[index], "is_paid", newVal);
       this.editAble = false;
     },
+    //deleteUser should be changed
     deleteUser(event, index, condition) {
-      if (condition === "all") {
-        if (this.selectedGroup === null) {
-          this.$delete(this.groupStudents[0], index);
+      if (this.editAble) {
+        if (this.selectedGroup) {
+          let foundArr = this.groupStudents.findIndex(
+            el => el[0].group_id == this.selectedGroup
+          );
+          foundArr++;
+
+          if (foundArr) {
+            let foundElement = this.groupStudents[foundArr - 1].findIndex(
+              el => el.student_id === condition
+            );
+            foundElement++;
+            if (foundElement--) {
+              this.$delete(this.groupStudents[foundArr - 1], foundElement--);
+            }
+
+            if (this.groupStudents[foundArr - 1].length === 0) {
+              this.$delete(this.groupStudents, foundArr - 1);
+            }
+          }
         } else {
-          this.$delete(this.groupStudents[this.selectedGroup - 1], index);
+          let foundElement = this.groupStudents[0].findIndex(
+            el => el.student_id === condition
+          );
+          foundElement++;
+          if (foundElement--) {
+            this.$delete(this.groupStudents[0], foundElement--);
+          }
+
+          if (this.groupStudents[0].length === 0) {
+            this.$delete(this.groupStudents, 0);
+          }
         }
-        this.editAble = null;
-      } else {
-        if (this.selectedGroup === null) {
-          for (let i = 0; i < this.groupStudents[0].length; i++) {
-            if (this.groupStudents[0][i].student_id === condition) {
-              this.$delete(this.groupStudents[0], i);
-              break;
-            }
+      }
+    },
+    searchStudent: function(e) {
+      // let name = this.$refs["search-input"].value;
+      let name = e.target.value;
+      let selectedGroup = this.selectedGroup || 1;
+      const vm = this;
+      axios
+        .get(route("searchStudents"), {
+          params: {
+            search: name,
+            selectedGroup: selectedGroup
+          }
+        })
+        .then(function(res) {
+          vm.searchedStudents = res.data;
+        });
+    },
+    addStudent(e, index) {
+      let date = new Date();
+
+      let addTo = group => {
+        return {
+          created_at: null,
+          first_name: this.searchedStudents[index].first_name,
+          last_name: this.searchedStudents[index].last_name,
+          group_id: Number(group),
+          is_paid: 0,
+          is_validated: 0,
+          nb_absences: 0,
+          student_id: this.searchedStudents[index].student_id,
+          date: `${date.getFullYear()}-0${date.getUTCMonth() +
+            1}-${date.getDate()}`,
+          time: `${date.getHours()}:00:00`,
+          updated_at: null
+          // id: lastId
+        };
+      };
+
+      if (this.groupStudents.length) {
+        if (this.selectedGroup) {
+          let found = this.groupStudents.findIndex(
+            el => el[0].group_id == this.selectedGroup
+          );
+          found++;
+
+          if (found) {
+            console.log("found", found);
+            this.groupStudents[found - 1].push(addTo(this.selectedGroup));
+          } else {
+            console.log("not found", found);
+
+            this.groupStudents.push([addTo(this.selectedGroup)]);
           }
         } else {
-          for (
-            let i = 0;
-            i < this.groupStudents[this.selectedGroup - 1].length;
-            i++
-          ) {
-            if (
-              this.groupStudents[this.selectedGroup - 1][i].student_id ===
-              condition
-            ) {
-              this.$delete(this.groupStudents[this.selectedGroup - 1], i);
-              break;
-            }
-          }
+          this.groupStudents[0].push(addTo(this.groupStudents[0][0].group_id));
+        }
+      } else {
+        // if there is no joined students
+        if (this.selectedGroup) {
+          this.groupStudents.push([addTo(this.selectedGroup)]);
+        } else {
+          this.groupStudents.push([addTo(this.modules[0].groupId)]);
         }
       }
     }
   },
   computed: {
+    modules: {
+      get() {
+        return this.$store.getters.modules;
+      }
+    },
     selectedGroup: {
       get() {
         return this.$store.getters.groupID;
@@ -300,16 +419,17 @@ export default {
     },
     allStudents: function() {
       if (this.groupStudents && !this.selectedGroup) {
-        return this.groupStudents[0].filter(el => {
-          return (
-            el.date.split("-")[0] == this.currentMonthAll.getFullYear() &&
-            el.date.split("-")[1] == this.currentMonthAll.getMonth() + 1
-          );
-        });
-      } else if (
-        this.selectedGroup &&
-        this.groupStudents[this.selectedGroup - 1]
-      ) {
+        // if (this.groupStudents[0].length !== 0) {
+        return this.groupStudents[0]
+          ? this.groupStudents[0].filter(el => {
+              return (
+                el.date.split("-")[0] == this.currentMonthAll.getFullYear() &&
+                el.date.split("-")[1] == this.currentMonthAll.getMonth() + 1
+              );
+            })
+          : null;
+        // }
+      } else if (this.selectedGroup && this.groupStudents) {
         let group = this.groupStudents.filter(el => {
           if (el.length !== 0) {
             return el[0].group_id == this.selectedGroup;
@@ -329,19 +449,28 @@ export default {
       } else {
         return null;
       }
+
+      if (this.groupStudents.length === 0) {
+        this.groupStudents = null;
+      }
     },
     nonPaid: function() {
       if (this.groupStudents && !this.selectedGroup) {
-        return this.groupStudents[0].filter(el => {
-          return (
-            el.date.split("-")[0] == this.currentMonthNonPaid.getFullYear() &&
-            el.date.split("-")[1] == this.currentMonthNonPaid.getMonth() + 1 &&
-            !el.is_paid
-          );
-        });
+        return this.groupStudents[0]
+          ? this.groupStudents[0].filter(el => {
+              return (
+                el.date.split("-")[0] ==
+                  this.currentMonthNonPaid.getFullYear() &&
+                el.date.split("-")[1] ==
+                  this.currentMonthNonPaid.getMonth() + 1 &&
+                !el.is_paid
+              );
+            })
+          : null;
       } else if (
-        this.selectedGroup &&
-        this.groupStudents[this.selectedGroup - 1]
+        this.selectedGroup
+        //  &&
+        // this.groupStudents[this.selectedGroup - 1]
       ) {
         let group = this.groupStudents.filter(el => {
           if (el.length !== 0) {
@@ -366,17 +495,21 @@ export default {
     },
     Absentees: function() {
       if (this.groupStudents && !this.selectedGroup) {
-        return this.groupStudents[0].filter(el => {
-          return (
-            el.date.split("-")[0] == this.currentMonthAbsentees.getFullYear() &&
-            el.date.split("-")[1] ==
-              this.currentMonthAbsentees.getMonth() + 1 &&
-            !el.is_paid
-          );
-        });
+        return this.groupStudents[0]
+          ? this.groupStudents[0].filter(el => {
+              return (
+                el.date.split("-")[0] ==
+                  this.currentMonthAbsentees.getFullYear() &&
+                el.date.split("-")[1] ==
+                  this.currentMonthAbsentees.getMonth() + 1 &&
+                !el.is_paid
+              );
+            })
+          : null;
       } else if (
-        this.selectedGroup &&
-        this.groupStudents[this.selectedGroup - 1]
+        this.selectedGroup
+        //  &&
+        // this.groupStudents[this.selectedGroup - 1]
       ) {
         let group = this.groupStudents.filter(el => {
           if (el.length !== 0) {
@@ -400,6 +533,7 @@ export default {
       }
     }
   },
+
   // life Cycle Hooks
   created() {
     this.currentMonthAll = this.getCurrentMonth();
@@ -413,9 +547,12 @@ export default {
 </script>
 
 <style  scoped>
-.fa-check {
+.fa-check,
+.fa-plus {
   color: green;
+  cursor: pointer;
 }
+
 .fa-times {
   color: red;
 }

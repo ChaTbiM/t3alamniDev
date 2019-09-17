@@ -151,6 +151,7 @@ export const store = new Vuex.Store({
 
             if (data.status === 200) {
                 context.commit("changeGroupStudents", data.data);
+                // console.log(data.data, "groups");
             }
         }
     },

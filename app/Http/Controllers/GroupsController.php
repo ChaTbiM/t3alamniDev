@@ -33,7 +33,14 @@ class GroupsController extends Controller
                     $item['first_name'] = $first_name;
                     $item['last_name'] = $last_name;
                 }
-                array_push($data, $info);
+                array_push(
+                    $data,
+                    $info
+                    // array(
+                    //     'info' => $info,
+                    //     'group_id' => $group->id
+                    // )
+                );
             } else {
                 continue;
             }

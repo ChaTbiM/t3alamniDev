@@ -6,9 +6,13 @@ use Auth;
 use Illuminate\Http\Request;
 
 use App\Teacher;
+use App\Student;
 use App\Document;
 use App\FixedSession;
 use App\SimpleSession;
+use App\joinGroup;
+
+use Illuminate\Support\Facades\DB;
 
 use Spatie\Permission\Models\Role;
 use Spatie\Permission\Models\Permission;
@@ -139,8 +143,48 @@ class TeacherController extends Controller
     {
     }
 
-    public function getStudents(Request $request)
+    public function search(Request $request)
     {
+        $name = $request->search;
+        $selectedGroup = $request->selectedGroup;
+        $output = '';
+        if ($request->ajax()) {
+            $joined = joinGroup::query()
+                ->where('group_id', '=', $selectedGroup)
+                ->get();
+            $joinedId = [];
+            if (!$joined->isEmpty()) {
+                foreach ($joined as $key => $element) {
+                    array_push($joinedId, $element->id);
+                }
+            }
+
+            $students = Student::query()
+                ->whereNotIn('id', $joinedId)
+                ->where(function ($query) use ($name) {
+                    $query
+                        ->where('first_name', 'like', '%' . $name . '%')
+                        ->orWhere('last_name', 'like', '%' . $name . '%');
+                })
+                ->get();
+
+            if (!$students->isEmpty()) {
+                // foreach ($students as $key => $student) {
+                //     $output .=
+                //         '<tr class="tr" id="searched-students">' .
+                //         '<td class="tdd">' .
+                //         $student->first_name .
+                //         '</td>' .
+                //         '<td  class="tdd" >' .
+                //         $student->last_name .
+                //         '</td>' .
+                //         '<td class="add tdd" ><i style="color:green" class="fas fa-plus">  </i></td>' .
+                //         '</tr>';
+                // }
+
+                return response()->json($students, 200);
+            }
+        }
     }
 
     //test upload
