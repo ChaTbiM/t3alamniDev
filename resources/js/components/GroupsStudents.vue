@@ -342,19 +342,29 @@ export default {
     },
     updateNumberOfAbsences(e, index) {
       e.preventDefault();
-      // console.log(this.$refs[`number-${index}`][0].value);
-      this.allStudents[index].nb_absences = this.$refs[
-        `number-${index}`
-      ][0].value;
+      let newVal = this.$refs[`number-${index}`][0].value;
+      this.allStudents[index].nb_absences = newVal;
+      let id = this.allStudents[index].id;
+
       this.abcenseIndex.forEach(el => {
         this.$refs[`number-${el}`][0].setAttribute("readonly", "readonly");
       });
+
+      axios
+        .put(route("updateAbsencesFixed", [id]), { newVal })
+        .then(res => (this.allStudents[index].nb_absences = newVal));
+
       this.editAble = null;
     },
 
     updatePaidState(e, index) {
       let newVal = Number(this.$refs[`paid-${index}`][0].value);
-      this.$set(this.allStudents[index], "is_paid", newVal);
+
+      let id = this.allStudents[index].id;
+
+      axios
+        .put(route("updatePaidFixed", [id]), { newVal })
+        .then(res => this.$set(this.allStudents[index], "is_paid", newVal));
       this.editAble = false;
     },
     //deleteUser should be changed
@@ -365,16 +375,24 @@ export default {
             el => el[0].group_id == this.selectedGroup
           );
           foundArr++;
-
           if (foundArr) {
             let foundElement = this.groupStudents[foundArr - 1].findIndex(
               el => el.student_id === condition
             );
             foundElement++;
             if (foundElement--) {
-              this.$delete(this.groupStudents[foundArr - 1], foundElement--);
+              let id = this.groupStudents[foundArr - 1][foundElement].id;
+              axios
+                .delete(route("deleteEnrolled", [id]))
+                .then(res =>
+                  res.status === 200
+                    ? this.$delete(
+                        this.groupStudents[foundArr - 1],
+                        foundElement--
+                      )
+                    : null
+                );
             }
-
             if (this.groupStudents[foundArr - 1].length === 0) {
               this.$delete(this.groupStudents, foundArr - 1);
             }
@@ -385,9 +403,15 @@ export default {
           );
           foundElement++;
           if (foundElement--) {
-            this.$delete(this.groupStudents[0], foundElement--);
+            let id = this.groupStudents[0][foundElement].id;
+            axios
+              .delete(route("deleteEnrolled", [id]))
+              .then(res =>
+                res.status === 200
+                  ? this.$delete(this.groupStudents[0], foundElement--)
+                  : null
+              );
           }
-
           if (this.groupStudents[0].length === 0) {
             this.$delete(this.groupStudents, 0);
           }
@@ -415,19 +439,18 @@ export default {
 
       let addTo = group => {
         return {
-          created_at: null,
+          // created_at: null,
           first_name: this.searchedStudents[index].first_name,
           last_name: this.searchedStudents[index].last_name,
           group_id: Number(group),
           is_paid: 0,
           is_validated: 0,
           nb_absences: 0,
-          student_id: this.searchedStudents[index].student_id,
+          student_id: this.searchedStudents[index].id,
           date: `${date.getFullYear()}-0${date.getUTCMonth() +
             1}-${date.getDate()}`,
-          time: `${date.getHours()}:00:00`,
-          updated_at: null
-          // id: lastId
+          time: `${date.getHours()}:00:00`
+          // updated_at: null
         };
       };
 
@@ -439,22 +462,29 @@ export default {
           found++;
 
           if (found) {
-            console.log("found", found);
-            this.groupStudents[found - 1].push(addTo(this.selectedGroup));
+            let enroll = addTo(this.selectedGroup);
+            this.groupStudents[found - 1].push(enroll);
+            this.enrollStudent(enroll);
           } else {
-            console.log("not found", found);
-
-            this.groupStudents.push([addTo(this.selectedGroup)]);
+            let enroll = addTo(this.selectedGroup);
+            this.groupStudents.push([enroll]);
+            this.enrollStudent(enroll);
           }
         } else {
-          this.groupStudents[0].push(addTo(this.groupStudents[0][0].group_id));
+          let enroll = addTo(this.groupStudents[0][0].group_id);
+          this.groupStudents[0].push(enroll);
+          this.enrollStudent(enroll);
         }
       } else {
         // if there is no joined students
         if (this.selectedGroup) {
-          this.groupStudents.push([addTo(this.selectedGroup)]);
+          let enroll = addTo(this.selectedGroup);
+          this.groupStudents.push([enroll]);
+          this.enrollStudent(enroll);
         } else {
-          this.groupStudents.push([addTo(this.modules[0].groupId)]);
+          let enroll = addTo(this.modules[0].groupId);
+          this.groupStudents.push([enroll]);
+          this.enrollStudent(enroll);
         }
       }
     },
@@ -493,6 +523,9 @@ export default {
       axios
         .post(route("createStudent"), formData)
         .then(res => console.log(res));
+    },
+    enrollStudent(enroll) {
+      axios.post(route("enrollStudent"), enroll).then(res => console.log(res));
     }
   },
   computed: {
@@ -633,6 +666,10 @@ export default {
     this.currentMonthAll = this.getCurrentMonth();
     this.currentMonthNonPaid = this.getCurrentMonth();
     this.currentMonthAbsentees = this.getCurrentMonth();
+
+    axios.defaults.headers.common["X-CSRF-TOKEN"] = document
+      .querySelector('meta[name="csrf-token"]')
+      .getAttribute("content");
   },
   mounted() {
     this.$store.dispatch("SET_GROUP_STUDENTS");

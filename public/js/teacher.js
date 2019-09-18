@@ -2777,27 +2777,40 @@ __webpack_require__.r(__webpack_exports__);
     updateNumberOfAbsences: function updateNumberOfAbsences(e, index) {
       var _this = this;
 
-      e.preventDefault(); // console.log(this.$refs[`number-${index}`][0].value);
-
-      this.allStudents[index].nb_absences = this.$refs["number-".concat(index)][0].value;
+      e.preventDefault();
+      var newVal = this.$refs["number-".concat(index)][0].value;
+      this.allStudents[index].nb_absences = newVal;
+      var id = this.allStudents[index].id;
       this.abcenseIndex.forEach(function (el) {
         _this.$refs["number-".concat(el)][0].setAttribute("readonly", "readonly");
+      });
+      axios.put(route("updateAbsencesFixed", [id]), {
+        newVal: newVal
+      }).then(function (res) {
+        return _this.allStudents[index].nb_absences = newVal;
       });
       this.editAble = null;
     },
     updatePaidState: function updatePaidState(e, index) {
+      var _this2 = this;
+
       var newVal = Number(this.$refs["paid-".concat(index)][0].value);
-      this.$set(this.allStudents[index], "is_paid", newVal);
+      var id = this.allStudents[index].id;
+      axios.put(route("updatePaidFixed", [id]), {
+        newVal: newVal
+      }).then(function (res) {
+        return _this2.$set(_this2.allStudents[index], "is_paid", newVal);
+      });
       this.editAble = false;
     },
     //deleteUser should be changed
     deleteUser: function deleteUser(event, index, condition) {
-      var _this2 = this;
+      var _this3 = this;
 
       if (this.editAble) {
         if (this.selectedGroup) {
           var foundArr = this.groupStudents.findIndex(function (el) {
-            return el[0].group_id == _this2.selectedGroup;
+            return el[0].group_id == _this3.selectedGroup;
           });
           foundArr++;
 
@@ -2808,7 +2821,10 @@ __webpack_require__.r(__webpack_exports__);
             foundElement++;
 
             if (foundElement--) {
-              this.$delete(this.groupStudents[foundArr - 1], foundElement--);
+              var id = this.groupStudents[foundArr - 1][foundElement].id;
+              axios["delete"](route("deleteEnrolled", [id])).then(function (res) {
+                return res.status === 200 ? _this3.$delete(_this3.groupStudents[foundArr - 1], foundElement--) : null;
+              });
             }
 
             if (this.groupStudents[foundArr - 1].length === 0) {
@@ -2823,7 +2839,10 @@ __webpack_require__.r(__webpack_exports__);
           _foundElement++;
 
           if (_foundElement--) {
-            this.$delete(this.groupStudents[0], _foundElement--);
+            var _id = this.groupStudents[0][_foundElement].id;
+            axios["delete"](route("deleteEnrolled", [_id])).then(function (res) {
+              return res.status === 200 ? _this3.$delete(_this3.groupStudents[0], _foundElement--) : null;
+            });
           }
 
           if (this.groupStudents[0].length === 0) {
@@ -2847,23 +2866,22 @@ __webpack_require__.r(__webpack_exports__);
       });
     },
     addStudent: function addStudent(e, index) {
-      var _this3 = this;
+      var _this4 = this;
 
       var date = new Date();
 
       var addTo = function addTo(group) {
         return {
-          created_at: null,
-          first_name: _this3.searchedStudents[index].first_name,
-          last_name: _this3.searchedStudents[index].last_name,
+          // created_at: null,
+          first_name: _this4.searchedStudents[index].first_name,
+          last_name: _this4.searchedStudents[index].last_name,
           group_id: Number(group),
           is_paid: 0,
           is_validated: 0,
           nb_absences: 0,
-          student_id: _this3.searchedStudents[index].student_id,
+          student_id: _this4.searchedStudents[index].id,
           date: "".concat(date.getFullYear(), "-0").concat(date.getUTCMonth() + 1, "-").concat(date.getDate()),
-          time: "".concat(date.getHours(), ":00:00"),
-          updated_at: null // id: lastId
+          time: "".concat(date.getHours(), ":00:00") // updated_at: null
 
         };
       };
@@ -2871,26 +2889,38 @@ __webpack_require__.r(__webpack_exports__);
       if (this.groupStudents.length) {
         if (this.selectedGroup) {
           var found = this.groupStudents.findIndex(function (el) {
-            return el[0].group_id == _this3.selectedGroup;
+            return el[0].group_id == _this4.selectedGroup;
           });
           found++;
 
           if (found) {
-            console.log("found", found);
-            this.groupStudents[found - 1].push(addTo(this.selectedGroup));
+            var enroll = addTo(this.selectedGroup);
+            this.groupStudents[found - 1].push(enroll);
+            this.enrollStudent(enroll);
           } else {
-            console.log("not found", found);
-            this.groupStudents.push([addTo(this.selectedGroup)]);
+            var _enroll = addTo(this.selectedGroup);
+
+            this.groupStudents.push([_enroll]);
+            this.enrollStudent(_enroll);
           }
         } else {
-          this.groupStudents[0].push(addTo(this.groupStudents[0][0].group_id));
+          var _enroll2 = addTo(this.groupStudents[0][0].group_id);
+
+          this.groupStudents[0].push(_enroll2);
+          this.enrollStudent(_enroll2);
         }
       } else {
         // if there is no joined students
         if (this.selectedGroup) {
-          this.groupStudents.push([addTo(this.selectedGroup)]);
+          var _enroll3 = addTo(this.selectedGroup);
+
+          this.groupStudents.push([_enroll3]);
+          this.enrollStudent(_enroll3);
         } else {
-          this.groupStudents.push([addTo(this.modules[0].groupId)]);
+          var _enroll4 = addTo(this.modules[0].groupId);
+
+          this.groupStudents.push([_enroll4]);
+          this.enrollStudent(_enroll4);
         }
       }
     },
@@ -2919,6 +2949,11 @@ __webpack_require__.r(__webpack_exports__);
       axios.post(route("createStudent"), formData).then(function (res) {
         return console.log(res);
       });
+    },
+    enrollStudent: function enrollStudent(enroll) {
+      axios.post(route("enrollStudent"), enroll).then(function (res) {
+        return console.log(res);
+      });
     }
   },
   computed: {
@@ -2938,21 +2973,21 @@ __webpack_require__.r(__webpack_exports__);
       }
     },
     allStudents: function allStudents() {
-      var _this4 = this;
+      var _this5 = this;
 
       if (this.groupStudents && !this.selectedGroup) {
         // if (this.groupStudents[0].length !== 0) {
         return this.groupStudents[0] ? this.groupStudents[0].filter(function (el) {
-          return el.date.split("-")[0] == _this4.currentMonthAll.getFullYear() && el.date.split("-")[1] == _this4.currentMonthAll.getMonth() + 1;
+          return el.date.split("-")[0] == _this5.currentMonthAll.getFullYear() && el.date.split("-")[1] == _this5.currentMonthAll.getMonth() + 1;
         }) : null; // }
       } else if (this.selectedGroup && this.groupStudents) {
         var group = this.groupStudents.filter(function (el) {
           if (el.length !== 0) {
-            return el[0].group_id == _this4.selectedGroup;
+            return el[0].group_id == _this5.selectedGroup;
           }
         });
         return group[0] ? group[0].filter(function (element) {
-          return element.date.split("-")[0] == _this4.currentMonthAll.getFullYear() && element.date.split("-")[1] == _this4.currentMonthAll.getMonth() + 1;
+          return element.date.split("-")[0] == _this5.currentMonthAll.getFullYear() && element.date.split("-")[1] == _this5.currentMonthAll.getMonth() + 1;
         }) : null;
       } else {
         return null;
@@ -2963,33 +2998,11 @@ __webpack_require__.r(__webpack_exports__);
       }
     },
     nonPaid: function nonPaid() {
-      var _this5 = this;
-
-      if (this.groupStudents && !this.selectedGroup) {
-        return this.groupStudents[0] ? this.groupStudents[0].filter(function (el) {
-          return el.date.split("-")[0] == _this5.currentMonthNonPaid.getFullYear() && el.date.split("-")[1] == _this5.currentMonthNonPaid.getMonth() + 1 && !el.is_paid;
-        }) : null;
-      } else if (this.selectedGroup //  &&
-      // this.groupStudents[this.selectedGroup - 1]
-      ) {
-          var group = this.groupStudents.filter(function (el) {
-            if (el.length !== 0) {
-              return el[0].group_id == _this5.selectedGroup;
-            }
-          });
-          return group[0] ? group[0].filter(function (element) {
-            return element.date.split("-")[0] == _this5.currentMonthNonPaid.getFullYear() && element.date.split("-")[1] == _this5.currentMonthNonPaid.getMonth() + 1 && !element.is_paid;
-          }) : null;
-        } else {
-        return null;
-      }
-    },
-    Absentees: function Absentees() {
       var _this6 = this;
 
       if (this.groupStudents && !this.selectedGroup) {
         return this.groupStudents[0] ? this.groupStudents[0].filter(function (el) {
-          return el.date.split("-")[0] == _this6.currentMonthAbsentees.getFullYear() && el.date.split("-")[1] == _this6.currentMonthAbsentees.getMonth() + 1 && !el.is_paid;
+          return el.date.split("-")[0] == _this6.currentMonthNonPaid.getFullYear() && el.date.split("-")[1] == _this6.currentMonthNonPaid.getMonth() + 1 && !el.is_paid;
         }) : null;
       } else if (this.selectedGroup //  &&
       // this.groupStudents[this.selectedGroup - 1]
@@ -3000,7 +3013,29 @@ __webpack_require__.r(__webpack_exports__);
             }
           });
           return group[0] ? group[0].filter(function (element) {
-            return element.date.split("-")[0] == _this6.currentMonthAbsentees.getFullYear() && element.date.split("-")[1] == _this6.currentMonthAbsentees.getMonth() + 1 && !element.is_paid;
+            return element.date.split("-")[0] == _this6.currentMonthNonPaid.getFullYear() && element.date.split("-")[1] == _this6.currentMonthNonPaid.getMonth() + 1 && !element.is_paid;
+          }) : null;
+        } else {
+        return null;
+      }
+    },
+    Absentees: function Absentees() {
+      var _this7 = this;
+
+      if (this.groupStudents && !this.selectedGroup) {
+        return this.groupStudents[0] ? this.groupStudents[0].filter(function (el) {
+          return el.date.split("-")[0] == _this7.currentMonthAbsentees.getFullYear() && el.date.split("-")[1] == _this7.currentMonthAbsentees.getMonth() + 1 && !el.is_paid;
+        }) : null;
+      } else if (this.selectedGroup //  &&
+      // this.groupStudents[this.selectedGroup - 1]
+      ) {
+          var group = this.groupStudents.filter(function (el) {
+            if (el.length !== 0) {
+              return el[0].group_id == _this7.selectedGroup;
+            }
+          });
+          return group[0] ? group[0].filter(function (element) {
+            return element.date.split("-")[0] == _this7.currentMonthAbsentees.getFullYear() && element.date.split("-")[1] == _this7.currentMonthAbsentees.getMonth() + 1 && !element.is_paid;
           }) : null;
         } else {
         return null;
@@ -3012,6 +3047,7 @@ __webpack_require__.r(__webpack_exports__);
     this.currentMonthAll = this.getCurrentMonth();
     this.currentMonthNonPaid = this.getCurrentMonth();
     this.currentMonthAbsentees = this.getCurrentMonth();
+    axios.defaults.headers.common["X-CSRF-TOKEN"] = document.querySelector('meta[name="csrf-token"]').getAttribute("content");
   },
   mounted: function mounted() {
     this.$store.dispatch("SET_GROUP_STUDENTS");

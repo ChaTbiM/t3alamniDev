@@ -141,10 +141,6 @@ class TeacherController extends Controller
         return response()->json($simpleSessions, 200);
     }
 
-    public function getID(Request $request)
-    {
-    }
-
     public function search(Request $request)
     {
         $name = $request->search;
@@ -215,6 +211,57 @@ class TeacherController extends Controller
             ]);
 
             return response()->json('worked', 200);
+        }
+    }
+
+    public function enrollStudent(Request $request)
+    {
+        if ($request->ajax()) {
+            joinGroup::create([
+                'nb_absences' => 0,
+                'is_paid' => 0,
+                'is_validated' => 0,
+                'time' => $request->time,
+                'date' => $request->date,
+                'group_id' => (int) $request->group_id,
+                'student_id' => $request->student_id
+            ]);
+            return response()->json('success', 200);
+        }
+    }
+
+    public function updatePaidFixed(
+        joinGroup $enrolledStudent,
+        Request $request
+    ) {
+        if ($request->ajax()) {
+            $id = $enrolledStudent->id;
+            $updated = joinGroup::find($id)->update([
+                'is_paid' => $request->newVal
+            ]);
+            return response()->json('success', 200);
+        }
+    }
+
+    public function updateAbsencesFixed(
+        joinGroup $enrolledStudent,
+        Request $request
+    ) {
+        if ($request->ajax()) {
+            $id = $enrolledStudent->id;
+            $updated = joinGroup::find($id)->update([
+                'nb_absences' => $request->newVal
+            ]);
+            return response()->json('success', 200);
+        }
+    }
+
+    public function deleteEnrolled(joinGroup $enrolledStudent, Request $request)
+    {
+        if ($request->ajax()) {
+            $id = $enrolledStudent->id;
+            $deleted = joinGroup::find($id)->delete();
+            return response()->json('success', 200);
         }
     }
 }

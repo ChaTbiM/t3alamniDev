@@ -203,6 +203,25 @@ Route::post('teacher/students/create', 'TeacherController@createStudent')->name(
     'createStudent'
 );
 
+Route::put(
+    'teacher/students/updatePaidFixed/{enrolledStudent}',
+    'TeacherController@updatePaidFixed'
+)->name('updatePaidFixed');
+
+Route::put(
+    'teacher/students/updateAbsencesFixed/{enrolledStudent}',
+    'TeacherController@updateAbsencesFixed'
+)->name('updateAbsencesFixed');
+
+Route::delete(
+    'teacher/students/delete/{enrolledStudent}',
+    'TeacherController@deleteEnrolled'
+)->name('deleteEnrolled');
+
+Route::post('teacher/enrolled/add', 'TeacherController@enrollStudent')->name(
+    'enrollStudent'
+);
+
 // test upload
 // Route::get('teacher/test', 'TeacherController@testIndex');
 // Route::post('teacher/fixed', 'TeacherController@addFixed')->name('upload');
