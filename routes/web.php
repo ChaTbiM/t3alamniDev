@@ -21,11 +21,11 @@ Auth::routes(['verify' => true]);
 Route::get('/home', 'HomeController@index')->name('home');
 Route::get('/admin', 'AdminController@index')->name('admin');
 Route::get('/student', 'StudentController@index')->name('student');
-Route::get('/teacher', 'TeacherController@index')->name('teacher');
+Route::get('/teacher', 'TeacherController@index')->name('teacher'); // Teacher Dashboard Home
 // Route::get('/teacher/schedule', 'TeacherController@index')->name('teacher');
 Route::get('/teacher/groups', 'TeacherController@index')->name(
     'teacher.groups'
-);
+); // groups page
 
 // Route::get('/teacher/{any}', function () {
 //     return view('teacher.teacher');
@@ -220,6 +220,11 @@ Route::delete(
 
 Route::post('teacher/enrolled/add', 'TeacherController@enrollStudent')->name(
     'enrollStudent'
+);
+
+// Teacher Sessions Page
+Route::get('/teacher/groups', 'TeacherController@index')->name(
+    'teacher.groups'
 );
 
 // test upload

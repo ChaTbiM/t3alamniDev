@@ -453,9 +453,13 @@ export default {
           // updated_at: null
         };
       };
-
       if (this.groupStudents.length) {
-        if (this.selectedGroup) {
+        let duplicate = this.allStudents.findIndex(
+          el => el.student_id === this.searchedStudents[index].id
+        );
+        duplicate++;
+        console.log(duplicate, "duplicate");
+        if (this.selectedGroup && duplicate === 0) {
           let found = this.groupStudents.findIndex(
             el => el[0].group_id == this.selectedGroup
           );
@@ -470,7 +474,7 @@ export default {
             this.groupStudents.push([enroll]);
             this.enrollStudent(enroll);
           }
-        } else {
+        } else if (!this.selectedGroup && duplicate === 0) {
           let enroll = addTo(this.groupStudents[0][0].group_id);
           this.groupStudents[0].push(enroll);
           this.enrollStudent(enroll);

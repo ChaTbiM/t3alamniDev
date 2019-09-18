@@ -59,7 +59,7 @@
         <div class="nav__bottom">
             <ul class="nav__bottom__list">
                 <li class="nav__list__item"> <a href="/teacher" class="nav__list__item__link bottom__link">Schedule</a> </li>
-                <li class="nav__list__item"> <a href="teacher/groups" class="nav__list__item__link bottom__link">Groupes</a> </li>
+            <li class="nav__list__item"> <a href="{{route('teacher.groups')}}" class="nav__list__item__link bottom__link">Groupes</a> </li>
                 <li class="nav__list__item"> <a href="#" class="nav__list__item__link bottom__link">Sessions</a> </li>
                 <li class="nav__list__item"> <a href="#" class="nav__list__item__link bottom__link ">All my students</a> </li>
                 <li class="nav__list__item"> <a href="#" class="nav__list__item__link bottom__link">Demandes interqissees</a> </li>

@@ -2887,7 +2887,13 @@ __webpack_require__.r(__webpack_exports__);
       };
 
       if (this.groupStudents.length) {
-        if (this.selectedGroup) {
+        var duplicate = this.allStudents.findIndex(function (el) {
+          return el.student_id === _this4.searchedStudents[index].id;
+        });
+        duplicate++;
+        console.log(duplicate, "duplicate");
+
+        if (this.selectedGroup && duplicate === 0) {
           var found = this.groupStudents.findIndex(function (el) {
             return el[0].group_id == _this4.selectedGroup;
           });
@@ -2903,7 +2909,7 @@ __webpack_require__.r(__webpack_exports__);
             this.groupStudents.push([_enroll]);
             this.enrollStudent(_enroll);
           }
-        } else {
+        } else if (!this.selectedGroup && duplicate === 0) {
           var _enroll2 = addTo(this.groupStudents[0][0].group_id);
 
           this.groupStudents[0].push(_enroll2);
